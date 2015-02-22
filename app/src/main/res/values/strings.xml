@@ -9,6 +9,7 @@
     <string name="username">Username</string>
     <string name="name">Name</string>
     <string name="other">Other</string>
+    <string name="email">Email</string>
     <string name="old_password">Old Password</string>
     <string name="new_password">New Password</string>
     <string name="city">City</string>
