@@ -86,10 +86,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/save"
-        android:id="@+id/button"
+        android:id="@+id/save"
         android:layout_below="@+id/newPassword2"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp" />
+        android:layout_marginTop="0dp" />
 
     <EditText
         android:layout_width="fill_parent"
@@ -99,7 +99,7 @@
         android:id="@+id/email"
         android:layout_below="@+id/editText7"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="30dp"
         android:hint="@string/email" />
 
 
