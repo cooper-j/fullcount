@@ -8,6 +8,19 @@
     <string name="title_activity_intro">IntroActivity</string>
     <string name="button">Log In</string>
     <string name="password">Password</string>
+
+    <string name="account_name">Login</string>
+    <string name="password1">Password</string>
+    <string name="password2">Confirm Password</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="cancel">Cancel</string>
+
+    <color name="logo_color">#FF1111</color>
+    <color name="background">#BBBBFF</color>
+    <color name="label_color">#000000</color>
+    <color name="field_color">#000000</color>
+    <color name="field_background">#FFFFFF</color>
+
     <string name="username">Username</string>
     <string name="name">Name</string>
     <string name="other">Other</string>
