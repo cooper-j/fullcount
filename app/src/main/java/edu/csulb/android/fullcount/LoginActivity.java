@@ -73,7 +73,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 
             //Execute HTTP Post Request
             HttpResponse response = client.execute(post);
-            Log.e("Status Code",String.valueOf(response.getStatusLine().getStatusCode()));
+            Log.d("Status Code: ", String.valueOf(response.getStatusLine().getStatusCode()));
         } catch (ClientProtocolException e) {
             //TODO Auto-generated catch block
         } catch (IOException e) {

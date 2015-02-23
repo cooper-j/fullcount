@@ -151,8 +151,7 @@ public class ConnectionActivity extends ActionBarActivity {
 
             // Execute HTTP Post Request
             HttpResponse response = httpclient.execute(httppost);
-            Log.e("test", EntityUtils.toString(response.getEntity()));
-            Log.d("test", "NEXT");
+            Log.d("Status Code: ", String.valueOf(response.getStatusLine().getStatusCode()));
         } catch (ClientProtocolException e) {
             // TODO Auto-generated catch block
         } catch (IOException e) {
