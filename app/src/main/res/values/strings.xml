@@ -3,9 +3,11 @@
 
     <string name="app_name">FullCount</string>
     <string name="title_activity_connection">ConnectionActivity</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="textview">Let\'s Get This Started</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_intro">IntroActivity</string>
+    <string name="button">Log In</string>
+    <string name="password">Password</string>
     <string name="username">Username</string>
     <string name="name">Name</string>
     <string name="other">Other</string>
