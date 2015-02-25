@@ -6,9 +6,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="You are logged in"
+        android:text="@string/logged_in"
         android:id="@+id/textView3"
         android:layout_gravity="center_vertical"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="13"
+        android:text="@string/log_out"
+        android:id="@+id/button"
+        android:layout_below="@+id/textView3"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp" />
 </RelativeLayout>

@@ -5,11 +5,14 @@ import java.util.List;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.facebook.Session;
 import com.facebook.SessionState;
@@ -94,13 +97,7 @@ public class FacebookFragment extends Fragment {
                                       Exception exception) {
         if (state.isOpened()) {
             Log.i(TAG, "Logged in...");
-            HttpHelper httpHelper = new HttpHelper();
-            JSONObject jsonobj = new JSONObject();
-            try {
-                jsonobj.put("access_token", session.getAccessToken());
-            } catch (JSONException je) {
-            }
-            //httpHelper.post(IntroActivity.class, "", , null);
+
             Intent i = new Intent(getActivity(), HomeActivity.class);
             startActivity(i);
         } else if (state.isClosed()) {
@@ -113,6 +110,39 @@ public class FacebookFragment extends Fragment {
         public void call(Session session, SessionState state,
                          Exception exception) {
             onSessionStateChange(session, state, exception);
+            if (session.isOpened()){
+                HttpHelper httpHelper = new HttpHelper();
+                JSONObject jsonobj = new JSONObject();
+                try {
+                    jsonobj.put("access_token", session.getAccessToken());
+                } catch (JSONException je) {
+                }
+                //httpHelper.post(IntroActivity.class, jsonobj, , null, handler);
+            }
+        }
+    };
+
+    private final Handler handler = new Handler() {
+
+        public void handleMessage(Message msg) {
+
+            String aResponse = msg.getData().getString("message");
+
+            if ((null != aResponse)) {
+                if (aResponse == "200"){
+                    Intent i = new Intent(getActivity(), HomeActivity.class);
+                    startActivity(i);
+                }
+            }
+            else
+            {
+                // ALERT MESSAGE
+                Toast.makeText(
+                        getActivity(),
+                        "Not Got Response From Server.",
+                        Toast.LENGTH_SHORT).show();
+            }
+
         }
     };
 }

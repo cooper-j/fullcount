@@ -1,5 +1,6 @@
 package edu.csulb.android.fullcount;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -8,6 +9,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.facebook.Session;
 
 
 public class IntroActivity extends FragmentActivity {
@@ -18,6 +21,7 @@ public class IntroActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
 
+        fbClearToken(this);
         if (savedInstanceState == null) {
             // Add the fragment on initial activity setup
             facebookFragment = new FacebookFragment();
@@ -74,4 +78,21 @@ public class IntroActivity extends FragmentActivity {
         return super.onOptionsItemSelected(item);
     }
 
-}
+    public  void fbClearToken(Context context) {
+            Session session = Session.getActiveSession();
+            if (session != null) {
+
+            if (!session.isClosed()) {
+            session.closeAndClearTokenInformation();
+            //clear your preferences if saved
+            }
+            } else {
+            session = new Session(context);
+            Session.setActiveSession(session);
+
+            session.closeAndClearTokenInformation();
+            //clear your preferences if saved
+            }
+
+            }
+    }

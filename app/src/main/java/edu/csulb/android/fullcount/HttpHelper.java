@@ -42,7 +42,7 @@ public class HttpHelper extends Activity {
      * @param authorization
      */
 
-    public void post(Activity me, String url, JSONObject data, String[] authorization, Handler handler){
+    public void post(Activity me, String url, JSONObject data, String authorization, Handler handler){
         new Thread(new HttpRunnablePost(me, url, data, authorization, handler)).start();
     }
 
@@ -53,7 +53,7 @@ public class HttpHelper extends Activity {
      * @param authorization
      */
 
-    public void get(Activity me, String url, JSONObject data, String[] authorization, Handler handler){
+    public void get(Activity me, String url, JSONObject data, String authorization, Handler handler){
         new Thread(new HttpRunnableGet(me, url, data, authorization, handler)).start();
     }
 
@@ -64,14 +64,14 @@ public class HttpHelper extends Activity {
      * @param authorization
      */
 
-    public void put(Activity me, String url, JSONObject data, String[] authorization, Handler handler){
+    public void put(Activity me, String url, JSONObject data, String authorization, Handler handler){
         new Thread(new HttpRunnablePut(me, url, data, authorization, handler)).start();
     }
 
     private abstract class HttpRunnable implements Runnable{
         protected String url;
         protected JSONObject data;
-        protected String[] authorization;
+        protected String authorization;
 
         protected static final String server = "http://fullcount.azurewebsites.net";
         protected HttpClient client;
@@ -82,7 +82,7 @@ public class HttpHelper extends Activity {
         private int timeoutConnection = 3000;
         private int timeoutSocket = 5000;
 
-        public HttpRunnable(Activity me, String url, JSONObject data, String[] authorization, Handler handler){
+        public HttpRunnable(Activity me, String url, JSONObject data, String authorization, Handler handler){
             this.me = me;
             this.url = url;
             this.data = data;
@@ -114,7 +114,7 @@ public class HttpHelper extends Activity {
 
     private class HttpRunnablePost extends HttpRunnable{
 
-        public HttpRunnablePost(Activity me, String url, JSONObject data, String[] authorization, Handler handler){
+        public HttpRunnablePost(Activity me, String url, JSONObject data, String authorization, Handler handler){
             super(me, url, data, authorization, handler);
         }
 
@@ -127,7 +127,7 @@ public class HttpHelper extends Activity {
                 dataStringEntity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json;charset=UTF-8"));
                 post.setEntity(dataStringEntity);
                 if (authorization != null)
-                    post.addHeader("Authorization", "Basic " + Base64.encodeToString((authorization[0] + ":" + authorization[1]).getBytes("UTF-8"), Base64.DEFAULT));
+                    post.addHeader("Authorization", "Basic " + authorization /*Base64.encodeToString((authorization[0] + ":" + authorization[1]).getBytes("UTF-8"), Base64.DEFAULT)*/);
                 //Execute HTTP Post Request
                 HttpResponse response = client.execute(post);
                 Log.e("Response: ", EntityUtils.toString(response.getEntity()));
@@ -160,7 +160,7 @@ public class HttpHelper extends Activity {
 
     private class HttpRunnableGet extends HttpRunnable {
 
-        public HttpRunnableGet(Activity me, String url, JSONObject data, String[] authorization, Handler handler) {
+        public HttpRunnableGet(Activity me, String url, JSONObject data, String authorization, Handler handler) {
             super(me, url, data, authorization, handler);
         }
 
@@ -169,7 +169,7 @@ public class HttpHelper extends Activity {
             HttpGet get = new HttpGet(server + url);
             try {
                 if(authorization != null)
-                    get.addHeader("Authorization", "Basic "+ Base64.encodeToString((authorization[0] + ":" + authorization[1]).getBytes("UTF-8"), Base64.DEFAULT));
+                    get.addHeader("Authorization", "Basic "+ authorization/*Base64.encodeToString((authorization[0] + ":" + authorization[1]).getBytes("UTF-8"), Base64.DEFAULT)*/);
 
                 //Execute HTTP Post Request
                 HttpResponse response = client.execute(get);
@@ -195,7 +195,7 @@ public class HttpHelper extends Activity {
 
     private class HttpRunnablePut extends HttpRunnable{
 
-        public HttpRunnablePut(Activity me, String url, JSONObject data, String[] authorization, Handler handler){
+        public HttpRunnablePut(Activity me, String url, JSONObject data, String authorization, Handler handler){
             super(me, url, data, authorization, handler);
         }
 
@@ -210,7 +210,7 @@ public class HttpHelper extends Activity {
                 put.setEntity(dataStringEntity);
 
                 if(authorization != null)
-                    put.addHeader("Authorization", "Basic "+ Base64.encodeToString((authorization[0] + ":" + authorization[1]).getBytes("UTF-8"), Base64.DEFAULT));
+                    put.addHeader("Authorization", "Basic "+ authorization /*Base64.encodeToString((authorization[0] + ":" + authorization[1]).getBytes("UTF-8"), Base64.DEFAULT)*/);
                 //Execute HTTP Post Request
                 HttpResponse response = client.execute(put);
                 Log.e("Response: ", EntityUtils.toString(response.getEntity()));
