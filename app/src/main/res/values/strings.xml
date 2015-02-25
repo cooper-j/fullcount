@@ -10,6 +10,8 @@
     <string name="password">Password</string>
     <string name="password_forgot1">Forgotten Password ?</string>
     <string name="password_forgot2">Send Email</string>
+    <string name="facebook_connect">FB | Connect</string>
+    <string name="not_a_member">Not a member?</string>
 
     <string name="account_name">Login</string>
     <string name="password1">Password</string>
