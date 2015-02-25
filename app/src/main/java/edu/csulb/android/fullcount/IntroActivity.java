@@ -1,17 +1,31 @@
 package edu.csulb.android.fullcount;
 
-import android.support.v7.app.ActionBarActivity;
+import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.facebook.AppEventsLogger;
 
-public class IntroActivity extends ActionBarActivity {
+
+public class IntroActivity extends FragmentActivity {
+    private FacebookFragment facebookFragment;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_intro);
+
+        if (savedInstanceState == null) {
+            // Add the fragment on initial activity setup
+            facebookFragment = new FacebookFragment();
+
+            getSupportFragmentManager().beginTransaction()
+                    .add(android.R.id.content, facebookFragment).commit();
+        } else {
+            // Or set the fragment from restored state info
+            facebookFragment = (FacebookFragment) getSupportFragmentManager()
+                    .findFragmentById(android.R.id.content);
+        }
     }
 
 
@@ -35,5 +49,21 @@ public class IntroActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Logs 'install' and 'app activate' App Events.
+        AppEventsLogger.activateApp(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // Logs 'app deactivate' App Event.
+        AppEventsLogger.deactivateApp(this);
     }
 }

@@ -1,83 +1,53 @@
 package edu.csulb.android.fullcount;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 
+public class LoginActivity extends Activity {
 
-public class LoginActivity extends Activity implements View.OnClickListener {
+    private HttpHelper httpHelp = new HttpHelper();
 
-    private static final String Query_URL = "http://fullcount.azurewebsites.net";
-	//@Override
-    //TextView loginTextView;
-    Button loginButton;
-    EditText loginUsername;
-    EditText loginPassword;
-    JSONObject jsonobj;
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
 
-        loginButton = (Button) findViewById(R.id.login_button);
-        loginButton.setOnClickListener(this);
-	}
+        Button loginButton = (Button) findViewById(R.id.login_button);
+        loginButton.setOnClickListener(new View.OnClickListener(){
+           @Override
+           public void onClick(View v) {
 
-    @Override
-    //This represents what will happen when the button is pushed
-    public void onClick(View v) {
+                EditText loginUsername = (EditText) findViewById(R.id.login_username);
+                EditText loginPassword = (EditText) findViewById(R.id.login_password);
 
-        loginUsername = (EditText) findViewById(R.id.login_username);
-        loginPassword = (EditText) findViewById(R.id.login_password);
-        new Thread(new Runnable() {
-            public void run() {
+                //String[] data = { loginUsername.getText().toString(), loginPassword.getText().toString()};
+
+                JSONObject jsonobj = new JSONObject();
                 try {
-                    JSONObject jsonobj = new JSONObject();
-                    jsonobj.put("username", loginUsername.getText());
-                    jsonobj.put("password", loginPassword.getText());
-                    postData(jsonobj, "/login");
+                    jsonobj.put("username", loginUsername.getText().toString());
+                    jsonobj.put("password", loginPassword.getText().toString());
                 } catch (JSONException je) {
                 }
+                httpHelp.post(LoginActivity.this, "/api/users/login", jsonobj, null);
+           }
+	    });
+        Button cancelButton = (Button) findViewById(R.id.cancel_button);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(), IntroActivity.class);
+                startActivity(i);
+                finish();
             }
-        }).start();
-    }
-
-    public void postData(JSONObject data, String url) {
-        HttpClient client = new DefaultHttpClient();
-        HttpPost post = new HttpPost("http://fullcount.azurewebsites.net" + url);
-        try {
-            StringEntity dataStringEntity = new StringEntity(data.toString());
-            dataStringEntity.setContentType("application/json;charset=UTF-8");
-            dataStringEntity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json;charset=UTF-8"));
-            post.setEntity(dataStringEntity);
-
-            //Execute HTTP Post Request
-            HttpResponse response = client.execute(post);
-            Log.d("Status Code: ", String.valueOf(response.getStatusLine().getStatusCode()));
-        } catch (ClientProtocolException e) {
-            //TODO Auto-generated catch block
-        } catch (IOException e) {
-            //TODO Auto-generated catch block
-        }
+        });
     }
 }

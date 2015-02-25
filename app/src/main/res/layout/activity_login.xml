@@ -45,7 +45,7 @@
                 android:id="@+id/login_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:ems="8"
+                android:ems="13"
                 android:layout_below="@+id/login_password"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="20dp"
@@ -54,7 +54,7 @@
                 android:id="@+id/cancel_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:ems="8"
+                android:ems="13"
                 android:layout_below="@+id/login_button"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
@@ -69,7 +69,8 @@
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="5dp"
-                android:layout_marginRight="5dp" />
+                android:layout_marginRight="5dp"
+                android:layout_alignParentTop="false" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

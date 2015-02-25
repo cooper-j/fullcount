@@ -1,5 +1,6 @@
 package edu.csulb.android.fullcount;
 
+import android.app.Activity;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -30,8 +31,9 @@ import org.apache.http.message.BasicHeader;
 
 import android.content.Intent;
 
-public class ConnectionActivity extends ActionBarActivity {
+public class ConnectionActivity extends Activity {
 
+    private HttpHelper httpHelp = new HttpHelper();
     private Button createAccButton, cancelButton;
     private EditText userName, email, passwordOne, passwordTwo;
 
@@ -49,8 +51,8 @@ public class ConnectionActivity extends ActionBarActivity {
 
         createAccButton = (Button)findViewById(R.id.AccountCreateButton);
         createAccButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
+                @Override
+                public void onClick(View v) {
                 userName = (EditText) findViewById(R.id.UserField);
                 email = (EditText) findViewById(R.id.EmailField);
                 passwordOne = (EditText) findViewById(R.id.Password1Field);
@@ -69,21 +71,16 @@ public class ConnectionActivity extends ActionBarActivity {
                     {
                         //Account Registered
                         //abc.register(field1, field2, field3);
-                        new Thread(new Runnable() {
-                            public void run()
-                            {
-                                try {
-                                    JSONObject jsonobj = new JSONObject();
-                                    jsonobj.put("username", userName.getText().toString());
-                                    jsonobj.put("password", passwordOne.getText().toString());
-                                    jsonobj.put("email", email.getText().toString());
-                                    jsonobj.put("city", "test city");
-                                    jsonobj.put("team", "test team");
-                                    register(jsonobj, "/register");
-                                } catch (JSONException je) {
-                                }
-                            }
-                        }).start();
+                        JSONObject jsonobj = new JSONObject();
+                        try {
+                            jsonobj.put("username", userName.getText().toString());
+                            jsonobj.put("password", passwordOne.getText().toString());
+                            jsonobj.put("email", email.getText().toString());
+                            jsonobj.put("city", "test city");
+                            jsonobj.put("team", "test team");
+                        } catch (JSONException je) {
+                        }
+                        httpHelp.post(ConnectionActivity.this, "/register", jsonobj, null);
 
                         Toast.makeText(getBaseContext(),"Account Info Sent",Toast.LENGTH_SHORT).show();
                     }
@@ -137,26 +134,4 @@ public class ConnectionActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
-
-    public void register(JSONObject data, String url)
-    {
-        HttpClient httpclient = new DefaultHttpClient();
-        HttpPost httppost = new HttpPost("http://fullcount.azurewebsites.net" + url);
-        try {
-            StringEntity dataStringEntity = new StringEntity(data.toString());
-            dataStringEntity.setContentType("application/json;charset=UTF-8");
-            dataStringEntity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,"application/json;charset=UTF-8"));
-            httppost.setEntity(dataStringEntity);
-
-            // Execute HTTP Post Request
-            HttpResponse response = httpclient.execute(httppost);
-            Log.d("Status Code: ", String.valueOf(response.getStatusLine().getStatusCode()));
-        } catch (ClientProtocolException e) {
-            // TODO Auto-generated catch block
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-        }
-    }
-
 }
