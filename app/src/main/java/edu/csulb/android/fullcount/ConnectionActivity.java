@@ -80,7 +80,8 @@ public class ConnectionActivity extends Activity {
                             jsonobj.put("team", "test team");
                         } catch (JSONException je) {
                         }
-                        httpHelp.post(ConnectionActivity.this, "/register", jsonobj, null);
+                        /*TODO Handler*/
+                        httpHelp.post(ConnectionActivity.this, "/register", jsonobj, null, null);
 
                         Toast.makeText(getBaseContext(),"Account Info Sent",Toast.LENGTH_SHORT).show();
                     }

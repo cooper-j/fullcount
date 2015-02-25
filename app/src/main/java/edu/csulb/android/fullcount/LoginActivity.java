@@ -5,10 +5,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -37,10 +38,10 @@ public class LoginActivity extends Activity {
                     jsonobj.put("password", loginPassword.getText().toString());
                 } catch (JSONException je) {
                 }
-                httpHelp.post(LoginActivity.this, "/api/users/login", jsonobj, null);
+                httpHelp.post(LoginActivity.this, "/api/users/login", jsonobj, null, handler);
            }
 	    });
-        Button cancelButton = (Button) findViewById(R.id.cancel_button);
+        Button cancelButton = (Button)findViewById(R.id.cancel_button);
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -50,4 +51,29 @@ public class LoginActivity extends Activity {
             }
         });
     }
+
+    private final Handler handler = new Handler() {
+
+        public void handleMessage(Message msg) {
+
+            String aResponse = msg.getData().getString("message");
+
+            if ((null != aResponse)) {
+                if (aResponse == "200"){
+                    Intent i = new Intent(getApplicationContext(), HomeActivity.class);
+                    startActivity(i);
+                    finish();
+                }
+            }
+            else
+            {
+                // ALERT MESSAGE
+                Toast.makeText(
+                        getBaseContext(),
+                        "Not Got Response From Server.",
+                        Toast.LENGTH_SHORT).show();
+            }
+
+        }
+    };
 }

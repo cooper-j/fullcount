@@ -1,11 +1,13 @@
 package edu.csulb.android.fullcount;
 
+import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import com.facebook.AppEventsLogger;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 
 public class IntroActivity extends FragmentActivity {
@@ -14,6 +16,7 @@ public class IntroActivity extends FragmentActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_intro);
 
         if (savedInstanceState == null) {
             // Add the fragment on initial activity setup
@@ -26,6 +29,26 @@ public class IntroActivity extends FragmentActivity {
             facebookFragment = (FacebookFragment) getSupportFragmentManager()
                     .findFragmentById(android.R.id.content);
         }
+
+        Button logInBtn = (Button)findViewById(R.id.login_btn);
+        logInBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(i);
+                finish();
+            }
+        });
+
+        TextView signUpTxt = (TextView)findViewById(R.id.signUpText);
+        signUpTxt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(), ConnectionActivity.class);
+                startActivity(i);
+                finish();
+            }
+        });
     }
 
 
@@ -51,19 +74,4 @@ public class IntroActivity extends FragmentActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        // Logs 'install' and 'app activate' App Events.
-        AppEventsLogger.activateApp(this);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        // Logs 'app deactivate' App Event.
-        AppEventsLogger.deactivateApp(this);
-    }
 }

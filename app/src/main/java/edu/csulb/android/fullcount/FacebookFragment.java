@@ -101,6 +101,8 @@ public class FacebookFragment extends Fragment {
             } catch (JSONException je) {
             }
             //httpHelper.post(IntroActivity.class, "", , null);
+            Intent i = new Intent(getActivity(), HomeActivity.class);
+            startActivity(i);
         } else if (state.isClosed()) {
             Log.i(TAG, "Logged out...");
         }
