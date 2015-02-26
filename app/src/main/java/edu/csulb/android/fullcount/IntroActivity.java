@@ -21,7 +21,6 @@ public class IntroActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
 
-        fbClearToken(this);
         if (savedInstanceState == null) {
             // Add the fragment on initial activity setup
             facebookFragment = new FacebookFragment();
@@ -74,25 +73,6 @@ public class IntroActivity extends FragmentActivity {
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
-
-    public  void fbClearToken(Context context) {
-            Session session = Session.getActiveSession();
-            if (session != null) {
-
-            if (!session.isClosed()) {
-            session.closeAndClearTokenInformation();
-            //clear your preferences if saved
-            }
-            } else {
-            session = new Session(context);
-            Session.setActiveSession(session);
-
-            session.closeAndClearTokenInformation();
-            //clear your preferences if saved
-            }
-
-            }
-    }
+}

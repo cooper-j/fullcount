@@ -39,4 +39,6 @@
     <string name="logged_in">You are logged in</string>
     <string name="log_out">Log Out</string>
 
+    <string name="edit_profile">Edit Profile</string>
+
 </resources>

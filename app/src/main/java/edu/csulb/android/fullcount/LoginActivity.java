@@ -18,14 +18,14 @@ public class LoginActivity extends Activity {
 
     private HttpHelper httpHelp = new HttpHelper();
 
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_login);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
 
         Button loginButton = (Button) findViewById(R.id.login_button);
-        loginButton.setOnClickListener(new View.OnClickListener(){
-           @Override
-           public void onClick(View v) {
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
                 EditText loginUsername = (EditText) findViewById(R.id.login_username);
                 EditText loginPassword = (EditText) findViewById(R.id.login_password);
@@ -39,9 +39,9 @@ public class LoginActivity extends Activity {
                 } catch (JSONException je) {
                 }
                 httpHelp.post(LoginActivity.this, "/api/users/login", jsonobj, null, handler);
-           }
-	    });
-        Button cancelButton = (Button)findViewById(R.id.cancel_button);
+            }
+        });
+        Button cancelButton = (Button) findViewById(R.id.cancel_button);
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -59,21 +59,14 @@ public class LoginActivity extends Activity {
             String aResponse = msg.getData().getString("message");
 
             if ((null != aResponse)) {
-                if (aResponse == "200"){
+                if (aResponse.matches("200")) {
                     Intent i = new Intent(getApplicationContext(), HomeActivity.class);
                     startActivity(i);
                     finish();
-                }
-            }
-            else
-            {
-                // ALERT MESSAGE
-                Toast.makeText(
-                        getBaseContext(),
-                        "Not Got Response From Server.",
-                        Toast.LENGTH_SHORT).show();
-            }
-
+                } else
+                    Toast.makeText(getBaseContext(), "Error: " + aResponse, Toast.LENGTH_SHORT).show();
+            } else
+                Toast.makeText(getBaseContext(), "Not Got Response From Server.", Toast.LENGTH_SHORT).show();
         }
     };
 }

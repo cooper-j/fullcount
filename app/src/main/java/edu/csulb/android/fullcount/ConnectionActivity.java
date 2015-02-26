@@ -1,6 +1,8 @@
 package edu.csulb.android.fullcount;
 
 import android.app.Activity;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -81,7 +83,7 @@ public class ConnectionActivity extends Activity {
                         } catch (JSONException je) {
                         }
                         /*TODO Handler*/
-                        httpHelp.post(ConnectionActivity.this, "/register", jsonobj, null, null);
+                        httpHelp.post(ConnectionActivity.this, "/register", jsonobj, null, handler);
 
                         Toast.makeText(getBaseContext(),"Account Info Sent",Toast.LENGTH_SHORT).show();
                     }
@@ -135,4 +137,22 @@ public class ConnectionActivity extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    private final Handler handler = new Handler() {
+
+        public void handleMessage(Message msg) {
+
+            String aResponse = msg.getData().getString("message");
+
+            if ((null != aResponse)) {
+                if (aResponse.matches("200")) {
+                    Intent i = new Intent(getApplicationContext(), HomeActivity.class);
+                    startActivity(i);
+                    finish();
+                } else
+                    Toast.makeText(getBaseContext(), "Error: " + aResponse, Toast.LENGTH_SHORT).show();
+            } else
+                Toast.makeText(getBaseContext(), "Not Got Response From Server.", Toast.LENGTH_SHORT).show();
+        }
+    };
 }

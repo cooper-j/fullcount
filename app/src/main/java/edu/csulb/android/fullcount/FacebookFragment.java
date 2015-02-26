@@ -3,6 +3,7 @@ package edu.csulb.android.fullcount;
 import java.util.Arrays;
 import java.util.List;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -97,9 +98,6 @@ public class FacebookFragment extends Fragment {
                                       Exception exception) {
         if (state.isOpened()) {
             Log.i(TAG, "Logged in...");
-
-            Intent i = new Intent(getActivity(), HomeActivity.class);
-            startActivity(i);
         } else if (state.isClosed()) {
             Log.i(TAG, "Logged out...");
         }
@@ -109,15 +107,15 @@ public class FacebookFragment extends Fragment {
         @Override
         public void call(Session session, SessionState state,
                          Exception exception) {
-            onSessionStateChange(session, state, exception);
+            //onSessionStateChange(session, state, exception);
             if (session.isOpened()){
                 HttpHelper httpHelper = new HttpHelper();
                 JSONObject jsonobj = new JSONObject();
                 try {
-                    jsonobj.put("access_token", session.getAccessToken());
+                    jsonobj.put("token", session.getAccessToken());
                 } catch (JSONException je) {
                 }
-                //httpHelper.post(IntroActivity.class, jsonobj, , null, handler);
+                httpHelper.post(getActivity(), "/api/users/login/facebook", jsonobj, null, handler);
             }
         }
     };
@@ -129,9 +127,18 @@ public class FacebookFragment extends Fragment {
             String aResponse = msg.getData().getString("message");
 
             if ((null != aResponse)) {
-                if (aResponse == "200"){
+                if (aResponse.matches("200")){
                     Intent i = new Intent(getActivity(), HomeActivity.class);
                     startActivity(i);
+                }
+                else
+                {
+                    fbClearToken(getActivity());
+                    // ALERT MESSAGE
+                    Toast.makeText(
+                            getActivity(),
+                            "Error: " + aResponse,
+                            Toast.LENGTH_SHORT).show();
                 }
             }
             else
@@ -145,4 +152,22 @@ public class FacebookFragment extends Fragment {
 
         }
     };
+
+    private void fbClearToken(Context context) {
+        Session session = Session.getActiveSession();
+        if (session != null) {
+
+            if (!session.isClosed()) {
+                session.closeAndClearTokenInformation();
+                //clear your preferences if saved
+            }
+        } else {
+            session = new Session(context);
+            Session.setActiveSession(session);
+
+            session.closeAndClearTokenInformation();
+            //clear your preferences if saved
+        }
+
+    }
 }
