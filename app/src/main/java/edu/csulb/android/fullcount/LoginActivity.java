@@ -22,26 +22,33 @@ public class LoginActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+
         Button loginButton = (Button) findViewById(R.id.login_button);
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
+               //set the text boxes for gathering username and password
                 EditText loginUsername = (EditText) findViewById(R.id.login_username);
                 EditText loginPassword = (EditText) findViewById(R.id.login_password);
 
                 //String[] data = { loginUsername.getText().toString(), loginPassword.getText().toString()};
 
+               //create json object to send to the server with username and password
                 JSONObject jsonobj = new JSONObject();
                 try {
                     jsonobj.put("username", loginUsername.getText().toString());
                     jsonobj.put("password", loginPassword.getText().toString());
                 } catch (JSONException je) {
                 }
+
+               //sends the json object to the server via our HttpHelper activity
                 httpHelp.post(LoginActivity.this, "/api/users/login", jsonobj, null, handler);
             }
         });
-        Button cancelButton = (Button) findViewById(R.id.cancel_button);
+        //cancel login activity
+        Button cancelButton = (Button)findViewById(R.id.cancel_button);
+
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,6 +65,7 @@ public class LoginActivity extends Activity {
 
             String aResponse = msg.getData().getString("message");
 
+            //once the user data has been confirmed, the application moves on to the home page
             if ((null != aResponse)) {
                 if (aResponse.matches("200")) {
                     Intent i = new Intent(getApplicationContext(), HomeActivity.class);
