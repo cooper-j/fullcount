@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_id">578945215575871</string>
+
+    <string name="app_name">FullCount</string>
+    <string name="title_activity_connection">ConnectionActivity</string>
+    <string name="textview">Let\'s Get This Started</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_intro">IntroActivity</string>
+    <string name="login_button">Log In</string>
+    <string name="password">Password</string>
+    <string name="password_forgot1">Forgotten Password ?</string>
+    <string name="password_forgot2">Send Email</string>
+    <string name="facebook_connect">FB | Connect</string>
+    <string name="not_a_member">Not a member?</string>
+    <string name="account_name">Login</string>
+    <string name="password1">Password</string>
+    <string name="password2">Confirm Password</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="cancel">Cancel</string>
+
+    <color name="logo_color">#FF1111</color>
+    <color name="background">#BBBBFF</color>
+    <color name="label_color">#000000</color>
+    <color name="field_color">#000000</color>
+    <color name="field_background">#FFFFFF</color>
+
+    <string name="username">Username</string>
+    <string name="name">Name</string>
+    <string name="other">Other</string>
+    <string name="email">Email</string>
+    <string name="old_password">Old Password</string>
+    <string name="new_password">New Password</string>
+    <string name="city">City</string>
+    <string name="team">Team</string>
+    <string name="save">Save</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="logged_in">You are logged in</string>
+    <string name="log_out">Log Out</string>
+
+    <string name="edit_profile">Edit Profile</string>
+
+</resources>
