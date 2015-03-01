@@ -1,13 +1,18 @@
 package edu.csulb.android.fullcount;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Message;
-import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
+import org.apache.http.Header;
+import org.apache.http.HeaderIterator;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.ProtocolVersion;
+import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -21,10 +26,13 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.net.URL;
+import java.util.Locale;
+import java.util.concurrent.ExecutionException;
+
 import android.os.Handler;
 
 /**
@@ -42,8 +50,38 @@ public class HttpHelper extends Activity {
      * @param authorization
      */
 
-    public void post(Activity me, String url, JSONObject data, String authorization, Handler handler){
-        new Thread(new HttpRunnablePost(me, url, data, authorization, handler)).start();
+    public HttpResponse post(String url, JSONObject data, String authorization){
+        HttpResponse respose = null;
+        try {
+            respose = new PostAsyncTask()
+                    .execute(url, data.toString(), authorization)
+                    .get();
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }catch (ExecutionException e){
+            e.printStackTrace();
+        }
+        return respose;
+    }
+
+    /**
+     *
+     * @param url
+     * @param authorization
+     */
+
+    public HttpResponse get(String url, String authorization){
+        HttpResponse respose = null;
+        try {
+            respose = new GetAsyncTask()
+                    .execute(url, authorization)
+                    .get();
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }catch (ExecutionException e){
+            e.printStackTrace();
+        }
+        return respose;
     }
 
     /**
@@ -53,183 +91,115 @@ public class HttpHelper extends Activity {
      * @param authorization
      */
 
-    public void get(Activity me, String url, JSONObject data, String authorization, Handler handler){
-        new Thread(new HttpRunnableGet(me, url, data, authorization, handler)).start();
+    public HttpResponse put(String url, JSONObject data, String authorization){
+        HttpResponse respose = null;
+        try {
+            respose = new PutAsyncTask()
+                            .execute(url, data.toString(), authorization)
+                            .get();
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }catch (ExecutionException e){
+            e.printStackTrace();
+        }
+        return respose;
     }
 
-    /**
-     *
-     * @param url
-     * @param data
-     * @param authorization
-     */
-
-    public void put(Activity me, String url, JSONObject data, String authorization, Handler handler){
-        new Thread(new HttpRunnablePut(me, url, data, authorization, handler)).start();
-    }
-
-    private abstract class HttpRunnable implements Runnable{
-        protected String url;
-        protected JSONObject data;
-        protected String authorization;
-
+    private abstract class HttpAsyncTask extends AsyncTask<String, Integer, HttpResponse> {
         protected static final String server = "http://fullcount.azurewebsites.net";
         protected HttpClient client;
-        protected Activity me;
 
-        protected Handler handler;
-
-        private int timeoutConnection = 3000;
-        private int timeoutSocket = 5000;
-
-        public HttpRunnable(Activity me, String url, JSONObject data, String authorization, Handler handler){
-            this.me = me;
-            this.url = url;
-            this.data = data;
-            this.authorization = authorization;
-            this.handler = handler;
-
-
+        public HttpAsyncTask(){
             HttpParams httpParameters = new BasicHttpParams();
-            HttpConnectionParams.setConnectionTimeout(httpParameters, this.timeoutConnection);
-            HttpConnectionParams.setSoTimeout(httpParameters, this.timeoutSocket);
+            //HttpConnectionParams.setConnectionTimeout(httpParameters, this.timeoutConnection);
+            //HttpConnectionParams.setSoTimeout(httpParameters, this.timeoutSocket);
             this.client = new DefaultHttpClient(httpParameters);
         }
-
         @Override
-        public abstract void run();
-
-        protected void threadMsg(String msg) {
-
-            if (!msg.equals(null) && !msg.equals("")) {
-                Message msgObj = handler.obtainMessage();
-                Bundle b = new Bundle();
-                b.putString("message", msg);
-                msgObj.setData(b);
-                handler.sendMessage(msgObj);
-            }
-        }
-
+        protected abstract HttpResponse doInBackground(String... params);
     }
 
-    private class HttpRunnablePost extends HttpRunnable{
-
-        public HttpRunnablePost(Activity me, String url, JSONObject data, String authorization, Handler handler){
-            super(me, url, data, authorization, handler);
-        }
-
+    private class PostAsyncTask extends HttpAsyncTask {
         @Override
-        public void run() {
-            HttpPost post = new HttpPost(server + url);
+        protected HttpResponse doInBackground(String... params) {
+            HttpPost post = new HttpPost(server + params[0]);
+            HttpResponse response = null;
             try {
-                StringEntity dataStringEntity = new StringEntity(data.toString());
+                StringEntity dataStringEntity = new StringEntity(params[1]);
                 dataStringEntity.setContentType("application/json;charset=UTF-8");
                 dataStringEntity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json;charset=UTF-8"));
                 post.setEntity(dataStringEntity);
-                if (authorization != null)
-                    post.addHeader("Authorization", "Basic " + authorization /*Base64.encodeToString((authorization[0] + ":" + authorization[1]).getBytes("UTF-8"), Base64.DEFAULT)*/);
+                if (!(params[2]).matches(""))
+                    post.addHeader("Authorization", "Basic " + params[2]);
                 //Execute HTTP Post Request
-                HttpResponse response = client.execute(post);
-                Log.e("Response: ", EntityUtils.toString(response.getEntity()));
-                Log.d("Status Code: ", String.valueOf(response.getStatusLine().getStatusCode()));
-                threadMsg(String.valueOf(response.getStatusLine().getStatusCode()));
-                /*runOnUiThread(new Runnable() {
-                    public void run() {
-                        // toasts 200 on success
-                        Toast.makeText(me, String.valueOf(response.getStatusLine().getStatusCode()), Toast.LENGTH_LONG).show();
-                    }
-                });*/
-
-                }catch (final ClientProtocolException e) {
+                response = client.execute(post);
+                //Log.e("Response: ", EntityUtils.toString(response.getEntity()));
+                //Log.d("Status Code: ", String.valueOf(response.getStatusLine().getStatusCode()));
+            } catch (final ClientProtocolException e) {
                 e.printStackTrace();
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        Toast.makeText(me, String.valueOf("Error #101: Please try again later or report"), Toast.LENGTH_LONG).show();
-                    }
-                });
-            } catch (final IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        Toast.makeText(me, String.valueOf("Error #102: Please try again later or report"), Toast.LENGTH_LONG).show();
-                    }
-                });
             }
+            return response;
         }
     }
 
-    private class HttpRunnableGet extends HttpRunnable {
-
-        public HttpRunnableGet(Activity me, String url, JSONObject data, String authorization, Handler handler) {
-            super(me, url, data, authorization, handler);
-        }
-
+    private class GetAsyncTask extends HttpAsyncTask {
         @Override
-        public void run(){
-            HttpGet get = new HttpGet(server + url);
+        protected HttpResponse doInBackground(String... params) {
+            HttpGet get = new HttpGet(server + params[0]);
+            HttpResponse response = null;
             try {
-                if(authorization != null)
-                    get.addHeader("Authorization", "Basic "+ authorization/*Base64.encodeToString((authorization[0] + ":" + authorization[1]).getBytes("UTF-8"), Base64.DEFAULT)*/);
+                get.addHeader("Content-type", "application/json");
 
+                if(!(params[1].matches("")))
+                    get.addHeader("Authorization", "Basic "+ params[1]);
+                Log.e("GetURL: ", server + params[0]);
                 //Execute HTTP Post Request
-                HttpResponse response = client.execute(get);
-                Log.e("Response: ", EntityUtils.toString(response.getEntity()));
-                Log.d("Status Code: ", String.valueOf(response.getStatusLine().getStatusCode()));
+                response = client.execute(get);
+                //Log.e("Response: ", EntityUtils.toString(response.getEntity()));
+                //Log.d("Status Code: ", String.valueOf(response.getStatusLine().getStatusCode()));
             }catch (final ClientProtocolException e) {
                 e.printStackTrace();
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        Toast.makeText(me, String.valueOf("Error #101: Please try again later or report"), Toast.LENGTH_LONG).show();
-                    }
-                });
             } catch (final IOException e) {
                 e.printStackTrace();
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        Toast.makeText(me, String.valueOf("Error #102: Please try again later or report"), Toast.LENGTH_LONG).show();
-                    }
-                });
             }
+            return response;
         }
     }
 
-    private class HttpRunnablePut extends HttpRunnable{
-
-        public HttpRunnablePut(Activity me, String url, JSONObject data, String authorization, Handler handler){
-            super(me, url, data, authorization, handler);
-        }
-
+    private class PutAsyncTask extends HttpAsyncTask{
         @Override
-        public void run() {
-            HttpPut put = new HttpPut(server + url);
-
+        protected HttpResponse doInBackground(String... params) {
+            HttpPut put = new HttpPut(server + params[0]);
+            HttpResponse response = null;
             try{
-                StringEntity dataStringEntity = new StringEntity(data.toString());
+                StringEntity dataStringEntity = new StringEntity(params[1]);
                 dataStringEntity.setContentType("application/json;charset=UTF-8");
                 dataStringEntity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json;charset=UTF-8"));
                 put.setEntity(dataStringEntity);
 
-                if(authorization != null)
-                    put.addHeader("Authorization", "Basic "+ authorization /*Base64.encodeToString((authorization[0] + ":" + authorization[1]).getBytes("UTF-8"), Base64.DEFAULT)*/);
+                if(!(params[2].matches("")))
+                    put.addHeader("Authorization", "Basic "+ params[2] /*Base64.encodeToString((authorization[0] + ":" + authorization[1]).getBytes("UTF-8"), Base64.DEFAULT)*/);
                 //Execute HTTP Post Request
-                HttpResponse response = client.execute(put);
-                Log.e("Response: ", EntityUtils.toString(response.getEntity()));
-                Log.d("Status Code: ", String.valueOf(response.getStatusLine().getStatusCode()));
+                response = client.execute(put);
+                //Log.e("Response: ", EntityUtils.toString(response.getEntity()));
+                //Log.d("Status Code: ", String.valueOf(response.getStatusLine().getStatusCode()));
             }catch (final ClientProtocolException e) {
                 e.printStackTrace();
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        Toast.makeText(me, String.valueOf("Error #101: Please try again later or report"), Toast.LENGTH_LONG).show();
-                    }
-                });
             }catch (IOException e) {
                 e.printStackTrace();
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        Toast.makeText(me, String.valueOf("Error #102: Please try again later or report"), Toast.LENGTH_LONG).show();
-                    }
-                });
             }
+            return response;
         }
+
+        /*protected void HttpResponse(Double result){
+            pb.setVisibility(View.GONE);
+            Toast.makeText(getApplicationContext(), "command sent", Toast.LENGTH_LONG).show();
+        }
+
+        protected void onProgressUpdate(Integer... progress){
+            pb.setProgress(progress[0]);
+        }*/
     }
 }

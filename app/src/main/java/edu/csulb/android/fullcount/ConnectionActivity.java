@@ -83,9 +83,13 @@ public class ConnectionActivity extends Activity {
                         } catch (JSONException je) {
                         }
                         /*TODO Handler*/
-                        httpHelp.post(ConnectionActivity.this, "/register", jsonobj, null, handler);
-
-                        Toast.makeText(getBaseContext(),"Account Info Sent",Toast.LENGTH_SHORT).show();
+                        HttpResponse response = httpHelp.post("/api/users", jsonobj, "");
+                        if (response != null && response.getStatusLine().getStatusCode() == 201){
+                            Intent i = new Intent(getBaseContext(), HomeActivity.class);
+                            startActivity(i);
+                        }else{
+                            Toast.makeText(getBaseContext(),"Server error please try again",Toast.LENGTH_SHORT).show();
+                        }
                     }
                     else
                     {
@@ -109,7 +113,6 @@ public class ConnectionActivity extends Activity {
                 //Toast.makeText(getBaseContext(),"Back to Login",Toast.LENGTH_SHORT).show();
                 Intent i = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(i);
-                finish();
             }});
     }
 
@@ -137,22 +140,4 @@ public class ConnectionActivity extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
-
-    private final Handler handler = new Handler() {
-
-        public void handleMessage(Message msg) {
-
-            String aResponse = msg.getData().getString("message");
-
-            if ((null != aResponse)) {
-                if (aResponse.matches("200")) {
-                    Intent i = new Intent(getApplicationContext(), HomeActivity.class);
-                    startActivity(i);
-                    finish();
-                } else
-                    Toast.makeText(getBaseContext(), "Error: " + aResponse, Toast.LENGTH_SHORT).show();
-            } else
-                Toast.makeText(getBaseContext(), "Not Got Response From Server.", Toast.LENGTH_SHORT).show();
-        }
-    };
 }

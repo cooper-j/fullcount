@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,16 +13,15 @@ import android.widget.TextView;
 
 import com.facebook.Session;
 
-
 public class IntroActivity extends FragmentActivity {
-    private FacebookFragment facebookFragment;
+    //private FacebookFragment facebookFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
 
-        if (savedInstanceState == null) {
+        /*if (savedInstanceState == null) {
             // Add the fragment on initial activity setup
             facebookFragment = new FacebookFragment();
 
@@ -31,7 +31,7 @@ public class IntroActivity extends FragmentActivity {
             // Or set the fragment from restored state info
             facebookFragment = (FacebookFragment) getSupportFragmentManager()
                     .findFragmentById(android.R.id.content);
-        }
+        }*/
 
         Button logInBtn = (Button)findViewById(R.id.login_btn);
         logInBtn.setOnClickListener(new View.OnClickListener() {
@@ -39,7 +39,6 @@ public class IntroActivity extends FragmentActivity {
             public void onClick(View v) {
                 Intent i = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(i);
-                finish();
             }
         });
 
@@ -49,7 +48,6 @@ public class IntroActivity extends FragmentActivity {
             public void onClick(View v) {
                 Intent i = new Intent(getApplicationContext(), ConnectionActivity.class);
                 startActivity(i);
-                finish();
             }
         });
     }

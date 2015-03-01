@@ -1,88 +1,116 @@
 package edu.csulb.android.fullcount;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Debug;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.Console;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+
 
 public class SettingsActivity extends Activity {
 
+    private HttpHelper httpHelp = new HttpHelper();
+    private String auth_token_string = "";
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_settings);
 
-        Button btn = (Button) findViewById(R.id.save);
+        SharedPreferences settings = PreferenceManager
+                .getDefaultSharedPreferences(this);
+        auth_token_string = settings.getString("auth", "");
 
-        btn.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                new Thread(new Runnable() {
-                    public void run() {
-                        try {
-                            JSONObject jsonobj = new JSONObject();
-                            jsonobj.put("username", "bob");
-                            jsonobj.put("password", "bob");
-                            postData(jsonobj, "/login");
-                        } catch (JSONException je) {
-                        }
-                            try {
-                                JSONObject jsonobj2 = new JSONObject();
-                                jsonobj2.put("password", "12345");
-                                jsonobj2.put("email", "Hi@gmail.com");
-                                jsonobj2.put("city", "L/A");
-                                jsonobj2.put("team", "N/A");
-                                postData(jsonobj2, "/editAccount");
-                            } catch (JSONException je) {
-
-                            }
-                        }
-                    }).start();
-            }
-        });
-	}
-
-    public void postData(JSONObject data, String url) {
-        // Create a new HttpClient and Post Header
-        HttpClient httpclient = new DefaultHttpClient();
-        HttpPost httppost = new HttpPost("http://fullcount.azurewebsites.net" + url);
+        TextView name = (TextView)findViewById(R.id.settings_name);
+        EditText city = (EditText)findViewById(R.id.settings_city);
+        EditText team = (EditText)findViewById(R.id.settings_team);
+        EditText email = (EditText)findViewById(R.id.settings_email);
 
         try {
-            StringEntity dataStringEntity = new StringEntity(data.toString());
-            dataStringEntity.setContentType("application/json;charset=UTF-8");
-            dataStringEntity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,"application/json;charset=UTF-8"));
-            httppost.setEntity(dataStringEntity);
-
-            // Execute HTTP Post Request
-            HttpResponse response = httpclient.execute(httppost);
-             Log.e("test", EntityUtils.toString(response.getEntity()));
-            Log.d("test", "NEXT");
-        } catch (ClientProtocolException e) {
-            // TODO Auto-generated catch block
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
+            JSONObject jsonobj = new JSONObject(settings.getString("user", auth_token_string));
+            HttpResponse response = httpHelp.get("/api/users/"+jsonobj.get("_id").toString(), auth_token_string);
+            Log.e("Get", response.getStatusLine().toString());
+            Log.e("Get", EntityUtils.toString(response.getEntity()));
+            name.setText(jsonobj.get("username").toString());
+            city.setText(jsonobj.get("city").toString());
+            team.setText(jsonobj.get("team").toString());
+            email.setText(jsonobj.get("email").toString());
+        }catch(JSONException e){
+            e.printStackTrace();
+        }catch(IOException e){
+            e.printStackTrace();
         }
+
+
+
+
+        Button saveBtn = (Button)findViewById(R.id.save);
+
+        saveBtn.setOnClickListener(new View.OnClickListener() {
+            /*TODO*/
+            public void onClick(View v) {
+                JSONObject jsonobj = new JSONObject();
+                EditText city = (EditText) findViewById(R.id.settings_city);
+                EditText team = (EditText) findViewById(R.id.settings_team);
+                EditText email = (EditText) findViewById(R.id.settings_email);
+                //EditText oldPassword = (EditText)findViewById(R.id.settings_oldPassword);
+                String newPassword1 = ((EditText) findViewById(R.id.settings_newPassword1)).getText().toString();
+                String newPassword2 = ((EditText) findViewById(R.id.settings_newPassword2)).getText().toString();
+                try {
+                    if (!newPassword1.matches(newPassword2))
+                        Toast.makeText(getBaseContext(), "Password missmatch", Toast.LENGTH_SHORT).show();
+                    else if (newPassword1.matches("")){
+                        jsonobj.put("city", city.getText().toString());
+                        jsonobj.put("team", team.getText().toString());
+                        jsonobj.put("email", email.getText().toString());
+                        sendPutRequest(jsonobj);
+                    }
+                    else {
+                        jsonobj.put("password", newPassword1);
+                        jsonobj.put("city", city.getText().toString());
+                        jsonobj.put("team", team.getText().toString());
+                        jsonobj.put("email", email.getText().toString());
+                        sendPutRequest(jsonobj);
+                    }
+                } catch (JSONException je) {
+                }
+            }
+        });
+
+
+        /*Button cancelBtn = (Button)findViewById(R.id.cancel);
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(), HomeActivity.class);
+                startActivity(i);
+            }
+        });*/
     }
 
+    private void sendPutRequest(JSONObject jsonobj){
+
+        HttpResponse response = httpHelp.put("/api/users/current", jsonobj, auth_token_string);
+
+        if (response != null && response.getStatusLine().getStatusCode() == 200) {
+            try {
+                Log.e("Put", EntityUtils.toString(response.getEntity()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Toast.makeText(getBaseContext(), "Save successful", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getBaseContext(), "Server error please try again", Toast.LENGTH_SHORT).show();
+        }
+    }
 }
