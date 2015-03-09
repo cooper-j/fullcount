@@ -53,13 +53,14 @@ public class LoginActivity extends Activity {
                 }
 
                 //sends the json object to the server via our HttpHelper activity
-                HttpResponse response = httpHelp.post("/api/users/login", jsonobj, "");
+                HttpResponse response = httpHelp.post("/api/users/login", jsonobj, "", "");
                if (response != null && response.getStatusLine().getStatusCode() == 200){
                    SharedPreferences settings = PreferenceManager
                            .getDefaultSharedPreferences(getBaseContext());
                    SharedPreferences.Editor editor = settings.edit();
                    try {
                        editor.putString("auth", Base64.encodeToString((loginUsername.getText().toString() + ":" + loginPassword.getText().toString()).getBytes("UTF-8"), Base64.URL_SAFE|Base64.NO_WRAP));
+                       //editor.putString("bearer", myObject[""]);
                        editor.putString("user", EntityUtils.toString(response.getEntity()));
                    } catch (UnsupportedEncodingException e) {
                        e.printStackTrace();

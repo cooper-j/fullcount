@@ -38,7 +38,7 @@ import android.os.Handler;
 /**
  * Created by james_000 on 2/23/2015.
  */
-public class HttpHelper extends Activity {
+public class HttpHelper {
     //final Handler mHandler = new Handler();
     public HttpHelper(){
     }
@@ -50,11 +50,11 @@ public class HttpHelper extends Activity {
      * @param authorization
      */
 
-    public HttpResponse post(String url, JSONObject data, String authorization){
+    public HttpResponse post(String url, JSONObject data, String authorization, String type){
         HttpResponse respose = null;
         try {
             respose = new PostAsyncTask()
-                    .execute(url, data.toString(), authorization)
+                    .execute(url, data.toString(), authorization, type)
                     .get();
         }catch(InterruptedException e){
             e.printStackTrace();
@@ -130,7 +130,7 @@ public class HttpHelper extends Activity {
                 dataStringEntity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json;charset=UTF-8"));
                 post.setEntity(dataStringEntity);
                 if (!(params[2]).matches(""))
-                    post.addHeader("Authorization", "Basic " + params[2]);
+                    post.addHeader("Authorization", params[3] + " " + params[2]);
                 //Execute HTTP Post Request
                 response = client.execute(post);
                 //Log.e("Response: ", EntityUtils.toString(response.getEntity()));

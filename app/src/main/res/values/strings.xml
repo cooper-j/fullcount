@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_id">578945215575871</string>
 
+    <string name="app_id">578945215575871</string>
     <string name="app_name">FullCount</string>
     <string name="title_activity_connection">ConnectionActivity</string>
     <string name="textview">Let\'s Get This Started</string>
@@ -35,10 +35,22 @@
     <string name="team">Team</string>
     <string name="save">Save</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-
     <string name="logged_in">You are logged in</string>
     <string name="log_out">Log Out</string>
-
     <string name="edit_profile">Edit Profile</string>
+    <string name="title_activity_team_creation">TeamCreation</string>
+    <string name="hello_world">Hello world!</string>
 
+
+    <string name="planet_prompt">Choose a planet</string>
+    <string-array name="planets_array">
+        <item>Mercury</item>
+        <item>Venus</item>
+        <item>Earth</item>
+        <item>Mars</item>
+        <item>Jupiter</item>
+        <item>Saturn</item>
+        <item>Uranus</item>
+        <item>Neptune</item>
+    </string-array>
 </resources>

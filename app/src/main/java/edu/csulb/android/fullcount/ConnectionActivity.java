@@ -83,7 +83,7 @@ public class ConnectionActivity extends Activity {
                         } catch (JSONException je) {
                         }
                         /*TODO Handler*/
-                        HttpResponse response = httpHelp.post("/api/users", jsonobj, "");
+                        HttpResponse response = httpHelp.post("/api/users", jsonobj, "", "");
                         if (response != null && response.getStatusLine().getStatusCode() == 201){
                             Intent i = new Intent(getBaseContext(), HomeActivity.class);
                             startActivity(i);
