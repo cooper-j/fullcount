@@ -116,8 +116,6 @@ public class ConnectionActivity extends Activity {
             }});
     }
 
-
-    //Compiler is having a problem with R.menu.menu_connection
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -125,7 +123,6 @@ public class ConnectionActivity extends Activity {
         return true;
     }
 
-    //Compiler is having a problem with R.id.action_settings
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will

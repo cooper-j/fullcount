@@ -147,8 +147,5 @@
                 android:clickable="true" />
             </RelativeLayout>
 
-
-            <!--TEST Commit -->
-
     </ScrollView>
 </RelativeLayout>
