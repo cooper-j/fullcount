@@ -20,7 +20,7 @@
     <EditText
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/editText"
+        android:id="@+id/teamName"
         android:layout_below="@+id/team_name"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
@@ -30,17 +30,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="City"
-        android:id="@+id/textView2"
+        android:id="@+id/City"
         android:textSize="25dp"
-        android:layout_below="@+id/editText"
+        android:layout_below="@+id/teamName"
         android:layout_marginTop="25dp"
         android:layout_centerVertical="true" />
 
     <EditText
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/editText2"
-        android:layout_below="@+id/textView2"
+        android:id="@+id/cityName"
+        android:layout_below="@+id/City"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="0dp" />
 
@@ -48,20 +48,49 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="League"
-        android:id="@+id/textView4"
+        android:id="@+id/League"
         android:textSize="25dp"
-        android:layout_below="@+id/editText2"
+        android:layout_below="@+id/cityName"
         android:layout_marginTop="25dp"
         android:layout_centerVertical="true" />
 
     <Spinner
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/spinner"
-        android:layout_below="@+id/textView4"
-        android:entries="@array/planets_array"
+        android:id="@+id/LeagueChoice"
+        android:layout_below="@+id/League"
+        android:entries="@array/league_array"
         android:prompt="@string/planet_prompt"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Done"
+        android:id="@+id/Done_Button"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="League Name"
+        android:id="@+id/League_Name"
+        android:layout_below="@+id/LeagueChoice"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/leagueName"
+        android:layout_below="@+id/League_Name"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/Done_Button"
+        android:layout_alignEnd="@+id/Done_Button" />
 
 </RelativeLayout>
