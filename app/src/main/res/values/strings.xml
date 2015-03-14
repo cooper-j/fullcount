@@ -40,9 +40,8 @@
     <string name="edit_profile">Edit Profile</string>
     <string name="title_activity_team_creation">TeamCreation</string>
     <string name="hello_world">Hello world!</string>
-
-
     <string name="planet_prompt">Choose a planet</string>
+
     <string-array name="planets_array">
         <item>Mercury</item>
         <item>Venus</item>
@@ -53,4 +52,7 @@
         <item>Uranus</item>
         <item>Neptune</item>
     </string-array>
+
+    <string name="title_activity_batting_roster">BattingRoster</string>
+
 </resources>
