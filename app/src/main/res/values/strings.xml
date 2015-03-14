@@ -41,6 +41,9 @@
     <string name="title_activity_team_creation">TeamCreation</string>
     <string name="hello_world">Hello world!</string>
 
+    <string name="done">Done</string>
+    <string name="add_player">Add Player</string>
+    <string name="team_roster">Team Roster</string>
 
     <string name="Done_Button">Done</string>
     <string name="planet_prompt">Choose a planet</string>
