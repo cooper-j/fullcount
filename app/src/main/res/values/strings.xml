@@ -55,4 +55,7 @@
         <item>Defunct</item>
         <item>Other</item>
     </string-array>
+
+    <string name="title_activity_batting_roster">BattingRoster</string>
+
 </resources>

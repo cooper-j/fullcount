@@ -115,7 +115,7 @@ public class FacebookFragment extends Fragment {
                     jsonobj.put("token", session.getAccessToken());
                 } catch (JSONException je) {
                 }
-                httpHelper.post("/api/users/login/facebook", jsonobj, "");
+                //httpHelper.post("/api/users/login/facebook", jsonobj, "");
             }
         }
     };
