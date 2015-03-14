@@ -42,15 +42,17 @@
     <string name="hello_world">Hello world!</string>
 
 
+    <string name="Done_Button">Done</string>
     <string name="planet_prompt">Choose a planet</string>
-    <string-array name="planets_array">
-        <item>Mercury</item>
-        <item>Venus</item>
-        <item>Earth</item>
-        <item>Mars</item>
-        <item>Jupiter</item>
-        <item>Saturn</item>
-        <item>Uranus</item>
-        <item>Neptune</item>
+    <string-array name="league_array">
+        <item>Youth</item>
+        <item>High School</item>
+        <item>Amateur</item>
+        <item>College</item>
+        <item>Town Team</item>
+        <item>Semi-Professional</item>
+        <item>Professional</item>
+        <item>Defunct</item>
+        <item>Other</item>
     </string-array>
 </resources>
