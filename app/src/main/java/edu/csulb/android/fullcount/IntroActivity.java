@@ -3,7 +3,15 @@ package edu.csulb.android.fullcount;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.pm.Signature;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.util.Base64;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,9 +30,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 public class IntroActivity extends Activity {
+
+	static final boolean DEBUG_MODE = true;
 
 	private HttpHelper mHttpHelp = new HttpHelper();
 
@@ -46,6 +59,22 @@ public class IntroActivity extends Activity {
 
 	    mUiHelper = new UiLifecycleHelper(this, mCallback);
 	    mUiHelper.onCreate(savedInstanceState);
+
+	    // Facebook key hash
+	    if (DEBUG_MODE) {
+		    try {
+			    PackageInfo info = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_SIGNATURES);
+			    for (Signature signature : info.signatures) {
+				    MessageDigest md = MessageDigest.getInstance("SHA");
+				    md.update(signature.toByteArray());
+				    Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+			    }
+		    } catch (NameNotFoundException e) {
+
+		    } catch (NoSuchAlgorithmException e) {
+
+		    }
+	    }
 
 	    mFacebookConnect = (LoginButton) findViewById(R.id.authButton);
 	    mFacebookConnect.setReadPermissions(Arrays.asList("user_location", "email"));
@@ -132,8 +161,21 @@ public class IntroActivity extends Activity {
 
 		dismissProgressDialog();
 
-		if (response != null && response.getStatusLine().getStatusCode() == 200) {
+		if (response != null && (response.getStatusLine().getStatusCode() == 200 || response.getStatusLine().getStatusCode() == 201)) {
+
+			SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+			SharedPreferences.Editor editor = settings.edit();
+			try {
+				editor.putString("user", EntityUtils.toString(response.getEntity()));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			editor.commit();
+
 			Intent i = new Intent(getBaseContext(), HomeActivity.class);
+			i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 			startActivity(i);
 		} else {
 			Session.getActiveSession().closeAndClearTokenInformation();

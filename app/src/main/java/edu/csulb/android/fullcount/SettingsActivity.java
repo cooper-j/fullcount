@@ -1,7 +1,6 @@
 package edu.csulb.android.fullcount;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -16,6 +15,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.IOException;
 
 
@@ -40,12 +40,20 @@ public class SettingsActivity extends Activity {
         try {
             JSONObject jsonobj = new JSONObject(settings.getString("user", auth_token_string));
             HttpResponse response = httpHelp.get("/api/users/"+jsonobj.get("_id").toString(), auth_token_string);
-            Log.e("Get", response.getStatusLine().toString());
-            Log.e("Get", EntityUtils.toString(response.getEntity()));
-            name.setText(jsonobj.get("username").toString());
-            city.setText(jsonobj.get("city").toString());
-            team.setText(jsonobj.get("team").toString());
-            email.setText(jsonobj.get("email").toString());
+	        if (response != null && response.getStatusLine().getStatusCode() == 200) {
+		        Log.e("Get", response.getStatusLine().toString());
+		        Log.e("Get", EntityUtils.toString(response.getEntity()));
+		        name.setText(jsonobj.get("username").toString());
+		        city.setText(jsonobj.get("city").toString());
+		        team.setText(jsonobj.get("team").toString());
+		        email.setText(jsonobj.get("email").toString());
+	        } else {
+		        try {
+			        Toast.makeText(this, EntityUtils.toString(response.getEntity()), Toast.LENGTH_SHORT).show();
+		        } catch (IOException e) {
+			        e.printStackTrace();
+		        }
+	        }
         }catch(JSONException e){
             e.printStackTrace();
         }catch(IOException e){
