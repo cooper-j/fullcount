@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,9 +20,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.security.KeyStore;
-
-import javax.crypto.SecretKey;
 
 
 public class LoginActivity extends Activity {
@@ -86,8 +82,7 @@ public class LoginActivity extends Activity {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getBaseContext(), IntroActivity.class);
-                startActivity(i);
+	            finish();
             }
         });
     }
@@ -102,12 +97,9 @@ public class LoginActivity extends Activity {
             if ((null != aResponse)) {
                 if (aResponse.matches("200")) {
                     Intent i = new Intent(getApplicationContext(), HomeActivity.class);
+	                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(i);
-                }
-                else if (aResponse.matches("201")) {
-                    Intent i = new Intent(getApplicationContext(), HomeActivity.class);
-                    startActivity(i);
-                }else
+                } else
                     Toast.makeText(getBaseContext(), "Error: " + aResponse, Toast.LENGTH_SHORT).show();
             } else
                 Toast.makeText(getBaseContext(), "Not Got Response From Server.", Toast.LENGTH_SHORT).show();

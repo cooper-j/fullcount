@@ -10,14 +10,21 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
+<<<<<<< HEAD
             android:name=".LoginActivity"
             android:label="@string/app_name" >
+=======
+            android:name=".IntroActivity"
+            android:label="@string/app_name">
+
+>>>>>>> origin/master
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".ConnectionActivity"
             android:label="@string/app_name" />
@@ -43,12 +50,26 @@
             android:value="@string/app_id" />
 
         <activity
+<<<<<<< HEAD
             android:name=".IntroActivity"
             android:label="@string/title_activity_team_creation" >
         </activity>
         <activity
             android:name=".HomeActivity"
+=======
+            android:name=".LoginActivity"
+>>>>>>> origin/master
             android:label="@string/title_activity_batting_roster" >
+        </activity>
+
+
+        <activity
+            android:name=".AddPlayer"
+            android:label="@string/title_activity_add_player"
+            android:parentActivityName=".TeamRoster" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="edu.csulb.android.fullcount.TeamRoster" />
         </activity>
     </application>
 
