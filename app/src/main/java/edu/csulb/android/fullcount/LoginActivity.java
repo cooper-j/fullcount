@@ -47,7 +47,7 @@ public class LoginActivity extends Activity {
                //create json object to send to the server with username and password
                 JSONObject jsonobj = new JSONObject();
                 try {
-                    jsonobj.put("username", loginUsername.getText().toString());
+                    jsonobj.put("email", loginUsername.getText().toString());
                     jsonobj.put("password", loginPassword.getText().toString());
                 } catch (JSONException je) {
                 }

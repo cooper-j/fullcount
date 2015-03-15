@@ -93,4 +93,15 @@
         android:layout_alignRight="@+id/Done_Button"
         android:layout_alignEnd="@+id/Done_Button" />
 
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/seasonName"
+        android:layout_below="@+id/leagueName"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/Done_Button"
+        android:layout_alignEnd="@+id/Done_Button"
+        android:hint="Season"/>
+
 </RelativeLayout>
