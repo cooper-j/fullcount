@@ -36,7 +36,7 @@ public class TeamRoster extends Activity {
             public void onClick(View v) {
                 //Go Back to login page
                 Toast.makeText(getBaseContext(),"Player Fragment Opened",Toast.LENGTH_SHORT).show();
-                //Intent i = new Intent(getApplicationContext(), FragmentAddPlayer.class);
+                //Intent i = new Intent(getBaseContext(), FragmentAddPlayer.class);
                 //startActivity(i);
 
             }});
@@ -60,7 +60,7 @@ public class TeamRoster extends Activity {
             public void onClick(View v) {
                 //Go Back to login page
                 //Toast.makeText(getBaseContext(),"Back to team page",Toast.LENGTH_SHORT).show();
-                Intent i = new Intent(getApplicationContext(), TeamCreation.class);
+                Intent i = new Intent(getBaseContext(), TeamCreation.class);
                 startActivity(i);
             }});
     }
