@@ -39,6 +39,15 @@ public class HomeActivity extends Activity {
 	            finish();
             }
         });
+
+        Button teamCreateButton = (Button)findViewById(R.id.create_team_button);
+        teamCreateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(), TeamCreation.class);
+                startActivity(i);
+            }
+        });
     }
 
 

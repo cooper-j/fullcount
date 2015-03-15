@@ -43,7 +43,8 @@ public class TeamCreation extends ActionBarActivity {
                 EditText TeamName = (EditText) findViewById(R.id.teamName);
                 EditText City = (EditText) findViewById(R.id.cityName);
                 Spinner League = (Spinner) findViewById(R.id.LeagueChoice);
-                EditText LeagueName = (EditText) findViewById(R.id.leagueName);
+                //EditText LeagueName = (EditText) findViewById(R.id.leagueName);
+                EditText Season = (EditText) findViewById((R.id.seasonName));
 
                 //create json object to send to the server with username and password
                 JSONObject jsonobj = new JSONObject();
@@ -51,13 +52,18 @@ public class TeamCreation extends ActionBarActivity {
                     jsonobj.put("name", TeamName.getText().toString());
                     jsonobj.put("city", City.getText().toString());
                     jsonobj.put("league", League.getSelectedItemPosition());
-                    jsonobj.put("lname", LeagueName.getText().toString());
+                    //jsonobj.put("lname", LeagueName.getText().toString());
+                    jsonobj.put("season", Season.getText().toString());
                 } catch (JSONException je) {
                     je.printStackTrace();
                 }
 
+
+                SharedPreferences settings = PreferenceManager
+                        .getDefaultSharedPreferences(TeamCreation.this);
+                String auth_token_string = settings.getString("auth", "");
                 //sends the json object to the server via our HttpHelper activity
-                HttpResponse response = httpHelp.post("/api/teams/", jsonobj, "", "");
+                HttpResponse response = httpHelp.post("/api/teams/", jsonobj, "Basic", auth_token_string);
                 if (response != null && response.getStatusLine().getStatusCode() == 201){
 
                     Intent i = new Intent(getBaseContext(), HomeActivity.class);
