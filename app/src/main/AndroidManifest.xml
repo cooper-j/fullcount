@@ -50,6 +50,22 @@
             android:name=".LoginActivity"
             android:label="@string/title_activity_batting_roster" >
         </activity>
+        <activity
+            android:name=".AddPlayerActivity"
+            android:label="@string/title_activity_add_player" >
+        </activity>
+        <activity
+            android:name=".test123"
+            android:label="@string/title_activity_test123" >
+        </activity>
+        <activity
+            android:name=".AddPlayer"
+            android:label="@string/title_activity_add_player"
+            android:parentActivityName=".TeamRoster" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="edu.csulb.android.fullcount.TeamRoster" />
+        </activity>
     </application>
 
 </manifest>
