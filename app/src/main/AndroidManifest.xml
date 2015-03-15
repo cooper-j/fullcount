@@ -10,7 +10,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".BattingRoster"
+            android:name=".LoginActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -47,7 +47,7 @@
             android:label="@string/title_activity_team_creation" >
         </activity>
         <activity
-            android:name=".LoginActivity"
+            android:name=".BattingRoster"
             android:label="@string/title_activity_batting_roster" >
         </activity>
     </application>

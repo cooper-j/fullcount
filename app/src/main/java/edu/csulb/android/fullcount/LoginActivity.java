@@ -1,6 +1,7 @@
 package edu.csulb.android.fullcount;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -14,8 +15,20 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpRequest;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.ResponseHandlerInterface;
+
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -28,7 +41,7 @@ import javax.crypto.SecretKey;
 
 public class LoginActivity extends Activity {
 
-    private HttpHelper httpHelp = new HttpHelper();
+    //private HttpHelper httpHelp = new HttpHelper();
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,44 +53,45 @@ public class LoginActivity extends Activity {
             @Override
             public void onClick(View v) {
 
-               //set the text boxes for gathering username and password
+                //set the text boxes for gathering username and password
                 EditText loginUsername = (EditText) findViewById(R.id.login_username);
                 EditText loginPassword = (EditText) findViewById(R.id.login_password);
 
-               //create json object to send to the server with username and password
+                //create json object to send to the server with username and password
                 JSONObject jsonobj = new JSONObject();
                 try {
-                    jsonobj.put("username", loginUsername.getText().toString());
+                    jsonobj.put("email", loginUsername.getText().toString());
                     jsonobj.put("password", loginPassword.getText().toString());
                 } catch (JSONException je) {
                 }
 
-                //sends the json object to the server via our HttpHelper activity
-                HttpResponse response = httpHelp.post("/api/users/login", jsonobj, "", "");
-               if (response != null && response.getStatusLine().getStatusCode() == 200){
-                   SharedPreferences settings = PreferenceManager
-                           .getDefaultSharedPreferences(getBaseContext());
-                   SharedPreferences.Editor editor = settings.edit();
-                   try {
-                       editor.putString("auth", Base64.encodeToString((loginUsername.getText().toString() + ":" + loginPassword.getText().toString()).getBytes("UTF-8"), Base64.URL_SAFE|Base64.NO_WRAP));
-                       //editor.putString("bearer", myObject[""]);
-                       editor.putString("user", EntityUtils.toString(response.getEntity()));
-                   } catch (UnsupportedEncodingException e) {
-                       e.printStackTrace();
-                   }catch (IOException e){
-                       e.printStackTrace();
-                   }
-                   editor.commit();
+                RequestParams params = new RequestParams();
+                params.put("email", loginUsername.getText().toString());
+                params.put("password", loginPassword.getText().toString());
 
-                   Intent i = new Intent(getBaseContext(), HomeActivity.class);
-                   startActivity(i);
-               }else{
-                   try{
-                       Toast.makeText(getBaseContext(),EntityUtils.toString(response.getEntity()),Toast.LENGTH_SHORT).show();
-                   }catch(IOException e){
-                       e.printStackTrace();
-                   }
-               }
+                SharedPreferences settings = PreferenceManager
+                        .getDefaultSharedPreferences(getBaseContext());
+                SharedPreferences.Editor editor = settings.edit();
+                try {
+                    String auth = Base64.encodeToString((loginUsername.getText().toString() + ":" + loginPassword.getText().toString()).getBytes("UTF-8"), Base64.URL_SAFE|Base64.NO_WRAP);
+                    editor.putString("auth", auth);
+                    FullcountRestClient.post("/api/users/login", params, auth, new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            Toast.makeText(getBaseContext(), "Object",Toast.LENGTH_SHORT).show();
+                            Intent i = new Intent(getBaseContext(), HomeActivity.class);
+                            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(i);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, String error, Throwable throwable) {
+                            Toast.makeText(getBaseContext(), error, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
             }
         });
         //cancel login activity
@@ -91,26 +105,4 @@ public class LoginActivity extends Activity {
             }
         });
     }
-
-    private final Handler handler = new Handler() {
-
-        public void handleMessage(Message msg) {
-
-            String aResponse = msg.getData().getString("message");
-
-            //once the user data has been confirmed, the application moves on to the home page
-            if ((null != aResponse)) {
-                if (aResponse.matches("200")) {
-                    Intent i = new Intent(getApplicationContext(), HomeActivity.class);
-                    startActivity(i);
-                }
-                else if (aResponse.matches("201")) {
-                    Intent i = new Intent(getApplicationContext(), HomeActivity.class);
-                    startActivity(i);
-                }else
-                    Toast.makeText(getBaseContext(), "Error: " + aResponse, Toast.LENGTH_SHORT).show();
-            } else
-                Toast.makeText(getBaseContext(), "Not Got Response From Server.", Toast.LENGTH_SHORT).show();
-        }
-    };
 }
