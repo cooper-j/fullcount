@@ -60,5 +60,24 @@
     </string-array>
 
     <string name="title_activity_batting_roster">BattingRoster</string>
+    <string name="title_activity_add_player">Add Player</string>
+
+    <!-- Add Player Fragment Layout -->
+    <string name="player_name_text_view">Player Name</string>
+    <string name="name_text_input">Name</string>
+    <string name="position_played_text_view">Position</string>
+    <string name="profile_picture">Profile Picture</string>
+    <string name="done_button">Done</string>
+    <string-array name="position_array">
+        <item>Pitcher</item>
+        <item>Catcher</item>
+        <item>First Baseman</item>
+        <item>Second Baseman</item>
+        <item>Third Baseman</item>
+        <item>Shortstop</item>
+        <item>Left Fielder</item>
+        <item>Center Fielder</item>
+        <item>Right Fielder</item>
+    </string-array>
 
 </resources>

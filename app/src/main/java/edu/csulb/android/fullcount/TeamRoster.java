@@ -1,6 +1,5 @@
 package edu.csulb.android.fullcount;
 
-import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -16,20 +15,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Toast;
 import android.app.Activity;
 
-public class TeamRoster extends Activity {
-
-    private HttpHelper httpHelp = new HttpHelper();
-    private Button AddPlayerButton, DoneButton;
+public class TeamRoster extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_team_roster);
 
+<<<<<<< HEAD
         AddPlayerButton = (Button)findViewById(R.id.AddPlayerButton);
         AddPlayerButton.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -63,12 +59,15 @@ public class TeamRoster extends Activity {
                 Intent i = new Intent(getBaseContext(), TeamCreation.class);
                 startActivity(i);
             }});
+=======
+>>>>>>> origin/master
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_team_roster, menu);
+        getMenuInflater().inflate(R.menu.menu_team_creation, menu);
         return true;
     }
 
