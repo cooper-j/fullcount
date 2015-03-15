@@ -32,7 +32,19 @@ public class HomeActivity extends Activity {
         cookieBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(), IntroActivity.class);
+	            Session.getActiveSession().closeAndClearTokenInformation();
+	            Intent i = new Intent(getApplicationContext(), IntroActivity.class);
+	            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+	            startActivity(i);
+	            finish();
+            }
+        });
+
+        Button teamCreateButton = (Button)findViewById(R.id.create_team_button);
+        teamCreateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(), TeamCreation.class);
                 startActivity(i);
             }
         });

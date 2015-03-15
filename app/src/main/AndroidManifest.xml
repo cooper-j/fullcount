@@ -10,14 +10,14 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".LoginActivity"
-            android:label="@string/app_name" >
+            android:name=".IntroActivity"
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".ConnectionActivity"
             android:label="@string/app_name" />
@@ -34,21 +34,39 @@
             android:name=".PlayerCardActivity"
             android:label="@string/app_name" />
         <activity
-            android:name=".TeamCreation"
+            android:name=".BattingRoster"
             android:label="@string/app_name" />
         <activity android:name="com.facebook.LoginActivity" />
+
+        <activity
+            android:name=".TeamCreation"
+            android:label="@string/app_name" />
+
+        <activity
+            android:name=".TeamRoster"
+            android:label="@string/app_name" />
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/app_id" />
 
         <activity
-            android:name=".IntroActivity"
+            android:name=".LoginActivity"
             android:label="@string/title_activity_team_creation" >
         </activity>
         <activity
             android:name=".BattingRoster"
             android:label="@string/title_activity_batting_roster" >
+        </activity>
+
+
+        <activity
+            android:name=".AddPlayer"
+            android:label="@string/title_activity_add_player"
+            android:parentActivityName=".TeamRoster" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="edu.csulb.android.fullcount.TeamRoster" />
         </activity>
     </application>
 

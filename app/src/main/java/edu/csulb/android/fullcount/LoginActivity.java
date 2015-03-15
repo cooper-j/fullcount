@@ -9,7 +9,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -34,9 +33,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.security.KeyStore;
-
-import javax.crypto.SecretKey;
 
 
 public class LoginActivity extends Activity {
@@ -100,8 +96,7 @@ public class LoginActivity extends Activity {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getBaseContext(), IntroActivity.class);
-                startActivity(i);
+	            finish();
             }
         });
     }
