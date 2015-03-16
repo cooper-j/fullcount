@@ -1,9 +1,11 @@
 package edu.csulb.android.fullcount;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -11,12 +13,17 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 
 public class SettingsActivity extends Activity {
@@ -68,31 +75,29 @@ public class SettingsActivity extends Activity {
         saveBtn.setOnClickListener(new View.OnClickListener() {
             /*TODO*/
             public void onClick(View v) {
-                JSONObject jsonobj = new JSONObject();
+                RequestParams params = new RequestParams();
                 EditText city = (EditText) findViewById(R.id.settings_city);
                 EditText team = (EditText) findViewById(R.id.settings_team);
                 EditText email = (EditText) findViewById(R.id.settings_email);
                 //EditText oldPassword = (EditText)findViewById(R.id.settings_oldPassword);
                 String newPassword1 = ((EditText) findViewById(R.id.settings_newPassword1)).getText().toString();
                 String newPassword2 = ((EditText) findViewById(R.id.settings_newPassword2)).getText().toString();
-                try {
+
                     if (!newPassword1.matches(newPassword2))
                         Toast.makeText(getBaseContext(), "Password missmatch", Toast.LENGTH_SHORT).show();
                     else if (newPassword1.matches("")){
-                        jsonobj.put("city", city.getText().toString());
-                        jsonobj.put("team", team.getText().toString());
-                        jsonobj.put("email", email.getText().toString());
-                        sendPutRequest(jsonobj);
+                        params.put("city", city.getText().toString());
+                        params.put("team", team.getText().toString());
+                        params.put("email", email.getText().toString());
+                        sendPutRequest(params);
                     }
                     else {
-                        jsonobj.put("password", newPassword1);
-                        jsonobj.put("city", city.getText().toString());
-                        jsonobj.put("team", team.getText().toString());
-                        jsonobj.put("email", email.getText().toString());
-                        sendPutRequest(jsonobj);
+                        params.put("password", newPassword1);
+                        params.put("city", city.getText().toString());
+                        params.put("team", team.getText().toString());
+                        params.put("email", email.getText().toString());
+                        sendPutRequest(params);
                     }
-                } catch (JSONException je) {
-                }
             }
         });
 
@@ -106,19 +111,22 @@ public class SettingsActivity extends Activity {
         });*/
     }
 
-    private void sendPutRequest(JSONObject jsonobj){
+    private void sendPutRequest(RequestParams params){
+        Log.e("Edit: ",auth_token_string);
+            FullcountRestClient.put("/api/users/current", params, auth_token_string, new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    Toast.makeText(getBaseContext(), "Success", Toast.LENGTH_SHORT).show();
+                    Intent i = new Intent(getBaseContext(), HomeActivity.class);
+                    startActivity(i);
+                    finish();
+                }
 
-        HttpResponse response = httpHelp.put("/api/users/current", jsonobj, auth_token_string);
+                @Override
+                public void onFailure(int statusCode, Header[] headers, String error, Throwable throwable) {
+                    Toast.makeText(getBaseContext(), "Error: " + statusCode + " " +error, Toast.LENGTH_SHORT).show();
+                }
+            });
 
-        if (response != null && response.getStatusLine().getStatusCode() == 200) {
-            try {
-                Log.e("Put", EntityUtils.toString(response.getEntity()));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Toast.makeText(getBaseContext(), "Save successful", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(getBaseContext(), "Server error please try again", Toast.LENGTH_SHORT).show();
-        }
     }
 }

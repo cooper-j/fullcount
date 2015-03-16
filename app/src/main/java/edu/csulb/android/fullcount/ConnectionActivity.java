@@ -92,18 +92,22 @@ public class ConnectionActivity extends Activity {
                         try {
                             String auth = Base64.encodeToString((field2 + ":" + field3).getBytes("UTF-8"), Base64.URL_SAFE | Base64.NO_WRAP);
                             editor.putString("auth", auth);
+                            editor.commit();
                             FullcountRestClient.post("/api/users", params, "", new JsonHttpResponseHandler() {
                                 @Override
                                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                                    if (statusCode == 201) {
                                     Toast.makeText(getBaseContext(), "Success",Toast.LENGTH_SHORT).show();
                                     Intent i = new Intent(getBaseContext(), HomeActivity.class);
                                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     startActivity(i);
+                                    }
+                                    Toast.makeText(getBaseContext(), "Error",Toast.LENGTH_SHORT).show();
                                 }
 
                                 @Override
                                 public void onFailure(int statusCode, Header[] headers, String error, Throwable throwable) {
-                                    Toast.makeText(getBaseContext(), error, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getBaseContext(), "Error: " + statusCode + " " +error, Toast.LENGTH_SHORT).show();
                                 }
                             });
                         } catch (UnsupportedEncodingException e) {
