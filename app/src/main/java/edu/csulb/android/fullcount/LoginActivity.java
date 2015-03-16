@@ -53,14 +53,6 @@ public class LoginActivity extends Activity {
                 EditText loginUsername = (EditText) findViewById(R.id.login_username);
                 EditText loginPassword = (EditText) findViewById(R.id.login_password);
 
-                //create json object to send to the server with username and password
-                JSONObject jsonobj = new JSONObject();
-                try {
-                    jsonobj.put("email", loginUsername.getText().toString());
-                    jsonobj.put("password", loginPassword.getText().toString());
-                } catch (JSONException je) {
-                }
-
                 RequestParams params = new RequestParams();
                 params.put("email", loginUsername.getText().toString());
                 params.put("password", loginPassword.getText().toString());
@@ -74,7 +66,7 @@ public class LoginActivity extends Activity {
                     FullcountRestClient.post("/api/users/login", params, auth, new JsonHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                            Toast.makeText(getBaseContext(), "Object",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getBaseContext(), "Success",Toast.LENGTH_SHORT).show();
                             Intent i = new Intent(getBaseContext(), HomeActivity.class);
                             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(i);

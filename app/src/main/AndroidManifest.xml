@@ -54,15 +54,12 @@
             android:name=".LoginActivity"
             android:label="@string/title_activity_team_creation" >
         </activity>
-        <activity
-            android:name=".BattingRoster"
-            android:label="@string/title_activity_batting_roster" >
-        </activity>
 
 
         <activity
             android:name=".AddPlayer"
             android:label="@string/title_activity_add_player"
+
             android:parentActivityName=".TeamRoster" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

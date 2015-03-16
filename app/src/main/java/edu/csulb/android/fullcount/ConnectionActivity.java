@@ -1,10 +1,13 @@
 package edu.csulb.android.fullcount;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -13,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import org.apache.http.Header;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -20,6 +24,8 @@ import org.apache.http.HttpResponse;
 
 
 import org.apache.http.entity.StringEntity;
+
+import java.io.UnsupportedEncodingException;
 import java.lang.Thread;
 import java.io.IOException;
 import org.apache.http.client.ClientProtocolException;
@@ -32,6 +38,9 @@ import android.util.Log;
 import org.apache.http.message.BasicHeader;
 
 import android.content.Intent;
+
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 public class ConnectionActivity extends Activity {
 
@@ -72,23 +81,33 @@ public class ConnectionActivity extends Activity {
                     if(field3.equals(field4))
                     {
                         //Account Registered
-                        //abc.register(field1, field2, field3);
-                        JSONObject jsonobj = new JSONObject();
+                        RequestParams params = new RequestParams();
+                        params.put("username", field1);
+                        params.put("email", field2);
+                        params.put("password", field3);
+
+                        SharedPreferences settings = PreferenceManager
+                                .getDefaultSharedPreferences(getBaseContext());
+                        SharedPreferences.Editor editor = settings.edit();
                         try {
-                            jsonobj.put("username", userName.getText().toString());
-                            jsonobj.put("password", passwordOne.getText().toString());
-                            jsonobj.put("email", email.getText().toString());
-                            jsonobj.put("city", "test city");
-                            jsonobj.put("team", "test team");
-                        } catch (JSONException je) {
-                        }
-                        /*TODO Handler*/
-                        HttpResponse response = httpHelp.post("/api/users", jsonobj, "", "");
-                        if (response != null && response.getStatusLine().getStatusCode() == 201){
-                            Intent i = new Intent(getBaseContext(), HomeActivity.class);
-                            startActivity(i);
-                        }else{
-                            Toast.makeText(getBaseContext(),"Server error please try again",Toast.LENGTH_SHORT).show();
+                            String auth = Base64.encodeToString((field2 + ":" + field3).getBytes("UTF-8"), Base64.URL_SAFE | Base64.NO_WRAP);
+                            editor.putString("auth", auth);
+                            FullcountRestClient.post("/api/users", params, "", new JsonHttpResponseHandler() {
+                                @Override
+                                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                                    Toast.makeText(getBaseContext(), "Success",Toast.LENGTH_SHORT).show();
+                                    Intent i = new Intent(getBaseContext(), HomeActivity.class);
+                                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    startActivity(i);
+                                }
+
+                                @Override
+                                public void onFailure(int statusCode, Header[] headers, String error, Throwable throwable) {
+                                    Toast.makeText(getBaseContext(), error, Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
                         }
                     }
                     else
