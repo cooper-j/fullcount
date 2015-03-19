@@ -1,8 +1,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="edu.csulb.android.fullcount.AddPlayerActivity$PlaceholderFragment">
+    tools:context="edu.csulb.android.fullcount.AddPlayerActivity$PlaceholderFragment"
+    android:background="#85000000">
 
 
     <TextView
@@ -18,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:text="@string/name_text_input"
+        android:hint="@string/name_text_input"
         android:ems="10"
         android:id="@+id/player_name_edit_text"
         android:layout_gravity="center_horizontal" />
@@ -56,7 +58,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/done_button"
+        android:text="@string/add_button"
         android:id="@+id/add_player_done_button"
         android:layout_marginTop="20dp"
         android:layout_gravity="center_horizontal"/>

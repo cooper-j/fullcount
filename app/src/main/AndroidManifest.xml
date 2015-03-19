@@ -58,12 +58,7 @@
 
         <activity
             android:name=".AddPlayer"
-            android:label="@string/title_activity_add_player"
-
-            android:parentActivityName=".TeamRoster" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="edu.csulb.android.fullcount.TeamRoster" />
+            android:label="@string/title_activity_add_player">
         </activity>
     </application>
 

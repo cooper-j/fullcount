@@ -8,16 +8,18 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.List;
+
 /**
  * Created by james_000 on 3/11/2015.
  */
 public class CustomListAdapter extends ArrayAdapter<String> {
 
     private final Activity context;
-    private final String[] itemname;
-    private final Integer[] imgid;
+    private final List<String> itemname;
+    private final List<Integer> imgid;
 
-    public CustomListAdapter(Activity context, String[] itemname, Integer[] imgid) {
+    public CustomListAdapter(Activity context, List<String> itemname, List<Integer> imgid) {
         super(context, R.layout.batting_roster_list, itemname);
 
         this.context=context;
@@ -32,8 +34,8 @@ public class CustomListAdapter extends ArrayAdapter<String> {
         TextView txtTitle = (TextView) rowView.findViewById(R.id.Itemname);
         ImageView imageView = (ImageView) rowView.findViewById(R.id.icon);
 
-        txtTitle.setText(itemname[position]);
-        imageView.setImageResource(imgid[position]);
+        txtTitle.setText(itemname.get(position));
+        imageView.setImageResource(imgid.get(position));
 
         return rowView;
     }

@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -69,6 +70,20 @@ public class LoginActivity extends Activity {
                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                             if (statusCode == 200) {
                                 Toast.makeText(getBaseContext(), "Success", Toast.LENGTH_SHORT).show();
+
+                                SharedPreferences settings = PreferenceManager
+                                        .getDefaultSharedPreferences(getBaseContext());
+                                SharedPreferences.Editor editor = settings.edit();
+
+                                try {
+                                    editor.putString("teamId", response.getJSONObject("user").getString("team"));
+                                } catch (JSONException je){
+                                    je.printStackTrace();
+                                }
+                                editor.commit();
+
+                                Log.e("Login response", response.toString());
+
                                 Intent i = new Intent(getBaseContext(), HomeActivity.class);
                                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 startActivity(i);

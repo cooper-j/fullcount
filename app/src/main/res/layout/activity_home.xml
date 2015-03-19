@@ -30,7 +30,18 @@
         android:id="@+id/create_team_button"
         android:layout_below="@+id/edit_profile_button"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp" />
+        android:layout_marginTop="20dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="13"
+        android:text="Create Score Sheet"
+        android:id="@+id/create_score_sheet"
+        android:layout_below="@+id/create_team_button"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp" />
+
 
     <Button
         android:layout_width="wrap_content"
@@ -38,7 +49,7 @@
         android:ems="13"
         android:text="@string/log_out"
         android:id="@+id/logout_button"
-        android:layout_below="@+id/create_team_button"
+        android:layout_below="@+id/create_score_sheet"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp" />
 </RelativeLayout>

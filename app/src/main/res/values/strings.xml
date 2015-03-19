@@ -68,6 +68,7 @@
     <string name="position_played_text_view">Position</string>
     <string name="profile_picture">Profile Picture</string>
     <string name="done_button">Done</string>
+    <string name="add_button">Add</string>
     <string-array name="position_array">
         <item>Pitcher</item>
         <item>Catcher</item>

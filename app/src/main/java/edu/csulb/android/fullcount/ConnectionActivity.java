@@ -97,10 +97,11 @@ public class ConnectionActivity extends Activity {
                                 @Override
                                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                                     if (statusCode == 201) {
-                                    Toast.makeText(getBaseContext(), "Success",Toast.LENGTH_SHORT).show();
-                                    Intent i = new Intent(getBaseContext(), HomeActivity.class);
-                                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                    startActivity(i);
+                                        Toast.makeText(getBaseContext(), "Success: " + statusCode,Toast.LENGTH_SHORT).show();
+                                        Intent i = new Intent(getBaseContext(), HomeActivity.class);
+                                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        startActivity(i);
+                                        finish();
                                     }
                                     Toast.makeText(getBaseContext(), "Error",Toast.LENGTH_SHORT).show();
                                 }
