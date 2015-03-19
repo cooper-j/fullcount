@@ -1,6 +1,10 @@
 package edu.csulb.android.fullcount;
 
+import android.content.Context;
+
 import com.loopj.android.http.*;
+
+import org.apache.http.entity.StringEntity;
 
 public class FullcountRestClient {
     private static final String BASE_URL = "http://fullcount.azurewebsites.net";
@@ -17,6 +21,12 @@ public class FullcountRestClient {
         if (!auth.matches(""))
             client.addHeader("Authorization", "Basic " + auth);
         client.post(getAbsoluteUrl(url), params, responseHandler);
+    }
+
+    public static void post(Context context, String url, StringEntity params, String auth, AsyncHttpResponseHandler responseHandler) {
+        if (!auth.matches(""))
+            client.addHeader("Authorization", "Basic " + auth);
+        client.post(context, getAbsoluteUrl(url), params, "application/json", responseHandler);
     }
 
     public static void put(String url, RequestParams params, String auth, AsyncHttpResponseHandler responseHandler) {
