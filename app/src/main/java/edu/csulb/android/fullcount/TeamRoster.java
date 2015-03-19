@@ -29,6 +29,7 @@ import android.app.Activity;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -93,20 +94,39 @@ public class TeamRoster extends Activity {
                 String auth_token_string = settings.getString("auth", "");
 
                 RequestParams params = new RequestParams();
-                Map<String, String> map = new HashMap<String, String>();
+                /*Map<String, String> map = new HashMap<String, String>();
                 for (String name : players)
                     map.put("name", name);
 
-                params.put("members", map);
+                params.put("members", map);*/
 
-                /*JSONObject jsonParams = new JSONObject();
-                jsonParams.put("notes", "Test api support");
-                StringEntity entity = new StringEntity(jsonParams.toString());
-                FullcountRestClient.post(restApiUrl, entity, "application/json", responseHandler);*/
+                JSONArray jsonArray = new JSONArray();
+                JSONObject jsonobj = new JSONObject();
+                for (String name : players) {
+                    try {
+                        jsonobj.put("name", name);
+                    } catch (JSONException je){
+                        je.printStackTrace();
+                    }
+                    jsonArray.put(jsonobj);
+                }
+                JSONObject jsonParams = new JSONObject();
+                try {
+                    jsonParams.put("members", jsonArray);
+                } catch (JSONException je){
+                    je.printStackTrace();
+                }
 
-                Log.e("Params", params.toString());
+                StringEntity entity = null;
+                try {
+                    entity = new StringEntity(jsonParams.toString());
+                } catch (UnsupportedEncodingException uee){
+                    uee.printStackTrace();
+                }
 
-                FullcountRestClient.post("/api/teams/" + intent.getStringExtra("teamId") + "/members", params, auth_token_string, new JsonHttpResponseHandler() {
+                Log.e("Params", entity.toString());
+
+                FullcountRestClient.post(getApplicationContext(), "/api/teams/" + intent.getStringExtra("teamId") + "/members", entity , auth_token_string, new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                         Toast.makeText(getBaseContext(), "Success: " + statusCode, Toast.LENGTH_SHORT).show();
