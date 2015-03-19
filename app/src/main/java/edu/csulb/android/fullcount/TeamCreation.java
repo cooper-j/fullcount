@@ -172,6 +172,7 @@ public class TeamCreation extends ActionBarActivity {
                             }catch(JSONException je){
                                 je.printStackTrace();
                             }
+	                        editor.commit();
 
                             Intent i = new Intent(getBaseContext(), TeamRoster.class);
                             startActivity(i);

@@ -24,9 +24,20 @@ repositories { mavenCentral() }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.facebook.android:facebook-android-sdk:3.21.1'
     compile 'com.android.support:support-v4:21.0.3'
     compile 'com.loopj.android:android-async-http:1.4.6'
+    compile('com.github.tomakehurst:wiremock:1.54') {
+        exclude group: 'org.mortbay.jetty', module: 'jetty'
+        exclude group: 'com.google.guava', module: 'guava'
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-core'
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-annotations'
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
+        exclude group: 'org.apache.httpcomponents', module: 'httpclient'
+        exclude group: 'org.skyscreamer', module: 'jsonassert'
+        exclude group: 'xmlunit', module: 'xmlunit'
+        exclude group: 'com.jayway.jsonpath', module: 'json-path'
+        exclude group: 'net.sf.jopt-simple', module: 'jopt-simple'
+    }
 }
