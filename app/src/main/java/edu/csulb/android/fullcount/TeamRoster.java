@@ -29,6 +29,7 @@ import android.app.Activity;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,7 +41,6 @@ public class TeamRoster extends Activity {
 
     private ArrayList<String> players = new ArrayList<String>();
     private ArrayList<Integer> imgid = new ArrayList<Integer>();
-    private Intent intent;
 
     private SharedPreferences settings;
 
@@ -49,7 +49,6 @@ public class TeamRoster extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.intent = this.getIntent();
         setContentView(R.layout.activity_team_roster);
 
         settings = PreferenceManager
@@ -93,18 +92,12 @@ public class TeamRoster extends Activity {
 
                 String auth_token_string = settings.getString("auth", "");
 
-                RequestParams params = new RequestParams();
-                /*Map<String, String> map = new HashMap<String, String>();
-                for (String name : players)
-                    map.put("name", name);
-
-                params.put("members", map);*/
-
                 JSONArray jsonArray = new JSONArray();
                 JSONObject jsonobj = new JSONObject();
                 for (String name : players) {
                     try {
                         jsonobj.put("name", name);
+                        Log.e("Name", name);
                     } catch (JSONException je){
                         je.printStackTrace();
                     }
@@ -120,13 +113,16 @@ public class TeamRoster extends Activity {
                 StringEntity entity = null;
                 try {
                     entity = new StringEntity(jsonParams.toString());
+                    //Log.e("Params", entity.getContent().);
                 } catch (UnsupportedEncodingException uee){
                     uee.printStackTrace();
+                } catch (IOException e){
+                    e.printStackTrace();
                 }
 
-                Log.e("Params", entity.toString());
+                entity.setContentType("application/json");
 
-                FullcountRestClient.post(getApplicationContext(), "/api/teams/" + intent.getStringExtra("teamId") + "/members", entity , auth_token_string, new JsonHttpResponseHandler() {
+                FullcountRestClient.put(getApplicationContext(), "/api/teams/" + settings.getString("teamId", "") + "/members", entity , auth_token_string, new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                         Toast.makeText(getBaseContext(), "Success: " + statusCode, Toast.LENGTH_SHORT).show();

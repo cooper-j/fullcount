@@ -77,6 +77,7 @@ public class LoginActivity extends Activity {
 
                                 try {
                                     editor.putString("teamId", response.getJSONObject("user").getString("team"));
+                                    editor.putString("roster",  response.getJSONObject("team").getJSONArray("roster").toString());
                                 } catch (JSONException je){
                                     je.printStackTrace();
                                 }

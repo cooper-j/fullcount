@@ -29,6 +29,12 @@ public class FullcountRestClient {
         client.post(context, getAbsoluteUrl(url), params, "application/json", responseHandler);
     }
 
+    public static void put(Context context, String url, StringEntity params, String auth, AsyncHttpResponseHandler responseHandler) {
+        if (!auth.matches(""))
+            client.addHeader("Authorization", "Basic " + auth);
+        client.put(context, getAbsoluteUrl(url), params, "application/json", responseHandler);
+    }
+
     public static void put(String url, RequestParams params, String auth, AsyncHttpResponseHandler responseHandler) {
         if (!auth.matches(""))
             client.addHeader("Authorization", "Basic " + auth);

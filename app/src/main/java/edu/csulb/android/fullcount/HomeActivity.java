@@ -48,6 +48,15 @@ public class HomeActivity extends Activity {
                 startActivity(i);
             }
         });
+
+        Button createGameSheet = (Button)findViewById(R.id.create_score_sheet);
+        createGameSheet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(), BattingRoster.class);
+                startActivity(i);
+            }
+        });
     }
 
 
