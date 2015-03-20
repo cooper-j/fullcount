@@ -22,9 +22,7 @@ public class BattingRoster extends Activity {
 
 
     private ArrayList<String> players = new ArrayList<>();
-    private StableArrayAdapter adapter;
-    private DynamicListView listView;
-    private Activity battingRoster;
+    private String[] player;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,24 +33,29 @@ public class BattingRoster extends Activity {
 
         //String[] players = {"Test1", "Test2", "Test3", "Test4", "Test5", "Test6", "Test7", "Test8", "Test9"};
 
-        battingRoster = this;
-
         SharedPreferences settings = PreferenceManager
-                .getDefaultSharedPreferences(BattingRoster.this);
+                .getDefaultSharedPreferences(this);
         String teamId = settings.getString("teamId", "");
         try {
             JSONArray playerJsonArray = new JSONArray(settings.getString("roster", ""));
 
-            for (int i = 0; i < playerJsonArray.length(); i++)
-                players.add(playerJsonArray.getString(i));
+            player = new String[playerJsonArray.length()];
+            for (int i = 0; i < playerJsonArray.length(); i++) {
+                players.add(playerJsonArray.getJSONObject(i).getString("name"));
+                player[i] = playerJsonArray.getJSONObject(i).getString("name");
+            }
         } catch (JSONException je){
             je.printStackTrace();
             finish();
         }
 
-        Integer[] imgid = new Integer[players.size()];
+        for(int i = 0; i < player.length; i++){
+            Log.e("Player", player[i]);
+        }
+
+        Integer[] imgid = new Integer[player.length];
         for (int i = 0; i < players.size(); i++) {
-            imgid[i] = R.drawable.avatar_icon;
+            imgid[i] = R.drawable.ham;
         }
 
         //adapter = new StableArrayAdapter(this, R.layout.batting_roster_list, players, imgid);
@@ -63,9 +66,9 @@ public class BattingRoster extends Activity {
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);*/
 
 
-        if (!players.isEmpty()){
-            adapter = new StableArrayAdapter(this, R.layout.batting_roster_list, players, imgid);
-            listView = (DynamicListView) findViewById(R.id.listview);
+        if (player.length > 0){
+            StableArrayAdapter adapter = new StableArrayAdapter(this, R.layout.batting_roster_list, player, imgid);
+            DynamicListView listView  = (DynamicListView)findViewById(R.id.listview);
 
             listView.setCheeseList(players);
             listView.setAdapter(adapter);

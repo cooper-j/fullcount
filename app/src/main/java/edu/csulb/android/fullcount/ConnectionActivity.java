@@ -103,7 +103,6 @@ public class ConnectionActivity extends Activity {
                                         startActivity(i);
                                         finish();
                                     }
-                                    Toast.makeText(getBaseContext(), "Error",Toast.LENGTH_SHORT).show();
                                 }
 
                                 @Override

@@ -23,15 +23,16 @@ public class StableArrayAdapter extends ArrayAdapter<String> {
     HashMap<String, Integer> mIdMap = new HashMap<String, Integer>();
 
     private final Activity context;
-    private final List<String> itemname;
+    //private final List<String> itemname;
+    private final String[] itemnames;
     private final Integer[] imgid;
 
-    public StableArrayAdapter(Activity context, int textViewResourceId, List<String> objects, Integer[] imgid) {
+    public StableArrayAdapter(Activity context, int textViewResourceId, String[] objects, Integer[] imgid) {
         super(context, textViewResourceId, objects);
-        for (int i = 0; i < objects.size(); ++i) {
-            mIdMap.put(objects.get(i), i);
+        for (int i = 0; i < objects.length; ++i) {
+            mIdMap.put(objects[i], i);
         }
-        this.itemname = objects;
+        this.itemnames = objects;
         this.context=context;
         this.imgid=imgid;
     }
@@ -52,7 +53,7 @@ public class StableArrayAdapter extends ArrayAdapter<String> {
         TextView txtTitle = (TextView) rowView.findViewById(R.id.Itemname);
         ImageView imageView = (ImageView) rowView.findViewById(R.id.icon);
 
-        txtTitle.setText(itemname.get(position));
+        txtTitle.setText(itemnames[position]);
         imageView.setImageResource(imgid[position]);
 
         return rowView;

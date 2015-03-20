@@ -327,9 +327,6 @@ public class DynamicListView extends ListView {
             if (android.os.Build.VERSION.SDK_INT <= android.os.Build.VERSION_CODES.KITKAT){
                 mobileView.setVisibility(View.VISIBLE);
                 switchView.setVisibility(View.INVISIBLE);
-            } else{
-                mobileView.setVisibility(View.INVISIBLE);
-                switchView.setVisibility(View.VISIBLE);
             }
 
             updateNeighborViewsForID(mMobileItemId);

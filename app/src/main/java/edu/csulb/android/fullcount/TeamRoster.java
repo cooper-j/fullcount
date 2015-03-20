@@ -93,8 +93,8 @@ public class TeamRoster extends Activity {
                 String auth_token_string = settings.getString("auth", "");
 
                 JSONArray jsonArray = new JSONArray();
-                JSONObject jsonobj = new JSONObject();
                 for (String name : players) {
+                    JSONObject jsonobj = new JSONObject();
                     try {
                         jsonobj.put("name", name);
                         Log.e("Name", name);
@@ -119,6 +119,8 @@ public class TeamRoster extends Activity {
                 } catch (IOException e){
                     e.printStackTrace();
                 }
+
+                Log.e("Data", jsonParams.toString());
 
                 entity.setContentType("application/json");
 
