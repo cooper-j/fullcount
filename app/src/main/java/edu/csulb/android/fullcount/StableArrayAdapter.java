@@ -48,7 +48,7 @@ public class StableArrayAdapter extends ArrayAdapter<String> {
 
     public View getView(int position,View view,ViewGroup parent) {
         LayoutInflater inflater = context.getLayoutInflater();
-        View rowView = inflater.inflate(R.layout.batting_roster_list, null, true);
+        View rowView = inflater.inflate(R.layout.dynamic_list_item, null, true);
 
         TextView txtTitle = (TextView) rowView.findViewById(R.id.Itemname);
         ImageView imageView = (ImageView) rowView.findViewById(R.id.icon);
@@ -56,6 +56,8 @@ public class StableArrayAdapter extends ArrayAdapter<String> {
         txtTitle.setText(itemname.get(position));
         imageView.setImageResource(imgid[position]);
 
+        if (position > 8)
+            rowView.setBackgroundColor(0x55191516);
         return rowView;
     }
 
