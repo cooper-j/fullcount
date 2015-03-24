@@ -42,16 +42,29 @@ public class BattingRoster extends Activity {
             player = new String[playerJsonArray.length()];
             for (int i = 0; i < playerJsonArray.length(); i++) {
                 players.add(playerJsonArray.getJSONObject(i).getString("name"));
-                player[i] = playerJsonArray.getJSONObject(i).getString("name");
+                //player[i] = playerJsonArray.getJSONObject(i).getString("name");
             }
         } catch (JSONException je){
             je.printStackTrace();
             finish();
         }
 
-        for(int i = 0; i < player.length; i++){
-            Log.e("Player", player[i]);
+        for(int i = 0; i < players.size(); i++){
+            Log.e("Player", players.get(i));
         }
+
+        /*player = new String[5];
+        player[0] = "Boby";
+        player[1] = "Jean";
+        player[2] = "Nick";
+        player[3] = "Benoit";
+        player[4] = "Victor";
+
+        players.add(player[0]);
+        players.add(player[1]);
+        players.add(player[2]);
+        players.add(player[3]);
+        players.add(player[4]);*/
 
         Integer[] imgid = new Integer[player.length];
         for (int i = 0; i < players.size(); i++) {
@@ -67,7 +80,7 @@ public class BattingRoster extends Activity {
 
 
         if (player.length > 0){
-            StableArrayAdapter adapter = new StableArrayAdapter(this, R.layout.batting_roster_list, player, imgid);
+            StableArrayAdapter adapter = new StableArrayAdapter(this, R.layout.batting_roster_list, players, imgid);
             DynamicListView listView  = (DynamicListView)findViewById(R.id.listview);
 
             listView.setCheeseList(players);

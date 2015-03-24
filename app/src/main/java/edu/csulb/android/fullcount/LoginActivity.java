@@ -44,64 +44,63 @@ public class LoginActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+                Button loginButton = (Button) findViewById(R.id.login_button);
+                loginButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
 
-        Button loginButton = (Button) findViewById(R.id.login_button);
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+                        //set the text boxes for gathering username and password
+                        EditText loginUsername = (EditText) findViewById(R.id.login_username);
+                        EditText loginPassword = (EditText) findViewById(R.id.login_password);
 
-                //set the text boxes for gathering username and password
-                EditText loginUsername = (EditText) findViewById(R.id.login_username);
-                EditText loginPassword = (EditText) findViewById(R.id.login_password);
+                        RequestParams params = new RequestParams();
+                        params.put("email", loginUsername.getText().toString());
+                        params.put("password", loginPassword.getText().toString());
 
-                RequestParams params = new RequestParams();
-                params.put("email", loginUsername.getText().toString());
-                params.put("password", loginPassword.getText().toString());
+                        SharedPreferences settings = PreferenceManager
+                                .getDefaultSharedPreferences(getBaseContext());
+                        SharedPreferences.Editor editor = settings.edit();
+                        try {
+                            String auth = Base64.encodeToString((loginUsername.getText().toString() + ":" + loginPassword.getText().toString()).getBytes("UTF-8"), Base64.URL_SAFE | Base64.NO_WRAP);
+                            editor.putString("auth", auth);
+                            editor.commit();
+                            FullcountRestClient.post("/api/users/login", params, auth, new JsonHttpResponseHandler() {
+                                @Override
+                                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                                    if (statusCode == 200) {
+                                        Toast.makeText(getBaseContext(), "Success", Toast.LENGTH_SHORT).show();
 
-                SharedPreferences settings = PreferenceManager
-                        .getDefaultSharedPreferences(getBaseContext());
-                SharedPreferences.Editor editor = settings.edit();
-                try {
-                    String auth = Base64.encodeToString((loginUsername.getText().toString() + ":" + loginPassword.getText().toString()).getBytes("UTF-8"), Base64.URL_SAFE|Base64.NO_WRAP);
-                    editor.putString("auth", auth);
-                    editor.commit();
-                    FullcountRestClient.post("/api/users/login", params, auth, new JsonHttpResponseHandler() {
-                        @Override
-                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                            if (statusCode == 200) {
-                                Toast.makeText(getBaseContext(), "Success", Toast.LENGTH_SHORT).show();
+                                        SharedPreferences settings = PreferenceManager
+                                                .getDefaultSharedPreferences(getBaseContext());
+                                        SharedPreferences.Editor editor = settings.edit();
 
-                                SharedPreferences settings = PreferenceManager
-                                        .getDefaultSharedPreferences(getBaseContext());
-                                SharedPreferences.Editor editor = settings.edit();
+                                        try {
+                                            editor.putString("teamId", response.getJSONObject("user").getString("team"));
+                                            editor.putString("roster", response.getJSONObject("team").getJSONArray("roster").toString());
+                                        } catch (JSONException je) {
+                                            je.printStackTrace();
+                                        }
+                                        editor.commit();
 
-                                try {
-                                    editor.putString("teamId", response.getJSONObject("user").getString("team"));
-                                    editor.putString("roster",  response.getJSONObject("team").getJSONArray("roster").toString());
-                                } catch (JSONException je){
-                                    je.printStackTrace();
+                                        Log.e("Login response", response.toString());
+
+                                        Intent i = new Intent(getBaseContext(), HomeActivity.class);
+                                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        startActivity(i);
+                                    }
+                                    //Toast.makeText(getBaseContext(), "Error", Toast.LENGTH_SHORT).show();
                                 }
-                                editor.commit();
 
-                                Log.e("Login response", response.toString());
-
-                                Intent i = new Intent(getBaseContext(), HomeActivity.class);
-                                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                startActivity(i);
-                            }
-                            //Toast.makeText(getBaseContext(), "Error", Toast.LENGTH_SHORT).show();
+                                @Override
+                                public void onFailure(int statusCode, Header[] headers, String error, Throwable throwable) {
+                                    Toast.makeText(getBaseContext(), "Error: " + statusCode + " " + error, Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
                         }
-
-                        @Override
-                        public void onFailure(int statusCode, Header[] headers, String error, Throwable throwable) {
-                            Toast.makeText(getBaseContext(), "Error: " + statusCode + " " +error, Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+                    }
+                });
         //cancel login activity
         Button cancelButton = (Button)findViewById(R.id.cancel_button);
 

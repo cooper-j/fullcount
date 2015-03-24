@@ -80,5 +80,6 @@
         <item>Center Fielder</item>
         <item>Right Fielder</item>
     </string-array>
+    <string name="delete">Delete</string>
 
 </resources>

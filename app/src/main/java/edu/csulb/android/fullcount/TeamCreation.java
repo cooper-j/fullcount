@@ -112,78 +112,81 @@ public class TeamCreation extends ActionBarActivity {
             });
         }
 
-        Button doneButton = (Button) findViewById(R.id.Done_Button);
-        doneButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Map<String, String> dataMap = new HashMap<String, String>();
+        new Thread(new Runnable() {
+            public void run() {
+                Button doneButton = (Button) findViewById(R.id.Done_Button);
+                doneButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Map<String, String> dataMap = new HashMap<String, String>();
 
-                dataMap.put("name", teamName.getText().toString());
-                dataMap.put("city", city.getText().toString());
-                dataMap.put("leagueCategory", String.valueOf(league.getSelectedItemPosition()));
-                dataMap.put("leagueName", leagueName.getText().toString());
-                dataMap.put("season", season.getText().toString());
+                        dataMap.put("name", teamName.getText().toString());
+                        dataMap.put("city", city.getText().toString());
+                        dataMap.put("leagueCategory", String.valueOf(league.getSelectedItemPosition()));
+                        dataMap.put("leagueName", leagueName.getText().toString());
+                        dataMap.put("season", season.getText().toString());
 
-                Pattern p = Pattern.compile("\\w", Pattern.CASE_INSENSITIVE);
-                Matcher m;
-                for (Map.Entry<String, String> entry : dataMap.entrySet()) {
-                    m = p.matcher(entry.getValue());
-                    if (!m.find()) {
-                        Toast.makeText(getBaseContext(), "Field: " + entry.getKey() + " missing.", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                }
-
-                RequestParams params = new RequestParams();
-                params.put("name", dataMap.get("name"));
-                params.put("city", dataMap.get("city"));
-                params.put("leagueCategory", dataMap.get("leagueCategory"));
-                params.put("leagueName", dataMap.get("leagueName"));
-                params.put("season", dataMap.get("season"));
-
-                if (isCreated)
-                    FullcountRestClient.put("/api/teams/" + teamId, params, auth_token_string, new JsonHttpResponseHandler(){
-                        @Override
-                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-
-                            Toast.makeText(getBaseContext(), "Success: " + statusCode, Toast.LENGTH_SHORT).show();
-                            Log.e("response", response.toString());
-
-                            Intent i = new Intent(getBaseContext(), TeamRoster.class);
-                            startActivity(i);
-                        }
-
-                        @Override
-                        public void onFailure(int statusCode, Header[] headers, String error, Throwable throwable) {
-                            Toast.makeText(getBaseContext(), "Error: " + statusCode + " " + error, Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                else
-                    FullcountRestClient.post("/api/teams", params, auth_token_string, new JsonHttpResponseHandler() {
-                        @Override
-                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-
-                            Toast.makeText(getBaseContext(), "Success: " + statusCode, Toast.LENGTH_SHORT).show();
-                            Log.e("response", response.toString());
-
-                            SharedPreferences.Editor editor = settings.edit();
-                            try {
-                                editor.putString("teamId", response.getString("_id"));
-                            }catch(JSONException je){
-                                je.printStackTrace();
+                        Pattern p = Pattern.compile("\\w", Pattern.CASE_INSENSITIVE);
+                        Matcher m;
+                        for (Map.Entry<String, String> entry : dataMap.entrySet()) {
+                            m = p.matcher(entry.getValue());
+                            if (!m.find()) {
+                                Toast.makeText(getBaseContext(), "Field: " + entry.getKey() + " missing.", Toast.LENGTH_SHORT).show();
+                                return;
                             }
-                            editor.commit();
-                            Intent i = new Intent(getBaseContext(), TeamRoster.class);
-                            startActivity(i);
                         }
 
-                        @Override
-                        public void onFailure(int statusCode, Header[] headers, String error, Throwable throwable) {
-                            Toast.makeText(getBaseContext(), "Error: " + statusCode + " " + error, Toast.LENGTH_SHORT).show();
-                        }
-                    });
-            }
-        });
+                        RequestParams params = new RequestParams();
+                        params.put("name", dataMap.get("name"));
+                        params.put("city", dataMap.get("city"));
+                        params.put("leagueCategory", dataMap.get("leagueCategory"));
+                        params.put("leagueName", dataMap.get("leagueName"));
+                        params.put("season", dataMap.get("season"));
+
+                        if (isCreated)
+                            FullcountRestClient.put("/api/teams/" + teamId, params, auth_token_string, new JsonHttpResponseHandler() {
+                                @Override
+                                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+
+                                    Toast.makeText(getBaseContext(), "Success: " + statusCode, Toast.LENGTH_SHORT).show();
+                                    Log.e("response", response.toString());
+
+                                    Intent i = new Intent(getBaseContext(), TeamRoster.class);
+                                    startActivity(i);
+                                }
+
+                                @Override
+                                public void onFailure(int statusCode, Header[] headers, String error, Throwable throwable) {
+                                    Toast.makeText(getBaseContext(), "Error: " + statusCode + " " + error, Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        else
+                            FullcountRestClient.post("/api/teams", params, auth_token_string, new JsonHttpResponseHandler() {
+                                @Override
+                                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+
+                                    Toast.makeText(getBaseContext(), "Success: " + statusCode, Toast.LENGTH_SHORT).show();
+                                    Log.e("response", response.toString());
+
+                                    SharedPreferences.Editor editor = settings.edit();
+                                    try {
+                                        editor.putString("teamId", response.getString("_id"));
+                                    } catch (JSONException je) {
+                                        je.printStackTrace();
+                                    }
+                                    editor.commit();
+                                    Intent i = new Intent(getBaseContext(), TeamRoster.class);
+                                    startActivity(i);
+                                }
+
+                                @Override
+                                public void onFailure(int statusCode, Header[] headers, String error, Throwable throwable) {
+                                    Toast.makeText(getBaseContext(), "Error: " + statusCode + " " + error, Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                    }
+                });
+            }}).start();
     }
 
 
