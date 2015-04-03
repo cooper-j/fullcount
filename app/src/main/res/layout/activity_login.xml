@@ -16,7 +16,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:src="@drawable/fullcountlogotmp"
+                android:src="@drawable/fullcountlogotmp_transparent"
                 android:adjustViewBounds="true"
                 android:layout_marginLeft="50dp"
                 android:layout_marginRight="50dp"
