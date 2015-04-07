@@ -1,46 +1,25 @@
 package edu.csulb.android.fullcount;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Handler;
-import android.os.Message;
-import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
-
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import org.apache.http.Header;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.HttpResponse;
-
-
-import org.apache.http.entity.StringEntity;
-
-import java.io.UnsupportedEncodingException;
-import java.lang.Thread;
-import java.io.IOException;
-import org.apache.http.client.ClientProtocolException;
-
-import org.json.JSONObject;
-import org.json.JSONException;
-import org.apache.http.util.EntityUtils;
-import org.apache.http.protocol.HTTP;
-import android.util.Log;
-import org.apache.http.message.BasicHeader;
-
-import android.content.Intent;
-
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+
+import org.apache.http.Header;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
 
 public class ConnectionActivity extends Activity {
 
@@ -92,7 +71,8 @@ public class ConnectionActivity extends Activity {
                         try {
                             String auth = Base64.encodeToString((field2 + ":" + field3).getBytes("UTF-8"), Base64.URL_SAFE | Base64.NO_WRAP);
                             editor.putString("auth", auth);
-                            editor.commit();
+                            editor.apply();
+
                             FullcountRestClient.post("/api/users", params, "", new JsonHttpResponseHandler() {
                                 @Override
                                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {

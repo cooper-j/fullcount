@@ -156,6 +156,7 @@ public class IntroActivity extends Activity {
 		} catch (JSONException je) {
 		}
 
+
 		//sends the json object to the server via our HttpHelper activity
 		HttpResponse response = mHttpHelp.post("/api/users/login/facebook", jsonobj, "", "");
 

@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -23,7 +22,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 
 
 public class SettingsActivity extends Activity {
@@ -45,7 +43,7 @@ public class SettingsActivity extends Activity {
         EditText email = (EditText)findViewById(R.id.settings_email);
 
         try {
-            JSONObject jsonobj = new JSONObject(settings.getString("user", auth_token_string));
+            JSONObject jsonobj = new JSONObject(settings.getString("user", ""));
             HttpResponse response = httpHelp.get("/api/users/"+jsonobj.get("_id").toString(), auth_token_string);
 	        if (response != null && response.getStatusLine().getStatusCode() == 200) {
 		        Log.e("Get", response.getStatusLine().toString());
