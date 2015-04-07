@@ -5,10 +5,13 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.facebook.Session;
@@ -67,17 +70,23 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 
 		final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 
+		final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+		transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+
+		Fragment fragment = null;
+
 		switch (viewId) {
 			case R.id.drawer_picture:
 			case R.id.drawer_username:
-				fragmentManager.beginTransaction().replace(R.id.container, HomeFragment.newInstance()).commit();
+				fragment = new HomeFragment();
 				break;
 
 			case R.id.drawer_team:
 				final String auth = settings.getString("auth", "");
 				final String teamId = settings.getString("teamId", "");
 				final boolean authIsBasic = settings.getBoolean("authIsBasic", true);
-				fragmentManager.beginTransaction().replace(R.id.container, TeamFragment.newInstance(auth, authIsBasic, teamId)).commit();
+				fragment = TeamFragment.newInstance(auth, authIsBasic, teamId);
+				transaction.addToBackStack(TeamFragment.class.getName());
 				break;
 
 			case R.id.drawer_create_game:
@@ -102,7 +111,14 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 
 				startActivity(new Intent(this, LoginActivity.class));
 				finish();
-				break;
+				return;
+		}
+
+		if (fragment != null) {
+			transaction.replace(R.id.container, fragment);
+			transaction.commit();
+		} else if (DEBUG_MODE) {
+			Log.e(TAG, "Unexpected null fragment");
 		}
 	}
 

@@ -27,7 +27,7 @@ public class Player implements Serializable {
 	private String mId;
 	private String mUsername;
 	private String mCity;
-	private String mTeam; // TODO Create Team model
+	private Team mTeam; // TODO Create Team model
 	private String mPictureUri;
 
 	public Player(String id) {
@@ -54,14 +54,14 @@ public class Player implements Serializable {
 		mCity = city;
 	}
 
-	public String getTeam(String defaultValue) {
-		return (mTeam == null || mTeam.isEmpty()) ? defaultValue : getTeam();
+	public String getTeamName(String defaultValue) {
+		return (mTeam == null) ? defaultValue : getTeam().getName();
 	}
-	public String getTeam() {
+	public Team getTeam() {
 		return mTeam;
 	}
 
-	public void setTeam(String team) {
+	public void setTeam(Team team) {
 		mTeam = team;
 	}
 
@@ -96,21 +96,26 @@ public class Player implements Serializable {
 		return jsonObject;
 	}
 
+	@Override
+	public String toString() {
+		return ("Player "   + mUsername + " (" +
+				"ID: "      + mId + "), " +
+				"City: "    + mCity + ", " +
+				((mTeam != null) ? (mTeam.toString() + ", ") : "") +
+				"Picture: " + mPictureUri
+		);
+	}
+
 	public static Player parseFromJSON(JSONObject jsonObject) throws JSONException {
 		final Player player = new Player(jsonObject.getString(TAG_ID));
 
 		player.setUsername(jsonObject.optString(TAG_USERNAME, "Unknown")); // TODO String
 		player.setCity(jsonObject.optString(TAG_CITY));
-		player.setTeam(jsonObject.optString(TAG_TEAM));
+		// TODO Replace player.setTeam(jsonObject.optString(TAG_TEAM));
 		player.setPictureUri(jsonObject.optString(TAG_PICTURE_URL));
 
 		if (DEBUG_MODE) {
-			Log.i(TAG, "Parsed JSON Player "
-					+ player.getUsername() + " (ID: "
-					+ player.getId() + "), City: "
-					+ player.getCity() + ", Team: "
-					+ player.getTeam() + ", Picture: "
-					+ player.getPictureUri());
+			Log.i(TAG, "Parsed JSON: " + player.toString());
 		}
 
 		return player;

@@ -1,9 +1,8 @@
 package edu.csulb.android.fullcount.ui.fragments;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,6 +21,7 @@ import org.json.JSONObject;
 
 import edu.csulb.android.fullcount.FullCountApplication;
 import edu.csulb.android.fullcount.R;
+import edu.csulb.android.fullcount.io.models.Team;
 import edu.csulb.android.fullcount.tools.FullCountRestClient;
 import edu.csulb.android.fullcount.ui.activities.HomeActivity;
 
@@ -37,6 +37,7 @@ public class TeamFragment extends Fragment implements View.OnClickListener {
 	private String mAuthTokenString;
 	private boolean mAuthIsBasic;
 	private String mTeamId;
+	private Team mTeam;
 
 	private EditText mTeamName;
 	private EditText mTeamCity;
@@ -109,15 +110,19 @@ public class TeamFragment extends Fragment implements View.OnClickListener {
 						}
 
 						try {
-							mTeamName.setText(response.getString("name"));
-							mTeamCity.setText(response.getString("city"));
-							// TODO Add team League
-							mTeamLeagueName.setText(response.getString("leagueName"));
-							mTeamSeason.setText(response.getString("season"));
+							final Team team = Team.parseFromJSON(response);
 
-							SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
-							editor.putString("roster", response.getJSONArray("roster").toString());
-							editor.commit();
+							if (getActivity() != null) {
+								((HomeActivity) getActivity()).player.setTeam(team);
+								fillTeamInformation(team);
+								
+								/* TODO Add roster
+								SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
+								editor.putString("roster", response.getJSONArray("roster").toString());
+								editor.commit();
+								*/
+							}
+
 						} catch (JSONException e) {
 							e.printStackTrace();
 						}
@@ -165,6 +170,25 @@ public class TeamFragment extends Fragment implements View.OnClickListener {
 		}
 
 		return inflateView;
+	}
+
+	@Override
+	public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+
+		final Team team = ((HomeActivity) getActivity()).player.getTeam();
+
+		if (team != null) {
+			fillTeamInformation(team);
+		}
+	}
+
+	private void fillTeamInformation(Team team) {
+		mTeamName.setText(team.getName());
+		mTeamCity.setText(team.getCity());
+		mTeamLeague.setSelection(team.getLeagueCategory());
+		mTeamLeagueName.setText(team.getLeagueName());
+		mTeamSeason.setText(team.getSeason());
 	}
 
 	@Override
