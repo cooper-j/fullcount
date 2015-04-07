@@ -33,6 +33,7 @@ import java.util.Arrays;
 import edu.csulb.android.fullcount.FullCountApplication;
 import edu.csulb.android.fullcount.R;
 import edu.csulb.android.fullcount.io.models.Player;
+import edu.csulb.android.fullcount.io.models.Team;
 import edu.csulb.android.fullcount.tools.FullCountRestClient;
 import edu.csulb.android.fullcount.tools.WebUtils;
 
@@ -197,9 +198,9 @@ public class LoginActivity extends FragmentActivity {
 
 							// TODO Enhance local data storage
 							try {
+								// TODO Get user object from response
 								final Player player = Player.parseFromJSON(response);
-
-								editor.putString("teamId", player.getTeam());
+								// TODO Add team
 								// TODO Add team roster
 								editor.apply();
 
@@ -209,6 +210,11 @@ public class LoginActivity extends FragmentActivity {
 							}
 						} else if (response != null) {
 
+							final Session session = Session.getActiveSession();
+							if (session != null) {
+								session.closeAndClearTokenInformation();
+							}
+
 							if (DEBUG_MODE) {
 								Log.e(TAG, "Error " + statusCode + ": " + response.toString());
 							}
@@ -216,6 +222,11 @@ public class LoginActivity extends FragmentActivity {
 							// TODO Handle error message
 							Toast.makeText(getActivity(), response.toString(), Toast.LENGTH_SHORT).show();
 						} else {
+
+							final Session session = Session.getActiveSession();
+							if (session != null) {
+								session.closeAndClearTokenInformation();
+							}
 
 							if (DEBUG_MODE) {
 								Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
@@ -228,6 +239,11 @@ public class LoginActivity extends FragmentActivity {
 					@Override
 					public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject error) {
 						dismissProgressDialog();
+
+						final Session session = Session.getActiveSession();
+						if (session != null) {
+							session.closeAndClearTokenInformation();
+						}
 
 						if (error != null) {
 							if (DEBUG_MODE) {
@@ -359,11 +375,18 @@ public class LoginActivity extends FragmentActivity {
 
 							// TODO Enhance local data storage
 							try {
-								final Player player = Player.parseFromJSON(response);
+								final Player player = Player.parseFromJSON(response.getJSONObject("user"));
 
-								editor.putString("teamId", player.getTeam());
-								// TODO Add team roster
-								editor.apply();
+								JSONObject jsonTeam = response.optJSONObject("team");
+								if (jsonTeam != null) {
+									final Team team = Team.parseFromJSON(jsonTeam);
+
+									editor.putString("teamId", team.getId());
+									// TODO Add team roster
+									editor.apply();
+
+									player.setTeam(team);
+								}
 
 								((LoginActivity) getActivity()).startHomeScreen(player);
 							} catch (JSONException e) {
@@ -502,12 +525,20 @@ public class LoginActivity extends FragmentActivity {
 								Log.i(TAG, "/api/users: " + response.toString());
 							}
 
+							// TODO Enhance local data storage
 							try {
-								final Player player = Player.parseFromJSON(response);
+								final Player player = Player.parseFromJSON(response.getJSONObject("user"));
 
-								editor.putString("teamId", player.getTeam());
-								// TODO Add team roster
-								editor.apply();
+								JSONObject jsonTeam = response.optJSONObject("team");
+								if (jsonTeam != null) {
+									final Team team = Team.parseFromJSON(jsonTeam);
+
+									editor.putString("teamId", team.getId());
+									// TODO Add team roster
+									editor.apply();
+
+									player.setTeam(team);
+								}
 
 								((LoginActivity) getActivity()).startHomeScreen(player);
 							} catch (JSONException e) {

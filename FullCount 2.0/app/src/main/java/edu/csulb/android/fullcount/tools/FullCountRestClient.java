@@ -23,23 +23,23 @@ public class FullCountRestClient {
 	static final boolean DEBUG_MODE = FullCountApplication.DEBUG_MODE;
 
 	// private static final String BASE_URL = "http://fullcount.azurewebsites.net";
-	private static final String BASE_URL = "http://192.168.1.3:3000";
+	private static final String BASE_URL = "http://ssh.solevic.com:3000";
 
 
 	private static AsyncHttpClient client = new AsyncHttpClient();
 
 	public static void get(String url, RequestParams params, String auth, boolean basic, AsyncHttpResponseHandler responseHandler) {
-		if (auth != null && !auth.matches("")) client.addHeader("Authorization", basic ? "Basic " : " Bearer " + auth);
+		if (auth != null && !auth.matches("")) client.addHeader("Authorization", (basic ? "Basic " : " Bearer ") + auth);
 		client.get(getAbsoluteUrl(url), params, responseHandler);
 	}
 
 	public static void post(String url, RequestParams params, String auth, boolean basic, AsyncHttpResponseHandler responseHandler) {
-		if (auth != null && !auth.matches("")) client.addHeader("Authorization", basic ? "Basic " : " Bearer " + auth);
+		if (auth != null && !auth.matches("")) client.addHeader("Authorization", (basic ? "Basic " : " Bearer ") + auth);
 		client.post(getAbsoluteUrl(url), params, responseHandler);
 	}
 
 	public static void post(Context context, String url, JSONObject jsonObject, String auth, boolean basic, JsonHttpResponseHandler responseHandler) {
-		if (auth != null && !auth.matches("")) client.addHeader("Authorization", basic ? "Basic " : " Bearer " + auth);
+		if (auth != null && !auth.matches("")) client.addHeader("Authorization", (basic ? "Basic " : " Bearer ") + auth);
 		try {
 			final StringEntity entity = new StringEntity(jsonObject.toString());
 			entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
@@ -53,7 +53,7 @@ public class FullCountRestClient {
 	}
 
 	public static void post(Context context, String url, JSONArray jsonArray, String auth, boolean basic, JsonHttpResponseHandler responseHandler) {
-		if (auth != null && !auth.matches("")) client.addHeader("Authorization", basic ? "Basic " : " Bearer " + auth);
+		if (auth != null && !auth.matches("")) client.addHeader("Authorization", (basic ? "Basic " : " Bearer ") + auth);
 		try {
 			final StringEntity entity = new StringEntity(jsonArray.toString());
 			entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
@@ -67,12 +67,12 @@ public class FullCountRestClient {
 	}
 
 	public static void put(String url, RequestParams params, String auth, boolean basic, AsyncHttpResponseHandler responseHandler) {
-		if (auth != null && !auth.matches("")) client.addHeader("Authorization", basic ? "Basic " : " Bearer " + auth);
+		if (auth != null && !auth.matches("")) client.addHeader("Authorization", (basic ? "Basic " : " Bearer ") + auth);
 		client.put(getAbsoluteUrl(url), params, responseHandler);
 	}
 
 	public static void put(Context context, String url, JSONObject jsonObject, String auth, boolean basic, JsonHttpResponseHandler responseHandler) {
-		if (auth != null && !auth.matches("")) client.addHeader("Authorization", basic ? "Basic " : " Bearer " + auth);
+		if (auth != null && !auth.matches("")) client.addHeader("Authorization", (basic ? "Basic " : " Bearer ") + auth);
 		try {
 			final StringEntity entity = new StringEntity(jsonObject.toString());
 			entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
@@ -86,7 +86,7 @@ public class FullCountRestClient {
 	}
 
 	public static void put(Context context, String url, JSONArray jsonArray, String auth, boolean basic, JsonHttpResponseHandler responseHandler) {
-		if (auth != null && !auth.matches("")) client.addHeader("Authorization", basic ? "Basic " : " Bearer " + auth);
+		if (auth != null && !auth.matches("")) client.addHeader("Authorization", (basic ? "Basic " : " Bearer ") + auth);
 		try {
 			final StringEntity entity = new StringEntity(jsonArray.toString());
 			entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));

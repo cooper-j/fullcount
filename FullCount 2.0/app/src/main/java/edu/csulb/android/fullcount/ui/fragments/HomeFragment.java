@@ -3,7 +3,6 @@ package edu.csulb.android.fullcount.ui.fragments;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,15 +57,16 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 	}
 
 	@Override
-	public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
+	public void onResume() {
+		super.onResume();
 
 		mPlayer = ((HomeActivity) getActivity()).player;
 
 		// TODO Add picture
 		mPlayerUsername.setText(mPlayer.getUsername());
-		mPlayerTeam.setText(mPlayer.getTeam("No team")); // TODO String
+		mPlayerTeam.setText(mPlayer.getTeamName("No team")); // TODO String
 		mPlayerCity.setText(mPlayer.getCity());
+
 	}
 
 	@Override

@@ -2,26 +2,38 @@ package edu.csulb.android.fullcount.ui.activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.Signature;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
+import com.facebook.Session;
+import com.facebook.SessionState;
+import com.loopj.android.http.JsonHttpResponseHandler;
+
+import org.apache.http.Header;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import edu.csulb.android.fullcount.FullCountApplication;
 import edu.csulb.android.fullcount.R;
+import edu.csulb.android.fullcount.io.models.Player;
+import edu.csulb.android.fullcount.tools.FullCountRestClient;
 
 
-public class SplashActivity extends Activity {
+public class SplashActivity extends Activity implements Session.StatusCallback {
 
 	static final String TAG = SplashActivity.class.getSimpleName();
 	static final boolean DEBUG_MODE = FullCountApplication.DEBUG_MODE;
@@ -30,7 +42,10 @@ public class SplashActivity extends Activity {
 
 	private View mSplash;
 
+	private boolean isAutoLoginChecked = false;
 	private boolean isSplashTime = false;
+
+	private Player mPlayer;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -80,8 +95,6 @@ public class SplashActivity extends Activity {
 			}
 		}, SPLASH_DELAY);
 
-		/* TODO Facebook autologin
-
 		Session session = Session.getActiveSession();
 
 		if (session == null) {
@@ -118,13 +131,10 @@ public class SplashActivity extends Activity {
 			Log.i(TAG, "Active session found");
 		}
 
-		checkFacebookSession(session);
-		*/
-
+		checkAutoLogin(session);
 	}
 
-	/*
-	private void checkFacebookSession(Session session) {
+	private void checkAutoLogin(Session session) {
 		if (session != null) {
 			if (session.isOpened()) {
 
@@ -139,8 +149,18 @@ public class SplashActivity extends Activity {
 					Log.i(TAG, "Session not opened !");
 				}
 
-				isAutoLoginChecked = true;
 				session.closeAndClearTokenInformation();
+
+				final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+				final String auth = settings.getString("auth", null);
+
+				if (auth != null) {
+					connect(auth);
+				} else {
+					isAutoLoginChecked = true;
+					startHomeActivity();
+				}
+
 			}
 		} else if (DEBUG_MODE) {
 			Log.w(TAG, "Could not instantiate Facebook session");
@@ -148,10 +168,181 @@ public class SplashActivity extends Activity {
 	}
 
 	private void connectFacebook(String accessToken) {
-		LoginTask task = new LoginTask(this);
-		task.setListener(this);
-		task.setAccessToken(accessToken);
-		task.execute();
+
+		try {
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("token", accessToken);
+
+			final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+			final SharedPreferences.Editor editor = settings.edit();
+
+			editor.putString("auth", accessToken);
+			editor.putBoolean("authIsBasic", false);
+			editor.commit();
+
+			FullCountRestClient.post(this, "/api/users/login/facebook", jsonObject, "", true, new JsonHttpResponseHandler() {
+				@Override
+				public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+					isAutoLoginChecked = true;
+
+					if (response != null && (statusCode == 200 || statusCode == 201)) {
+
+						if (DEBUG_MODE) {
+							Log.i(TAG, "/api/users/login/facebook: " + response.toString());
+						}
+
+						// TODO Enhance local data storage
+						try {
+							// TODO Get user object from response
+							final Player player = Player.parseFromJSON(response);
+							// TODO Add team
+							// TODO Add team roster
+							editor.apply();
+
+							mPlayer = player;
+							startHomeActivity();
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+					} else if (response != null) {
+
+						final Session session = Session.getActiveSession();
+						if (session != null) {
+							session.closeAndClearTokenInformation();
+						}
+
+						if (DEBUG_MODE) {
+							Log.e(TAG, "Error " + statusCode + ": " + response.toString());
+						}
+					} else {
+
+						final Session session = Session.getActiveSession();
+						if (session != null) {
+							session.closeAndClearTokenInformation();
+						}
+
+						if (DEBUG_MODE) {
+							Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
+						}
+					}
+				}
+
+				@Override
+				public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject error) {
+
+					final Session session = Session.getActiveSession();
+					if (session != null) {
+						session.closeAndClearTokenInformation();
+					}
+
+					if (error != null) {
+						if (DEBUG_MODE) {
+							Log.e(TAG, "Error " + statusCode + ": " + error.toString());
+						}
+					} else {
+						if (DEBUG_MODE) {
+							Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
+						}
+					}
+				}
+			});
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void connect(String auth) {
+		FullCountRestClient.get("/api/users/current", null, auth, true, new JsonHttpResponseHandler() {
+			@Override
+			public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+				isAutoLoginChecked = true;
+
+				if (response != null && statusCode == 200) {
+
+					if (DEBUG_MODE) {
+						Log.i(TAG, "/api/users/current: " + response.toString());
+					}
+
+					// TODO Enhance local data storage
+					try {
+						final Player player = Player.parseFromJSON(response);
+
+						/* // TODO Add team
+						JSONObject jsonTeam = response.optJSONObject("team");
+						if (jsonTeam != null) {
+							final Team team = Team.parseFromJSON(jsonTeam);
+
+							final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+							final SharedPreferences.Editor editor = settings.edit();
+							editor.putString("teamId", team.getId());
+							// TODO Add team roster
+							editor.apply();
+
+							player.setTeam(team);
+						}
+						*/
+
+						mPlayer = player;
+
+						startHomeActivity();
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+
+				} else if (response != null) {
+
+					if (DEBUG_MODE) {
+						Log.e(TAG, "Error " + statusCode + ": " + response.toString());
+					}
+
+					PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().clear();
+
+					startHomeActivity();
+				} else {
+
+					if (DEBUG_MODE) {
+						Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
+					}
+					PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().clear();
+
+					startHomeActivity();
+				}
+			}
+
+			@Override
+			public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+
+				isAutoLoginChecked = true;
+
+				if (DEBUG_MODE) {
+					Log.e(TAG, "Error " + statusCode + ": " + responseString);
+					throwable.printStackTrace();
+				}
+
+				startHomeActivity();
+			}
+
+			@Override
+			public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject error) {
+				isAutoLoginChecked = true;
+
+				PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().clear();
+
+				if (error != null) {
+					if (DEBUG_MODE) {
+						Log.e(TAG, "Error " + statusCode + ": " + error.toString());
+						throwable.printStackTrace();
+					}
+				} else {
+					if (DEBUG_MODE) {
+						Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
+						throwable.printStackTrace();
+					}
+				}
+
+				startHomeActivity();
+			}
+		});
 	}
 
 	@Override
@@ -165,7 +356,6 @@ public class SplashActivity extends Activity {
 			session.removeCallback(this);
 		}
 	}
-	*/
 
 
 	private void startHomeActivity() {
@@ -176,7 +366,7 @@ public class SplashActivity extends Activity {
 			return;
 		}
 
-		if (!isSplashTime) { // TODO Add auto login check
+		if (!isSplashTime || !isAutoLoginChecked) {
 			if (DEBUG_MODE) {
 				Log.w(TAG, "It's time !.. to wait some more..");
 			}
@@ -186,8 +376,7 @@ public class SplashActivity extends Activity {
 
 		Animation animation;
 
-		if (false) { // TODO Check autologin
-			// TODO Change animation to fade out
+		if (mPlayer != null) {
 			animation = AnimationUtils.loadAnimation(this, R.anim.splash_out);
 		} else {
 			animation = AnimationUtils.loadAnimation(this, android.R.anim.fade_out);
@@ -205,15 +394,14 @@ public class SplashActivity extends Activity {
 
 			@Override
 			public void onAnimationEnd(Animation animation) {
-				if (false) { // TODO Add autologin check
-					/*
-					final Intent intent = new Intent(SplashActivity.this, HomeActivity.class);
+				if (mPlayer != null) {
+					Intent intent = new Intent(SplashActivity.this, HomeActivity.class);
 					intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+					intent.putExtra(HomeActivity.EXTRA_PLAYER, mPlayer);
 					startActivity(intent);
-
 					finish();
+
 					overridePendingTransition(R.anim.home_in, R.anim.splash_out);
-					*/
 				} else {
 					final Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
 					intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -222,31 +410,9 @@ public class SplashActivity extends Activity {
 					finish();
 					overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
 				}
-
 			}
 		});
 
 		mSplash.startAnimation(animation);
 	}
-
-	/*
-	@Override
-	public void onLoginComplete() {
-		isAutoLoginChecked = true;
-		startHomeActivity();
-	}
-
-	@Override
-	public void onLoginIncomplete() {
-
-		final Session session = Session.getActiveSession();
-		if (session != null) {
-			session.closeAndClearTokenInformation();
-		}
-
-		isAutoLoginChecked = true;
-		startHomeActivity();
-	}
-	*/
-
 }
