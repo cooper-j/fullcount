@@ -24,6 +24,7 @@ import com.facebook.widget.LoginButton;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.apache.http.Header;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -201,7 +202,7 @@ public class LoginActivity extends FragmentActivity {
 								// TODO Get user object from response
 								final Player player = Player.parseFromJSON(response);
 								// TODO Add team
-								// TODO Add team roster
+                                // TODO Add team roster
 								editor.apply();
 
 								((LoginActivity) getActivity()).startHomeScreen(player);

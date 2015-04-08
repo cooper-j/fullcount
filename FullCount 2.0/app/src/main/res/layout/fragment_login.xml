@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="totor@totor.com"
+            android:text="totoa@totoa.com"
             android:hint="E-mail"/>
 
         <EditText
@@ -28,7 +28,7 @@
             android:layout_marginTop="15dp"
             android:gravity="center"
             android:inputType="textPassword"
-            android:text="totor"
+            android:text="totoa"
             android:hint="Password"/>
 
         <Button
