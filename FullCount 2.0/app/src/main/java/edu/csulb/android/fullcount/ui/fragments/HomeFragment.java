@@ -1,7 +1,6 @@
 package edu.csulb.android.fullcount.ui.fragments;
 
 import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -9,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import edu.csulb.android.fullcount.R;
 import edu.csulb.android.fullcount.io.models.Player;
@@ -72,8 +70,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 	@Override
 	public void onClick(View v) {
 		if (v.getId() == R.id.home_profile_edit) {
-			// TODO Add profile edit view
-			Toast.makeText(getActivity(), "Profile edit", Toast.LENGTH_SHORT).show();
+			mListener.onProfileEditionClick();
 		}
 	}
 
@@ -97,7 +94,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 	}
 
 	public interface OnFragmentInteractionListener {
-		public void onFragmentInteraction(Uri uri);
+		public void onProfileEditionClick();
 	}
 
 }

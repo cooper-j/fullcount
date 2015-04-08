@@ -2,7 +2,6 @@ package edu.csulb.android.fullcount.ui.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -21,9 +20,10 @@ import edu.csulb.android.fullcount.R;
 import edu.csulb.android.fullcount.io.models.Player;
 import edu.csulb.android.fullcount.ui.fragments.HomeFragment;
 import edu.csulb.android.fullcount.ui.fragments.NavigationDrawerFragment;
+import edu.csulb.android.fullcount.ui.fragments.ProfileEditFragment;
 import edu.csulb.android.fullcount.ui.fragments.TeamFragment;
 
-public class HomeActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks, HomeFragment.OnFragmentInteractionListener, TeamFragment.OnFragmentInteractionListener {
+public class HomeActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks, HomeFragment.OnFragmentInteractionListener, TeamFragment.OnFragmentInteractionListener, ProfileEditFragment.OnFragmentInteractionListener {
 
 	static final String TAG = HomeActivity.class.getSimpleName();
 	static final boolean DEBUG_MODE = FullCountApplication.DEBUG_MODE;
@@ -142,11 +142,6 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 	}
 
 	@Override
-	public void onFragmentInteraction(Uri uri) {
-
-	}
-
-	@Override
 	public void onTeamCreation() {
 		// TODO Add team roster fragment
 	}
@@ -154,5 +149,24 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 	@Override
 	public void onTeamEdition() {
 		// TODO Add team roster fragment
+	}
+
+	@Override
+	public void onProfileEditionClick() {
+		final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+		final String auth = settings.getString("auth", "");
+		final boolean authIsBasic = settings.getBoolean("authIsBasic", true);
+
+		final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+		transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+		transaction.addToBackStack(ProfileEditFragment.class.getName());
+		transaction.replace(R.id.container, ProfileEditFragment.newInstance(auth, authIsBasic));
+		transaction.commit();
+	}
+
+	@Override
+	public void onProfileSaved() {
+		getSupportFragmentManager().popBackStack();
+		// TODO Pop back stack
 	}
 }

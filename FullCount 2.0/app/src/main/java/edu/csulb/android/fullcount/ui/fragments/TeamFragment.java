@@ -112,16 +112,18 @@ public class TeamFragment extends Fragment implements View.OnClickListener {
 						try {
 							final Team team = Team.parseFromJSON(response);
 
+
 							if (getActivity() != null) {
 								((HomeActivity) getActivity()).player.setTeam(team);
-								fillTeamInformation(team);
-								
-								/* TODO Add roster
-								SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
-								editor.putString("roster", response.getJSONArray("roster").toString());
-								editor.commit();
-								*/
 							}
+
+							fillTeamInformation(team);
+
+							/* TODO Add roster
+							SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
+							editor.putString("roster", response.getJSONArray("roster").toString());
+							editor.commit();
+							*/
 
 						} catch (JSONException e) {
 							e.printStackTrace();
@@ -222,6 +224,18 @@ public class TeamFragment extends Fragment implements View.OnClickListener {
 									Log.i(TAG, "/api/teams/" + mTeamId + ": " + response.toString());
 
 									Toast.makeText(getActivity(), "Team successfully edited.", Toast.LENGTH_SHORT).show();
+								}
+
+								try {
+									final Team team = Team.parseFromJSON(response);
+
+									if (getActivity() != null) {
+										((HomeActivity) getActivity()).player.setTeam(team);
+									}
+								} catch (JSONException e) {
+									if (DEBUG_MODE) {
+										e.printStackTrace();
+									}
 								}
 
 								if (mListener != null) {
