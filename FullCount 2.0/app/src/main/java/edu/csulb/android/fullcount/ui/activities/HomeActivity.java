@@ -15,9 +15,6 @@ import android.widget.Toast;
 
 import com.facebook.Session;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import edu.csulb.android.fullcount.FullCountApplication;
 import edu.csulb.android.fullcount.R;
 import edu.csulb.android.fullcount.io.models.Player;
@@ -27,6 +24,7 @@ import edu.csulb.android.fullcount.ui.fragments.NavigationDrawerFragment;
 import edu.csulb.android.fullcount.ui.fragments.ProfileEditFragment;
 import edu.csulb.android.fullcount.ui.fragments.TeamFragment;
 
+public class HomeActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks, HomeFragment.OnFragmentInteractionListener, TeamFragment.OnFragmentInteractionListener, ProfileEditFragment.OnFragmentInteractionListener, BattingRosterFragment.OnFragmentInteractionListener {
 
 	static final String TAG = HomeActivity.class.getSimpleName();
 	static final boolean DEBUG_MODE = FullCountApplication.DEBUG_MODE;
@@ -88,6 +86,7 @@ import edu.csulb.android.fullcount.ui.fragments.TeamFragment;
 				final String auth = settings.getString("auth", "");
 				final String teamId = settings.getString("teamId", "");
 				final boolean authIsBasic = settings.getBoolean("authIsBasic", true);
+				fragment = TeamFragment.newInstance(auth, authIsBasic, teamId);
 				transaction.addToBackStack(TeamFragment.class.getName());
 				break;
 
@@ -174,5 +173,10 @@ import edu.csulb.android.fullcount.ui.fragments.TeamFragment;
 	public void onProfileSaved() {
 		getSupportFragmentManager().popBackStack();
 		// TODO Pop back stack
+	}
+
+	@Override
+	public void onBattingRosterCreation() {
+		// TODO Add game sheet fragment
 	}
 }
