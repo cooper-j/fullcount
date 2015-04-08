@@ -9,9 +9,9 @@
         android:padding="5dp" />
     <TextView
         android:id="@+id/Itemname"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:paddingTop="5dp"
-        android:layout_toRightOf="@+id/icon" />
-</RelativeLayout>
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textSize="20sp"
+    android:paddingTop="5dp"
+    android:layout_toRightOf="@+id/icon" />
+    </RelativeLayout>

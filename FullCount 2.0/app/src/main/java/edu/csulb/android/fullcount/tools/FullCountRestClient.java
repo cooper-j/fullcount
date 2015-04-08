@@ -25,7 +25,6 @@ public class FullCountRestClient {
 	// private static final String BASE_URL = "http://fullcount.azurewebsites.net";
 	private static final String BASE_URL = "http://ssh.solevic.com:3000";
 
-
 	private static AsyncHttpClient client = new AsyncHttpClient();
 
 	public static void get(String url, RequestParams params, String auth, boolean basic, AsyncHttpResponseHandler responseHandler) {

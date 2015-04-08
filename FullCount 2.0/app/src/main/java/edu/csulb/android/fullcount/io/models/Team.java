@@ -35,7 +35,7 @@ public class Team implements Serializable {
 	private String mOwnerId;
 	private String mName;
 	private String mCity;
-	private List<Player> mRoster;
+	private List<RosterMember> mRoster;
 	private int mLeagueCategory;
 	private String mLeagueName;
 	private String mSeason;
@@ -73,11 +73,11 @@ public class Team implements Serializable {
 		mCity = city;
 	}
 
-	public List<Player> getRoster() {
+	public List<RosterMember> getRoster() {
 		return mRoster;
 	}
 
-	public void setRoster(List<Player> roster) {
+	public void setRoster(List<RosterMember> roster) {
 		mRoster = roster;
 	}
 
@@ -162,10 +162,10 @@ public class Team implements Serializable {
 
 		final JSONArray jsonRoster = jsonTeam.optJSONArray(TAG_ROSTER);
 		if (jsonRoster != null && jsonRoster.length() > 0) {
-			final List<Player> roster = new ArrayList<>();
+			final List<RosterMember> roster = new ArrayList<>();
 
 			for (int i = 0; i < jsonRoster.length(); i++) {
-				roster.add(Player.parseFromJSON(jsonRoster.getJSONObject(i)));
+				roster.add(RosterMember.parseFromJSON(jsonRoster.getJSONObject(i)));
 			}
 
 			team.setRoster(roster);

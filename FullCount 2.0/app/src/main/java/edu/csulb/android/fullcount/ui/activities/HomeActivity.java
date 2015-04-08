@@ -15,15 +15,18 @@ import android.widget.Toast;
 
 import com.facebook.Session;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import edu.csulb.android.fullcount.FullCountApplication;
 import edu.csulb.android.fullcount.R;
 import edu.csulb.android.fullcount.io.models.Player;
+import edu.csulb.android.fullcount.ui.fragments.BattingRosterFragment;
 import edu.csulb.android.fullcount.ui.fragments.HomeFragment;
 import edu.csulb.android.fullcount.ui.fragments.NavigationDrawerFragment;
 import edu.csulb.android.fullcount.ui.fragments.ProfileEditFragment;
 import edu.csulb.android.fullcount.ui.fragments.TeamFragment;
 
-public class HomeActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks, HomeFragment.OnFragmentInteractionListener, TeamFragment.OnFragmentInteractionListener, ProfileEditFragment.OnFragmentInteractionListener {
 
 	static final String TAG = HomeActivity.class.getSimpleName();
 	static final boolean DEBUG_MODE = FullCountApplication.DEBUG_MODE;
@@ -85,12 +88,15 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 				final String auth = settings.getString("auth", "");
 				final String teamId = settings.getString("teamId", "");
 				final boolean authIsBasic = settings.getBoolean("authIsBasic", true);
-				fragment = TeamFragment.newInstance(auth, authIsBasic, teamId);
 				transaction.addToBackStack(TeamFragment.class.getName());
 				break;
 
 			case R.id.drawer_create_game:
 				Toast.makeText(this, "Create game", Toast.LENGTH_SHORT).show();
+                if (player.getTeam() != null) {
+                    fragment = BattingRosterFragment.newInstance(player.getTeam().getRoster());
+                    transaction.addToBackStack(BattingRosterFragment.class.getName());
+                }
 				// TODO fragmentManager.beginTransaction().replace(R.id.container, CreateGameFragment.newInstance()).commit();
 				break;
 
