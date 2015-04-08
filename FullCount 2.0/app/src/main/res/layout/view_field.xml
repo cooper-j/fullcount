@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="200dp"
+    android:layout_height="200dp"
+    android:background="@drawable/field">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:text="1B"
+            android:id="@+id/"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:text="2B"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:text="3B"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:text="HR"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:text="BB"/>
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/field_helper"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"/>
+
+
+    <View
+        android:id="@+id/field_base_first"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_toEndOf="@id/field_helper"
+        android:layout_toRightOf="@id/field_helper"
+        android:layout_alignParentBottom="true"
+        android:background="#4FF0"/>
+
+    <View
+        android:id="@+id/field_base_second"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_below="@id/field_helper"
+        android:layout_toEndOf="@id/field_helper"
+        android:layout_toRightOf="@id/field_helper"
+        android:background="#4888"/>
+
+    <View
+        android:id="@+id/field_base_third"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_below="@id/field_helper"
+        android:layout_toStartOf="@id/field_helper"
+        android:layout_toLeftOf="@id/field_helper"
+        android:background="#40FF"/>
+
+    <View
+        android:id="@+id/field_base_home"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_toStartOf="@id/field_helper"
+        android:layout_toLeftOf="@id/field_helper"
+        android:layout_alignParentBottom="true"
+        android:background="#4F0F"/>
+
+    <TextView
+        android:id="@+id/field_note_base_first"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/field_base_first"
+        android:layout_alignEnd="@id/field_base_first"
+        android:layout_alignRight="@id/field_base_first"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:text="XX"
+        android:textColor="?attr/colorPrimary"/>
+
+    <TextView
+        android:id="@+id/field_note_base_second"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/field_base_second"
+        android:layout_alignEnd="@id/field_base_second"
+        android:layout_alignRight="@id/field_base_second"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:text="XX"
+        android:textColor="?attr/colorPrimary"/>
+
+    <TextView
+        android:id="@+id/field_note_base_third"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/field_base_third"
+        android:layout_alignStart="@id/field_base_third"
+        android:layout_alignLeft="@id/field_base_third"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:text="XX"
+        android:textColor="?attr/colorPrimary"/>
+
+    <TextView
+        android:id="@+id/field_note_base_home"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/field_base_home"
+        android:layout_alignStart="@id/field_base_home"
+        android:layout_alignLeft="@id/field_base_home"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:text="XX"
+        android:textColor="?attr/colorPrimary"/>
+
+    <CheckBox
+        android:id="@+id/field_ball_first"
+        android:layout_width="25dp"
+        android:layout_height="22dp"
+        android:layout_marginStart="-3dp"
+        android:layout_marginLeft="-3dp"
+        android:layout_alignParentBottom="true"/>
+
+    <CheckBox
+        android:id="@+id/field_ball_second"
+        android:layout_width="25dp"
+        android:layout_height="22dp"
+        android:layout_marginStart="-3dp"
+        android:layout_marginLeft="-3dp"
+        android:layout_above="@id/field_ball_first"/>
+
+    <CheckBox
+        android:id="@+id/field_ball_third"
+        android:layout_width="25dp"
+        android:layout_height="22dp"
+        android:layout_marginStart="-3dp"
+        android:layout_marginLeft="-3dp"
+        android:layout_above="@id/field_ball_second"/>
+
+    <CheckBox
+        android:id="@+id/field_strike_first"
+        android:layout_width="25dp"
+        android:layout_height="22dp"
+        android:layout_marginStart="-3dp"
+        android:layout_marginLeft="-3dp"
+        android:layout_toRightOf="@id/field_ball_first"
+        android:layout_toEndOf="@id/field_ball_first"
+        android:layout_alignParentBottom="true"/>
+
+    <CheckBox
+        android:id="@+id/field_strike_second"
+        android:layout_width="25dp"
+        android:layout_height="22dp"
+        android:layout_marginStart="-3dp"
+        android:layout_marginLeft="-3dp"
+        android:layout_above="@id/field_strike_first"
+        android:layout_toRightOf="@id/field_ball_second"
+        android:layout_toEndOf="@id/field_ball_second"/>
+
+    <RadioButton
+        android:id="@+id/field_out"
+        android:layout_marginRight="-8dp"
+        android:layout_marginEnd="-8dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"/>
+
+</RelativeLayout>
