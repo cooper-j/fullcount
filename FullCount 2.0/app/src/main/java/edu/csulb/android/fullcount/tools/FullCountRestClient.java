@@ -23,7 +23,7 @@ public class FullCountRestClient {
 	static final boolean DEBUG_MODE = FullCountApplication.DEBUG_MODE;
 
 	// private static final String BASE_URL = "http://fullcount.azurewebsites.net";
-    private static final String BASE_URL = "http://192.68.1.3:3000";
+    private static final String BASE_URL = "http://192.168.1.3:3000";
     //private static final String BASE_URL = "http://ssh.solevic.com:3000";
 
 	private static AsyncHttpClient client = new AsyncHttpClient();
