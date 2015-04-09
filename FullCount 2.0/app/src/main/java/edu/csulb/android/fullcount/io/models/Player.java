@@ -2,10 +2,12 @@ package edu.csulb.android.fullcount.io.models;
 
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import edu.csulb.android.fullcount.FullCountApplication;
 
@@ -22,6 +24,7 @@ public class Player implements Serializable {
 	private static final String TAG_CITY = "city";
 	private static final String TAG_TEAM = "team";
 	private static final String TAG_PICTURE_URL = "picture";
+    private static final String TAG_FAVORITES = "favorites";
 
 	// Model attributes
 	private String mId;
@@ -29,6 +32,7 @@ public class Player implements Serializable {
 	private String mCity;
 	private Team mTeam; // TODO Create Team model
 	private String mPictureUri;
+    private ArrayList<Player> mFavorites;
 
 	public Player(String id) {
 		mId = id;
@@ -73,6 +77,12 @@ public class Player implements Serializable {
 		mPictureUri = pictureUri;
 	}
 
+    public ArrayList<Player> getFavorites(){ return mFavorites; }
+
+    public void setFavorites(ArrayList<Player> favorites) { mFavorites = favorites; }
+
+    public void addFavorite(Player player) { if (mFavorites == null) mFavorites = new ArrayList<Player>(); mFavorites.add(player); }
+
 	public JSONObject toJSON() {
 		JSONObject jsonObject = new JSONObject();
 
@@ -114,6 +124,11 @@ public class Player implements Serializable {
 		player.setTeam(Team.parseFromJSON(jsonObject.optJSONObject(TAG_TEAM)));
 		player.setPictureUri(jsonObject.optString(TAG_PICTURE_URL));
 
+        JSONArray fav = jsonObject.optJSONArray(TAG_FAVORITES);
+        if (fav != null)
+            for (int i = 0; i < fav.length(); i++) {
+                player.addFavorite(Player.parseFromJSON(fav.getJSONObject(i)));
+            }
 		if (DEBUG_MODE) {
 			Log.i(TAG, "Parsed JSON: " + player.toString());
 		}

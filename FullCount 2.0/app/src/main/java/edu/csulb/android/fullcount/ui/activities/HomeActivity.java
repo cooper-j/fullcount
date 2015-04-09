@@ -26,8 +26,10 @@ import edu.csulb.android.fullcount.io.models.Player;
 import edu.csulb.android.fullcount.io.models.RosterMember;
 import edu.csulb.android.fullcount.ui.fragments.AddPlayerTeamRosterFragment;
 import edu.csulb.android.fullcount.ui.fragments.BattingRosterFragment;
+import edu.csulb.android.fullcount.ui.fragments.FavoritesFragment;
 import edu.csulb.android.fullcount.ui.fragments.HomeFragment;
 import edu.csulb.android.fullcount.ui.fragments.NavigationDrawerFragment;
+import edu.csulb.android.fullcount.ui.fragments.PlayerCardFragment;
 import edu.csulb.android.fullcount.ui.fragments.ProfileEditFragment;
 import edu.csulb.android.fullcount.ui.fragments.ScoreFinalFragment;
 import edu.csulb.android.fullcount.ui.fragments.ScoreFragment;
@@ -42,7 +44,9 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
         TeamRosterFragment.OnFragmentInteractionListener,
         AddPlayerTeamRosterFragment.OnFragmentInteractionListener,
 		ScoreFragment.OnFragmentInteractionListener,
-		ScoreFinalFragment.OnFragmentInteractionListener {
+		ScoreFinalFragment.OnFragmentInteractionListener,
+        PlayerCardFragment.OnFragmentInteractionListener,
+        FavoritesFragment.OnFragmentInteractionListener {
 
 	static final String TAG = HomeActivity.class.getSimpleName();
 	static final boolean DEBUG_MODE = FullCountApplication.DEBUG_MODE;
@@ -122,8 +126,8 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 			case R.id.drawer_favorites: {
 				final String auth = settings.getString("auth", "");
 				final boolean authIsBasic = settings.getBoolean("authIsBasic", true);
-				fragment = ScoreFragment.newInstance(auth, authIsBasic, player.getTeam());
-				transaction.addToBackStack(ScoreFragment.class.getName());
+				fragment = FavoritesFragment.newInstance(player.getFavorites());
+				transaction.addToBackStack(FavoritesFragment.class.getName());
 
 				// Toast.makeText(this, "Favorites", Toast.LENGTH_SHORT).show();
 				// TODO fragmentManager.beginTransaction().replace(R.id.container, FavoritesFragment.newInstance()).commit();
@@ -132,8 +136,12 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 
 			case R.id.drawer_player_card:
 				Toast.makeText(this, "Player card", Toast.LENGTH_SHORT).show();
-				// TODO fragmentManager.beginTransaction().replace(R.id.container, PlayerCard.newInstance()).commit();
-				break;
+
+                //final String auth = settings.getString("auth", "");
+                //final boolean authIsBasic = settings.getBoolean("authIsBasic", true);
+                fragment = PlayerCardFragment.newInstance(player);
+                transaction.addToBackStack(PlayerCardFragment.class.getName());
+                break;
 
 			case R.id.drawer_logout:
 				// Clear session information

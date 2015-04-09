@@ -158,6 +158,8 @@ public class Team implements Serializable {
 	}
 
 	public static Team parseFromJSON(JSONObject jsonTeam) throws JSONException {
+        if (jsonTeam == null)
+            return null;
 		final Team team = new Team(jsonTeam.getString(TAG_ID));
 
 		team.setOwnerId(jsonTeam.optString(TAG_OWNER_ID));
