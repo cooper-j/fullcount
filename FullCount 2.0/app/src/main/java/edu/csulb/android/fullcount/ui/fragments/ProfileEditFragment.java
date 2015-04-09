@@ -119,7 +119,7 @@ public class ProfileEditFragment extends Fragment implements View.OnClickListene
 			try {
 				JSONObject jsonObject = new JSONObject();
 
-				//jsonObject.put("username", username);
+				jsonObject.put("username", username);
 				jsonObject.put("city", city);
 
 				Log.e(TAG, jsonObject.toString());

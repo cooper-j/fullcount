@@ -1,6 +1,7 @@
 package edu.csulb.android.fullcount.ui.widgets;
 
 import android.content.Context;
+import android.graphics.PorterDuff;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -161,6 +162,12 @@ public class Field extends RelativeLayout implements View.OnClickListener {
 		mThirdBall = (CheckBox) mField.findViewById(R.id.field_ball_third);
 		mFirstStrike = (CheckBox) mField.findViewById(R.id.field_strike_first);
 		mSecondStrike = (CheckBox) mField.findViewById(R.id.field_strike_second);
+
+		mFirstBall.getBackground().setColorFilter(getResources().getColor(R.color.red), PorterDuff.Mode.DST_IN);
+		mSecondBall.getBackground().setColorFilter(getResources().getColor(R.color.red), PorterDuff.Mode.DST_IN);
+		mThirdBall.getBackground().setColorFilter(getResources().getColor(R.color.red), PorterDuff.Mode.DST_IN);
+		mFirstStrike.getBackground().setColorFilter(getResources().getColor(R.color.red), PorterDuff.Mode.DST_IN);
+		mSecondStrike.getBackground().setColorFilter(getResources().getColor(R.color.red), PorterDuff.Mode.DST_IN);
 
 		mFirstBall.setOnClickListener(this);
 		mSecondBall.setOnClickListener(this);

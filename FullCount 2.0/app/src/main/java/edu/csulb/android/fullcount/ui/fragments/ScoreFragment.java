@@ -87,7 +87,7 @@ public class ScoreFragment extends Fragment implements View.OnClickListener, Vie
 		mPager = (ViewPager) inflateView.findViewById(R.id.score_pager);
 		mSave = inflateView.findViewById(R.id.score_save);
 
-		for (int i = 0; i < mTeam.getRoster().size(); i++) {
+		for (int i = 0; i < mTeam.getRoster().size() && i < 9; i++) {
 			final View view = inflater.inflate(R.layout.item_score_player, mPlayers, false);
 			final TextView playerName = (TextView) view.findViewById(R.id.item_score_player_name);
 			playerName.setText(mTeam.getRoster().get(i).getName());

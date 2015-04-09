@@ -83,12 +83,16 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
 		super.onActivityCreated(savedInstanceState);
 		// Indicate that this fragment would like to influence the set of actions in the action bar.
 		setHasOptionsMenu(true);
+	}
 
-		// Fuck the police
+
+	@Override
+	public void onResume() {
+		super.onResume();
+
 		mUsername.setText(((HomeActivity) getActivity()).player.getUsername());
 		// TODO Add picture
 	}
-
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

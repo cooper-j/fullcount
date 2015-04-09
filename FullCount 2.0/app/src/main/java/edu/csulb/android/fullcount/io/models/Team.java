@@ -39,7 +39,7 @@ public class Team implements Serializable {
 	private int mLeagueCategory;
 	private String mLeagueName;
 	private String mSeason;
-	private List<Void> mGames; // TODO Create Game model
+	private List<Game> mGames; // TODO Create Game model
 
 	public Team(String id) {
 		mId = id;
@@ -101,11 +101,11 @@ public class Team implements Serializable {
 		mLeagueName = leagueName;
 	}
 
-	public List<Void> getGames() {
+	public List<Game> getGames() {
 		return mGames;
 	}
 
-	public void setGames(List<Void> games) {
+	public void setGames(List<Game> games) {
 		mGames = games;
 	}
 
@@ -179,7 +179,15 @@ public class Team implements Serializable {
 		team.setLeagueName(jsonTeam.optString(TAG_LEAGUE_NAME));
 		team.setSeason(jsonTeam.optString(TAG_SEASON));
 
-		// TODO Add TAG_GAMES
+		final JSONArray jsonGames = jsonTeam.optJSONArray(TAG_GAMES);
+		if (jsonGames != null && jsonGames.length() > 0) {
+			final List<Game> games = new ArrayList<>();
+
+			for (int i = 0; i < jsonGames.length(); i++) {
+				games.add(Game.parseFromJSON(jsonGames.getJSONObject(i)));
+			}
+			team.setGames(games);
+		} else team.setGames(new ArrayList<Game>());
 
 		if (DEBUG_MODE) {
 			Log.i(TAG, "Parsed JSON: " + team.toString());

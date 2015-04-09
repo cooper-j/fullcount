@@ -23,7 +23,7 @@ public class FieldPagerAdapter extends PagerAdapter {
 
 	public FieldPagerAdapter(Context context, List<Run> runs, int battersCount) {
 		mContext = context;
-		mBattersCount = battersCount;
+		mBattersCount = battersCount > 9 ? 9 : battersCount;
 
 		if (runs == null) {
 			mRuns = new ArrayList<>();
