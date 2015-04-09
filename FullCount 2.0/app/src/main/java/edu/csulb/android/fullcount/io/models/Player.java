@@ -111,7 +111,7 @@ public class Player implements Serializable {
 
 		player.setUsername(jsonObject.optString(TAG_USERNAME, "Unknown")); // TODO String
 		player.setCity(jsonObject.optString(TAG_CITY));
-		// TODO Replace player.setTeam(jsonObject.optString(TAG_TEAM));
+		player.setTeam(Team.parseFromJSON(jsonObject.optJSONObject(TAG_TEAM)));
 		player.setPictureUri(jsonObject.optString(TAG_PICTURE_URL));
 
 		if (DEBUG_MODE) {

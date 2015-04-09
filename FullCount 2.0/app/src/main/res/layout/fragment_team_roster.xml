@@ -1,0 +1,38 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="edu.csulb.android.fullcount.ui.fragments.TeamRosterFragment">
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:id="@+id/team_roster_list"
+        android:layout_above="@+id/DoneButton"
+        android:layout_alignTop="@+id/scrollView"
+        android:headerDividersEnabled="false" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/team_fragment_add_player"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:padding="5dp"
+            android:text="Add Player"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_gravity="bottom" />
+        <Button
+            android:id="@+id/team_fragment_save"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:padding="5dp"
+            android:text="SAVE"
+            android:layout_gravity="bottom"
+            android:layout_width="match_parent"
+            android:layout_weight="1" />
+    </LinearLayout>
+</LinearLayout>

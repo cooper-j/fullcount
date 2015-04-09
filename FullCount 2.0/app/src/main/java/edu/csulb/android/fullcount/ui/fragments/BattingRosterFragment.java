@@ -17,17 +17,9 @@ import edu.csulb.android.fullcount.io.models.RosterMember;
 import edu.csulb.android.fullcount.ui.adapters.RosterMemberListAdapter;
 import edu.csulb.android.fullcount.ui.widgets.DynamicRosterMemberListView;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link BattingRosterFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link BattingRosterFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class BattingRosterFragment extends Fragment implements View.OnClickListener {
 
-    static final String ARGUMENT_PLAYER_LIST = "PLAYER_LIST";
+    static final String ARGUMENT_PLAYER_LIST = "ROSTER_MEMBER_LIST";
 
     private ArrayList<RosterMember> mRosterMemberList;
 

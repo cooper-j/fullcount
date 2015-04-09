@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.apache.http.Header;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -258,6 +259,8 @@ public class TeamFragment extends Fragment implements View.OnClickListener {
 								Toast.makeText(getActivity(), "Could not edit team. Try again later.", Toast.LENGTH_SHORT).show();
 							}
 						}
+
+
 
 						@Override
 						public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject error) {

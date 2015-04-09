@@ -28,9 +28,10 @@ public class RosterMember implements Serializable {
 	private Team mTeam; // TODO Create Team model
 	private String mPictureUri;
 
-	public RosterMember(String id) {
-		mId = id;
-	}
+	public RosterMember() {}
+    public RosterMember(String id) {
+        mId = id;
+    }
 
 	public String getId() {
 		return mId;

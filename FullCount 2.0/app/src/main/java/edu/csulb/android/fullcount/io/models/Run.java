@@ -1,11 +1,18 @@
 package edu.csulb.android.fullcount.io.models;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
 
+import edu.csulb.android.fullcount.FullCountApplication;
+
 public class Run implements Serializable {
 
+	static final String TAG = Run.class.getSimpleName();
+	static final boolean DEBUG_MODE = FullCountApplication.DEBUG_MODE;
+
+	private int mBases;
 	private int mStrikes;
 	private int mBalls;
 	private int mOut;
@@ -13,6 +20,14 @@ public class Run implements Serializable {
 	private String mSecondBase;
 	private String mThirdBase;
 	private String mFourthBase;
+
+	public int getBases() {
+		return mBases;
+	}
+
+	public void setBases(int bases) {
+		mBases = bases;
+	}
 
 	public int getStrikes() {
 		return mStrikes;
@@ -68,6 +83,32 @@ public class Run implements Serializable {
 
 	public void setFourthBase(String fourthBase) {
 		mFourthBase = fourthBase;
+	}
+
+	public JSONObject toJSON() {
+		try {
+			final JSONObject jsonRun = new JSONObject();
+
+			jsonRun.put("strikes", mStrikes);
+			jsonRun.put("balls", mBalls);
+			jsonRun.put("out", mOut);
+			jsonRun.put("firstBase", mFirstBase);
+			jsonRun.put("secondBase", mSecondBase);
+			jsonRun.put("ThirdBase", mThirdBase);
+			jsonRun.put("FourthBase", mFourthBase);
+
+			/* TODO Statistics
+			final JSONObject jsonStatistics = new JSONObject();
+			jsonStatistics.put("");
+			*/
+
+			return jsonRun;
+		} catch (JSONException e) {
+			if (DEBUG_MODE) {
+				e.printStackTrace();
+			}
+		}
+		return null;
 	}
 
 	public static Run parseFromJSON(JSONObject jsonObject) {
