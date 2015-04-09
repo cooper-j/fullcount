@@ -107,14 +107,13 @@ public class ScoreFragment extends Fragment implements View.OnClickListener, Vie
 	public void onClick(View v) {
 		if (v.getId() == R.id.score_save) {
 			try {
-				mPager.setCurrentItem(9);
-				mPager.setCurrentItem(1);
+				mAdapter.saveData();
 
 				final List<Run> runs = mAdapter.getRuns();
 				final JSONArray jsonScoreSheet = new JSONArray();
 				int score = 0;
 
-				for (int i = 0; i < mTeam.getRoster().size(); i++) {
+				for (int i = 0; i < mTeam.getRoster().size() && i < runs.size(); i++) {
 					final JSONObject jsonObject = new JSONObject();
 					final JSONArray jsonRuns = new JSONArray();
 					final Run run = runs.get(i);
