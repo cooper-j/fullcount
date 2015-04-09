@@ -1,0 +1,33 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="edu.csulb.android.fullcount.ui.fragments.PlayerCardFragment" >
+
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/player_image_player_card_fragment" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/frame_player_card_fragment" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/name_player_card_fragment"
+        android:layout_alignParentBottom="true"
+        android:background="@color/dark_red"
+        android:autoText="true"
+        android:textSize="20sp"
+        android:textColor="#FFFFFF"
+        android:gravity="right"
+        android:layout_alignParentRight="true"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:paddingRight="50dp"/>
+
+</RelativeLayout>
