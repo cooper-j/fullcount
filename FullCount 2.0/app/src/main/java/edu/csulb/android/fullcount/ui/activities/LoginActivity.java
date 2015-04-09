@@ -197,13 +197,8 @@ public class LoginActivity extends FragmentActivity {
 								Log.i(TAG, "/api/users/login/facebook: " + response.toString());
 							}
 
-							// TODO Enhance local data storage
 							try {
-								// TODO Get user object from response
 								final Player player = Player.parseFromJSON(response);
-								// TODO Add team
-                                // TODO Add team roster
-								editor.apply();
 
 								((LoginActivity) getActivity()).startHomeScreen(player);
 							} catch (JSONException e) {
@@ -376,18 +371,7 @@ public class LoginActivity extends FragmentActivity {
 
 							// TODO Enhance local data storage
 							try {
-								final Player player = Player.parseFromJSON(response.getJSONObject("user"));
-
-								JSONObject jsonTeam = response.optJSONObject("team");
-								if (jsonTeam != null) {
-									final Team team = Team.parseFromJSON(jsonTeam);
-
-									editor.putString("teamId", team.getId());
-									// TODO Add team roster
-									editor.apply();
-
-									player.setTeam(team);
-								}
+								final Player player = Player.parseFromJSON(response);
 
 								((LoginActivity) getActivity()).startHomeScreen(player);
 							} catch (JSONException e) {
@@ -528,18 +512,7 @@ public class LoginActivity extends FragmentActivity {
 
 							// TODO Enhance local data storage
 							try {
-								final Player player = Player.parseFromJSON(response.getJSONObject("user"));
-
-								JSONObject jsonTeam = response.optJSONObject("team");
-								if (jsonTeam != null) {
-									final Team team = Team.parseFromJSON(jsonTeam);
-
-									editor.putString("teamId", team.getId());
-									// TODO Add team roster
-									editor.apply();
-
-									player.setTeam(team);
-								}
+								final Player player = Player.parseFromJSON(response);
 
 								((LoginActivity) getActivity()).startHomeScreen(player);
 							} catch (JSONException e) {

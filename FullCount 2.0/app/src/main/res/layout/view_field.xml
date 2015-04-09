@@ -15,7 +15,7 @@
             android:gravity="center"
             android:textSize="18sp"
             android:text="1B"
-            android:id="@+id/"/>
+            android:id="@+id/field_1b"/>
 
         <TextView
             android:layout_width="0dp"

@@ -81,7 +81,11 @@ public class Team implements Serializable {
 		mRoster = roster;
 	}
 
-	public int getLeagueCategory() {
+    public void removeMemberFromRoster(RosterMember rosterMember){ this.mRoster.remove(rosterMember); }
+
+    public void addMemberToRoster(RosterMember rosterMember) { this.mRoster.add(rosterMember); };
+
+    public int getLeagueCategory() {
 		return mLeagueCategory;
 	}
 
@@ -167,10 +171,10 @@ public class Team implements Serializable {
 			for (int i = 0; i < jsonRoster.length(); i++) {
 				roster.add(RosterMember.parseFromJSON(jsonRoster.getJSONObject(i)));
 			}
-
 			team.setRoster(roster);
 		}
-
+        else
+            team.setRoster(new ArrayList<RosterMember>());
 		team.setLeagueCategory(jsonTeam.optInt(TAG_LEAGUE_CATEGORY));
 		team.setLeagueName(jsonTeam.optString(TAG_LEAGUE_NAME));
 		team.setSeason(jsonTeam.optString(TAG_SEASON));

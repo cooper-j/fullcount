@@ -11,20 +11,32 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.facebook.Session;
 
+import java.util.ArrayList;
+
 import edu.csulb.android.fullcount.FullCountApplication;
 import edu.csulb.android.fullcount.R;
 import edu.csulb.android.fullcount.io.models.Player;
+import edu.csulb.android.fullcount.io.models.RosterMember;
+import edu.csulb.android.fullcount.ui.fragments.AddPlayerTeamRosterFragment;
 import edu.csulb.android.fullcount.ui.fragments.BattingRosterFragment;
 import edu.csulb.android.fullcount.ui.fragments.HomeFragment;
 import edu.csulb.android.fullcount.ui.fragments.NavigationDrawerFragment;
 import edu.csulb.android.fullcount.ui.fragments.ProfileEditFragment;
 import edu.csulb.android.fullcount.ui.fragments.TeamFragment;
+import edu.csulb.android.fullcount.ui.fragments.TeamRosterFragment;
 
-public class HomeActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks, HomeFragment.OnFragmentInteractionListener, TeamFragment.OnFragmentInteractionListener, ProfileEditFragment.OnFragmentInteractionListener, BattingRosterFragment.OnFragmentInteractionListener {
+public class HomeActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks,
+        HomeFragment.OnFragmentInteractionListener,
+        TeamFragment.OnFragmentInteractionListener,
+        ProfileEditFragment.OnFragmentInteractionListener,
+        BattingRosterFragment.OnFragmentInteractionListener,
+        TeamRosterFragment.OnFragmentInteractionListener,
+        AddPlayerTeamRosterFragment.OnFragmentInteractionListener {
 
 	static final String TAG = HomeActivity.class.getSimpleName();
 	static final boolean DEBUG_MODE = FullCountApplication.DEBUG_MODE;
@@ -84,7 +96,9 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 
 			case R.id.drawer_team:
 				final String auth = settings.getString("auth", "");
-				final String teamId = settings.getString("teamId", "");
+                String teamId = "";
+                if (player.getTeam().getId() != null)
+                    teamId = player.getTeam().getId();
 				final boolean authIsBasic = settings.getBoolean("authIsBasic", true);
 				fragment = TeamFragment.newInstance(auth, authIsBasic, teamId);
 				transaction.addToBackStack(TeamFragment.class.getName());
@@ -146,21 +160,42 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 		getSupportActionBar().setTitle(mTitle);
 	}
 
+    public void removeRosterMemberOnClickHandler(View v) {
+        RosterMember itemToRemove = (RosterMember)v.getTag();
+        this.player.getTeam().removeMemberFromRoster(itemToRemove);
+    }
+
 	@Override
 	public void onTeamCreation() {
-		// TODO Add team roster fragment
+        final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        final String auth = settings.getString("auth", "");
+        final boolean authIsBasic = settings.getBoolean("authIsBasic", true);
+
+        final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+        transaction.addToBackStack(TeamRosterFragment.class.getName());
+        transaction.replace(R.id.container, TeamRosterFragment.newInstance(player, auth, authIsBasic));
+        transaction.commit();
 	}
 
 	@Override
 	public void onTeamEdition() {
-		// TODO Add team roster fragment
+        final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        final String auth = settings.getString("auth", "");
+        final boolean authIsBasic = settings.getBoolean("authIsBasic", true);
+
+        final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+        transaction.addToBackStack(TeamRosterFragment.class.getName());
+        transaction.replace(R.id.container, TeamRosterFragment.newInstance(player, auth, authIsBasic));
+        transaction.commit();
 	}
 
-	@Override
+    @Override
 	public void onProfileEditionClick() {
 		final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 		final String auth = settings.getString("auth", "");
-		final boolean authIsBasic = settings.getBoolean("authIsBasic", true);
+        final boolean authIsBasic = settings.getBoolean("authIsBasic", true);
 
 		final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 		transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
@@ -179,4 +214,31 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 	public void onBattingRosterCreation() {
 		// TODO Add game sheet fragment
 	}
+
+    @Override
+    public void onAddRosterMember(RosterMember rosterMember) {
+        player.getTeam().addMemberToRoster(rosterMember);
+        getSupportFragmentManager().popBackStack();
+    }
+
+    @Override
+    public void onAddTeamPlayer() {
+        final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+        transaction.addToBackStack(AddPlayerTeamRosterFragment.class.getName());
+        transaction.replace(R.id.container, AddPlayerTeamRosterFragment.newInstance());
+        transaction.commit();
+    }
+
+    @Override
+    public void onSaveTeamRoster(ArrayList<RosterMember> rosterMembers) {
+        player.getTeam().setRoster(rosterMembers);
+
+        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+        transaction.addToBackStack(HomeFragment.class.getName());
+        transaction.replace(R.id.container, HomeFragment.newInstance());
+        transaction.commit();
+    }
 }

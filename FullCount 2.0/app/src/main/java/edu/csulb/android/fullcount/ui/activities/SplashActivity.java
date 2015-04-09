@@ -30,6 +30,7 @@ import java.security.NoSuchAlgorithmException;
 import edu.csulb.android.fullcount.FullCountApplication;
 import edu.csulb.android.fullcount.R;
 import edu.csulb.android.fullcount.io.models.Player;
+import edu.csulb.android.fullcount.io.models.Team;
 import edu.csulb.android.fullcount.tools.FullCountRestClient;
 
 
@@ -191,15 +192,9 @@ public class SplashActivity extends Activity implements Session.StatusCallback {
 							Log.i(TAG, "/api/users/login/facebook: " + response.toString());
 						}
 
-						// TODO Enhance local data storage
 						try {
-							// TODO Get user object from response
-							final Player player = Player.parseFromJSON(response);
-							// TODO Add team
-							// TODO Add team roster
-							editor.apply();
+                            mPlayer = Player.parseFromJSON(response);
 
-							mPlayer = player;
 							startHomeActivity();
 						} catch (JSONException e) {
 							e.printStackTrace();
@@ -263,26 +258,8 @@ public class SplashActivity extends Activity implements Session.StatusCallback {
 						Log.i(TAG, "/api/users/current: " + response.toString());
 					}
 
-					// TODO Enhance local data storage
 					try {
-						final Player player = Player.parseFromJSON(response);
-
-						/* // TODO Add team
-						JSONObject jsonTeam = response.optJSONObject("team");
-						if (jsonTeam != null) {
-							final Team team = Team.parseFromJSON(jsonTeam);
-
-							final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-							final SharedPreferences.Editor editor = settings.edit();
-							editor.putString("teamId", team.getId());
-							// TODO Add team roster
-							editor.apply();
-
-							player.setTeam(team);
-						}
-						*/
-
-						mPlayer = player;
+						mPlayer = Player.parseFromJSON(response);
 
 						startHomeActivity();
 					} catch (JSONException e) {
