@@ -22,9 +22,10 @@ import edu.csulb.android.fullcount.ui.fragments.BattingRosterFragment;
 import edu.csulb.android.fullcount.ui.fragments.HomeFragment;
 import edu.csulb.android.fullcount.ui.fragments.NavigationDrawerFragment;
 import edu.csulb.android.fullcount.ui.fragments.ProfileEditFragment;
+import edu.csulb.android.fullcount.ui.fragments.ScoreFragment;
 import edu.csulb.android.fullcount.ui.fragments.TeamFragment;
 
-public class HomeActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks, HomeFragment.OnFragmentInteractionListener, TeamFragment.OnFragmentInteractionListener, ProfileEditFragment.OnFragmentInteractionListener, BattingRosterFragment.OnFragmentInteractionListener {
+public class HomeActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks, HomeFragment.OnFragmentInteractionListener, TeamFragment.OnFragmentInteractionListener, ProfileEditFragment.OnFragmentInteractionListener, BattingRosterFragment.OnFragmentInteractionListener, ScoreFragment.OnFragmentInteractionListener {
 
 	static final String TAG = HomeActivity.class.getSimpleName();
 	static final boolean DEBUG_MODE = FullCountApplication.DEBUG_MODE;
@@ -82,13 +83,14 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 				fragment = new HomeFragment();
 				break;
 
-			case R.id.drawer_team:
+			case R.id.drawer_team: {
 				final String auth = settings.getString("auth", "");
 				final String teamId = settings.getString("teamId", "");
 				final boolean authIsBasic = settings.getBoolean("authIsBasic", true);
 				fragment = TeamFragment.newInstance(auth, authIsBasic, teamId);
 				transaction.addToBackStack(TeamFragment.class.getName());
 				break;
+			}
 
 			case R.id.drawer_create_game:
 				Toast.makeText(this, "Create game", Toast.LENGTH_SHORT).show();
@@ -96,13 +98,18 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
                     fragment = BattingRosterFragment.newInstance(player.getTeam().getRoster());
                     transaction.addToBackStack(BattingRosterFragment.class.getName());
                 }
-				// TODO fragmentManager.beginTransaction().replace(R.id.container, CreateGameFragment.newInstance()).commit();
 				break;
 
-			case R.id.drawer_favorites:
-				Toast.makeText(this, "Favorites", Toast.LENGTH_SHORT).show();
+			case R.id.drawer_favorites: {
+				final String auth = settings.getString("auth", "");
+				final boolean authIsBasic = settings.getBoolean("authIsBasic", true);
+				fragment = ScoreFragment.newInstance(auth, authIsBasic, player.getTeam());
+				transaction.addToBackStack(ScoreFragment.class.getName());
+
+				// Toast.makeText(this, "Favorites", Toast.LENGTH_SHORT).show();
 				// TODO fragmentManager.beginTransaction().replace(R.id.container, FavoritesFragment.newInstance()).commit();
 				break;
+			}
 
 			case R.id.drawer_player_card:
 				Toast.makeText(this, "Player card", Toast.LENGTH_SHORT).show();
@@ -178,5 +185,10 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 	@Override
 	public void onBattingRosterCreation() {
 		// TODO Add game sheet fragment
+	}
+
+	@Override
+	public void onGameFinished() {
+		// TODO Do stuff (probably go back to home fragment)
 	}
 }

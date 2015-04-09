@@ -24,7 +24,6 @@ import com.facebook.widget.LoginButton;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.apache.http.Header;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -376,18 +375,7 @@ public class LoginActivity extends FragmentActivity {
 
 							// TODO Enhance local data storage
 							try {
-								final Player player = Player.parseFromJSON(response.getJSONObject("user"));
-
-								JSONObject jsonTeam = response.optJSONObject("team");
-								if (jsonTeam != null) {
-									final Team team = Team.parseFromJSON(jsonTeam);
-
-									editor.putString("teamId", team.getId());
-									// TODO Add team roster
-									editor.apply();
-
-									player.setTeam(team);
-								}
+								final Player player = Player.parseFromJSON(response);
 
 								((LoginActivity) getActivity()).startHomeScreen(player);
 							} catch (JSONException e) {
