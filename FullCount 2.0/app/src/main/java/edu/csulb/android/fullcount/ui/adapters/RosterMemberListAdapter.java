@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import edu.csulb.android.fullcount.R;
 import edu.csulb.android.fullcount.io.models.RosterMember;
@@ -80,5 +81,9 @@ public class RosterMemberListAdapter extends ArrayAdapter<RosterMember> {
     @Override
     public boolean hasStableIds() {
         return true;
+    }
+
+    public ArrayList<RosterMember> getRosterMemberList(){
+        return mRosterMembers;
     }
 }

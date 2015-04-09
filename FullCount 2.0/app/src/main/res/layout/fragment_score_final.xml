@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="25dp"
+        android:layout_gravity="center"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="28sp"
+            android:textColor="?attr/colorPrimary"
+            android:layout_marginTop="25dp"
+            android:text="Opponent name"/>
+
+        <EditText
+            android:id="@+id/score_final_name"
+            android:hint="Team name"
+            android:textSize="22sp"
+            android:layout_width="match_parent"
+            android:layout_marginTop="25dp"
+            android:gravity="center"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="30sp"
+            android:textColor="?attr/colorPrimary"
+            android:layout_marginTop="25dp"
+            android:text="Score"/>
+
+        <EditText
+            android:id="@+id/score_final_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="36sp"
+            android:layout_marginTop="10dp"
+            android:text="0"/>
+
+        <Button
+            android:id="@+id/score_final_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="?attr/colorPrimary"
+            android:layout_marginTop="25dp"
+            android:textSize="22sp"
+            android:background="@null"
+            android:text="Save"/>
+    </LinearLayout>
+</ScrollView>

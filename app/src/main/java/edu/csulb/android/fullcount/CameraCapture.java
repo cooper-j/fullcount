@@ -86,7 +86,7 @@ public class CameraCapture implements Button.OnClickListener
     protected void dispatchTakePictureIntent()
     {
         //check to see if camera is available
-        Context context = getActivity();
+        Context context = (Context)getActivity();
         PackageManager packManager = context.getPackageManager();
         if(packManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)==false)
         {

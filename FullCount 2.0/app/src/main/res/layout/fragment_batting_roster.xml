@@ -1,14 +1,23 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/mainLayout"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".BattingRoster" >
+    tools:context="edu.csulb.android.fullcount.ui.fragments.BattingRosterFragment"
+    android:orientation="vertical">
 
     <edu.csulb.android.fullcount.ui.widgets.DynamicRosterMemberListView
         android:id="@+id/listview"
         android:background="#0000"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-</RelativeLayout>
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+    <Button
+        android:id="@+id/batting_roster_fragment_next"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:padding="5dp"
+        android:text="NEXT"
+        android:layout_width="match_parent"
+        android:layout_weight="0"
+        android:layout_gravity="bottom" />
+</LinearLayout>

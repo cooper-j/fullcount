@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.app.Fragment;
+import android.widget.Button;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -21,8 +22,10 @@ public class BattingRosterFragment extends Fragment implements View.OnClickListe
 
     static final String ARGUMENT_PLAYER_LIST = "ROSTER_MEMBER_LIST";
 
+    private Button mNextButton;
     private ArrayList<RosterMember> mRosterMemberList;
 
+    private RosterMemberListAdapter mAdapter;
     private OnFragmentInteractionListener mListener;
 
     /**
@@ -58,25 +61,21 @@ public class BattingRosterFragment extends Fragment implements View.OnClickListe
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_batting_roster, container, false);
 
-        RosterMemberListAdapter adapter = new RosterMemberListAdapter(getActivity(), mRosterMemberList);
+        mNextButton = (Button)view.findViewById(R.id.batting_roster_fragment_next);
+        mNextButton.setOnClickListener(this);
+
+        mAdapter = new RosterMemberListAdapter(getActivity(), mRosterMemberList);
         DynamicRosterMemberListView listView  = (DynamicRosterMemberListView)view.findViewById(R.id.listview);
 
         listView.setRosterMemberList(mRosterMemberList);
-        listView.setAdapter(adapter);
+        listView.setAdapter(mAdapter);
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         // Inflate the layout for this fragment
         return view;
     }
 
     public void onClick(View v) {
-
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onBattingRosterCreation();
-        }
+        mListener.onBattingRosterNext(mAdapter.getRosterMemberList());
     }
 
     @Override
@@ -97,7 +96,7 @@ public class BattingRosterFragment extends Fragment implements View.OnClickListe
     }
 
     public interface OnFragmentInteractionListener {
-	    public void onBattingRosterCreation();
+	    public void onBattingRosterNext(ArrayList<RosterMember> rosterMember);
     }
 
 }

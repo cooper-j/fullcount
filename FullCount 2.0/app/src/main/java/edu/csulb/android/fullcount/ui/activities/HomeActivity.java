@@ -16,6 +16,8 @@ import android.widget.Toast;
 
 import com.facebook.Session;
 
+import org.json.JSONArray;
+
 import java.util.ArrayList;
 
 import edu.csulb.android.fullcount.FullCountApplication;
@@ -27,6 +29,8 @@ import edu.csulb.android.fullcount.ui.fragments.BattingRosterFragment;
 import edu.csulb.android.fullcount.ui.fragments.HomeFragment;
 import edu.csulb.android.fullcount.ui.fragments.NavigationDrawerFragment;
 import edu.csulb.android.fullcount.ui.fragments.ProfileEditFragment;
+import edu.csulb.android.fullcount.ui.fragments.ScoreFinalFragment;
+import edu.csulb.android.fullcount.ui.fragments.ScoreFragment;
 import edu.csulb.android.fullcount.ui.fragments.TeamFragment;
 import edu.csulb.android.fullcount.ui.fragments.TeamRosterFragment;
 
@@ -36,7 +40,9 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
         ProfileEditFragment.OnFragmentInteractionListener,
         BattingRosterFragment.OnFragmentInteractionListener,
         TeamRosterFragment.OnFragmentInteractionListener,
-        AddPlayerTeamRosterFragment.OnFragmentInteractionListener {
+        AddPlayerTeamRosterFragment.OnFragmentInteractionListener,
+		ScoreFragment.OnFragmentInteractionListener,
+		ScoreFinalFragment.OnFragmentInteractionListener {
 
 	static final String TAG = HomeActivity.class.getSimpleName();
 	static final boolean DEBUG_MODE = FullCountApplication.DEBUG_MODE;
@@ -94,7 +100,7 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 				fragment = new HomeFragment();
 				break;
 
-			case R.id.drawer_team:
+			case R.id.drawer_team: {
 				final String auth = settings.getString("auth", "");
                 String teamId = "";
                 if (player.getTeam().getId() != null)
@@ -103,6 +109,7 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 				fragment = TeamFragment.newInstance(auth, authIsBasic, teamId);
 				transaction.addToBackStack(TeamFragment.class.getName());
 				break;
+			}
 
 			case R.id.drawer_create_game:
 				Toast.makeText(this, "Create game", Toast.LENGTH_SHORT).show();
@@ -110,13 +117,18 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
                     fragment = BattingRosterFragment.newInstance(player.getTeam().getRoster());
                     transaction.addToBackStack(BattingRosterFragment.class.getName());
                 }
-				// TODO fragmentManager.beginTransaction().replace(R.id.container, CreateGameFragment.newInstance()).commit();
 				break;
 
-			case R.id.drawer_favorites:
-				Toast.makeText(this, "Favorites", Toast.LENGTH_SHORT).show();
+			case R.id.drawer_favorites: {
+				final String auth = settings.getString("auth", "");
+				final boolean authIsBasic = settings.getBoolean("authIsBasic", true);
+				fragment = ScoreFragment.newInstance(auth, authIsBasic, player.getTeam());
+				transaction.addToBackStack(ScoreFragment.class.getName());
+
+				// Toast.makeText(this, "Favorites", Toast.LENGTH_SHORT).show();
 				// TODO fragmentManager.beginTransaction().replace(R.id.container, FavoritesFragment.newInstance()).commit();
 				break;
+			}
 
 			case R.id.drawer_player_card:
 				Toast.makeText(this, "Player card", Toast.LENGTH_SHORT).show();
@@ -211,8 +223,40 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 	}
 
 	@Override
-	public void onBattingRosterCreation() {
-		// TODO Add game sheet fragment
+	public void onBattingRosterNext(ArrayList<RosterMember> rosterMember) {
+        final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        final String auth = settings.getString("auth", "");
+        final boolean authIsBasic = settings.getBoolean("authIsBasic", true);
+
+        final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+        transaction.addToBackStack(ScoreFragment.class.getName());
+        transaction.replace(R.id.container, ScoreFragment.newInstance(auth, authIsBasic, player.getTeam()));
+        transaction.commit();
+	}
+
+
+	@Override
+	public void onGameFinished() {
+		getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+		final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+		transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+		transaction.addToBackStack(HomeFragment.class.getName());
+		transaction.replace(R.id.container, HomeFragment.newInstance());
+		transaction.commit();
+	}
+
+	@Override
+	public void onGameFinished(int score, JSONArray jsonScoreSheet) {
+		final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+		final String auth = settings.getString("auth", "");
+		final boolean authIsBasic = settings.getBoolean("authIsBasic", true);
+
+		final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+		transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+		transaction.addToBackStack(ScoreFinalFragment.class.getName());
+		transaction.replace(R.id.container, ScoreFinalFragment.newInstance(auth, authIsBasic, score, jsonScoreSheet));
+		transaction.commit();
 	}
 
     @Override

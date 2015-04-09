@@ -24,7 +24,6 @@ import com.facebook.widget.LoginButton;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.apache.http.Header;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -34,7 +33,6 @@ import java.util.Arrays;
 import edu.csulb.android.fullcount.FullCountApplication;
 import edu.csulb.android.fullcount.R;
 import edu.csulb.android.fullcount.io.models.Player;
-import edu.csulb.android.fullcount.io.models.Team;
 import edu.csulb.android.fullcount.tools.FullCountRestClient;
 import edu.csulb.android.fullcount.tools.WebUtils;
 
