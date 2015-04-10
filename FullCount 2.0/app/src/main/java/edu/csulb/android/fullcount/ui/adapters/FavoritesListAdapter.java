@@ -25,7 +25,7 @@ public class FavoritesListAdapter extends ArrayAdapter<Player> {
     public FavoritesListAdapter(Activity context, ArrayList<Player> favorites) {
         super(context, R.layout.player_list_item, favorites);
 
-        mFavorites = favorites;
+        mFavorites = favorites != null ? favorites : new ArrayList<Player>();
         this.context = context;
     }
 
@@ -34,13 +34,15 @@ public class FavoritesListAdapter extends ArrayAdapter<Player> {
         View rowView=inflater.inflate(R.layout.team_roster_list_item, null,true);
 
         ViewHolder holder = new ViewHolder();
-        holder.removePlayerButton = (Button)rowView.findViewById(R.id.team_roster_list_delete);
-        holder.removePlayerButton.setTag(mFavorites.get(position));
+        //holder.removePlayerButton = (Button)rowView.findViewById(R.id.team_roster_list_delete);
+        //holder.removePlayerButton.setTag(mFavorites.get(position));
 
         holder.name = (TextView)rowView.findViewById(R.id.player_name);
         holder.icon = (ImageView)rowView.findViewById(R.id.player_icon);
 
-        Button deleteButton = (Button) rowView.findViewById(R.id.team_roster_list_delete);
+
+
+        /*Button deleteButton = (Button) rowView.findViewById(R.id.team_roster_list_delete);
         deleteButton.setTag(position);
 
         deleteButton.setOnClickListener(
@@ -52,7 +54,7 @@ public class FavoritesListAdapter extends ArrayAdapter<Player> {
                         notifyDataSetChanged();
                     }
                 }
-        );
+        );*/
 
         rowView.setTag(holder);
 
