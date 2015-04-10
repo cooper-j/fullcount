@@ -56,7 +56,7 @@ public class PlayerCardFragment extends Fragment {
         mPlayerImage.setImageResource(R.drawable.ic_launcher);
 
         mFrameImage = (ImageView)view.findViewById(R.id.frame_player_card_fragment);
-        //mFrameImage.setImageResource(R.drawable.ic_launcher);
+        mFrameImage.setImageResource(R.drawable.player_card_frame2);
 
         mPlayerName = (TextView)view.findViewById(R.id.name_player_card_fragment);
         mPlayerName.setText(mPlayer.getUsername());

@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -51,6 +52,16 @@ public class FavoritesFragment extends Fragment {
         ListView listView = (ListView)view.findViewById(R.id.favorites_list);
         listView.setAdapter(mAdapter);
 
+        listView.setClickable(true);
+        listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mListener.onSelectFavorite(position);
+            }
+        });
+
         return view;
     }
 
@@ -72,7 +83,7 @@ public class FavoritesFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        //public void onSaveFavorites(ArrayList<Player> favorites);
+        public void onSelectFavorite(int position);
     }
 
 }
