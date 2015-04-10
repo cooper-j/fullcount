@@ -31,7 +31,7 @@ public class FavoritesListAdapter extends ArrayAdapter<Player> {
 
     public View getView(int position,View view,ViewGroup parent) {
         LayoutInflater inflater=context.getLayoutInflater();
-        View rowView=inflater.inflate(R.layout.team_roster_list_item, null,true);
+        View rowView=inflater.inflate(R.layout.player_list_item, null,true);
 
         ViewHolder holder = new ViewHolder();
         //holder.removePlayerButton = (Button)rowView.findViewById(R.id.team_roster_list_delete);

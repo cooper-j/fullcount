@@ -27,7 +27,7 @@ public class TeamRosterListAdapter extends ArrayAdapter<RosterMember> {
     HashMap<RosterMember, Integer> mIdMap = new HashMap<RosterMember, Integer>();
 
     public TeamRosterListAdapter(Activity context, ArrayList<RosterMember> rosterMembers) {
-        super(context, R.layout.player_list_item, rosterMembers);
+        super(context, R.layout.team_roster_list_item, rosterMembers);
         for (int i = 0; i < rosterMembers.size(); ++i) {
             mIdMap.put(rosterMembers.get(i), i);
         }
