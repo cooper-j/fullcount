@@ -10,10 +10,13 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+
 import java.util.ArrayList;
 
 import edu.csulb.android.fullcount.R;
 import edu.csulb.android.fullcount.io.models.Player;
+import edu.csulb.android.fullcount.tools.FullCountRestClient;
 import edu.csulb.android.fullcount.ui.activities.HomeActivity;
 import edu.csulb.android.fullcount.ui.adapters.GameHistoryListAdapter;
 
@@ -72,6 +75,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 		mPlayerUsername.setText(mPlayer.getUsername());
 		mPlayerTeam.setText(mPlayer.getTeamName("No team")); // TODO String
 		mPlayerCity.setText(mPlayer.getCity());
+
+		if (mPlayer.getPictureUri() != null) {
+			ImageLoader.getInstance().displayImage(FullCountRestClient.getAbsoluteUrl(mPlayer.getPictureUri()), mPlayerPicture);
+		}
 
 		if (mPlayer.getTeam() != null) {
 			mListView.setVisibility(View.VISIBLE);

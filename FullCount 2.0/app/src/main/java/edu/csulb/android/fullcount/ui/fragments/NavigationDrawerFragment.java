@@ -21,7 +21,11 @@ import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+
 import edu.csulb.android.fullcount.R;
+import edu.csulb.android.fullcount.io.models.Player;
+import edu.csulb.android.fullcount.tools.FullCountRestClient;
 import edu.csulb.android.fullcount.ui.activities.HomeActivity;
 
 public class NavigationDrawerFragment extends Fragment implements View.OnClickListener {
@@ -90,8 +94,12 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
 	public void onResume() {
 		super.onResume();
 
-		mUsername.setText(((HomeActivity) getActivity()).player.getUsername());
-		// TODO Add picture
+		final Player player = ((HomeActivity) getActivity()).player;
+		mUsername.setText(player.getUsername());
+
+		if (player.getPictureUri() != null) {
+			ImageLoader.getInstance().displayImage(FullCountRestClient.getAbsoluteUrl(player.getPictureUri()), mUserPicture);
+		}
 	}
 
 	@Override

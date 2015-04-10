@@ -1,6 +1,8 @@
 package edu.csulb.android.fullcount.ui.fragments;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -12,15 +14,21 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.apache.http.Header;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+
 import edu.csulb.android.fullcount.FullCountApplication;
 import edu.csulb.android.fullcount.R;
 import edu.csulb.android.fullcount.io.models.Player;
 import edu.csulb.android.fullcount.tools.FullCountRestClient;
+import edu.csulb.android.fullcount.tools.ImageFilePath;
 import edu.csulb.android.fullcount.ui.activities.HomeActivity;
 
 public class ProfileEditFragment extends Fragment implements View.OnClickListener {
@@ -30,6 +38,8 @@ public class ProfileEditFragment extends Fragment implements View.OnClickListene
 
 	static final String ARGUMENT_AUTH = "AUTH";
 	static final String ARGUMENT_AUTH_IS_BASIC = "AUTH_IS_BASIC";
+
+	private static final int REQUEST_SELECT_PICTURE = 1;
 
 	private String mAuthTokenString;
 	private boolean mAuthIsBasic;
@@ -102,14 +112,123 @@ public class ProfileEditFragment extends Fragment implements View.OnClickListene
 	}
 
 	private void fillPlayerInformation(Player player) {
-		// TODO Add picture
+		if (player.getPictureUri() != null) {
+			ImageLoader.getInstance().displayImage(FullCountRestClient.getAbsoluteUrl(player.getPictureUri()), mPicture);
+		}
 		mUsername.setText(player.getUsername());
 		mCity.setText(player.getCity());
 	}
 
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (isDetached()) {
+			return;
+		}
+
+		switch (requestCode) {
+
+			case REQUEST_SELECT_PICTURE:
+				if (resultCode == Activity.RESULT_OK) {
+
+					Uri pictureUri = data.getData();
+					String picturePath = ImageFilePath.getPath(getActivity(), pictureUri);
+
+					Log.i(TAG, picturePath);
+					final File picture = new File(picturePath);
+
+					ImageLoader.getInstance().displayImage("file://" + picturePath, mPicture);
+					RequestParams params = new RequestParams();
+					try {
+						params.put("picture", picture);
+
+						FullCountRestClient.put("/api/users/current", params, mAuthTokenString, mAuthIsBasic, new JsonHttpResponseHandler() {
+
+							@Override
+							public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+								if (response != null && statusCode == 200) {
+
+									if (DEBUG_MODE) {
+										Log.i(TAG, "/api/users/current: " + response.toString());
+										Toast.makeText(getActivity(), "Picture successfully edited.", Toast.LENGTH_SHORT).show();
+									}
+
+									try {
+										final Player player = Player.parseFromJSON(response);
+
+										if (getActivity() != null) {
+											((HomeActivity) getActivity()).player = player;
+										}
+									} catch (JSONException e) {
+										if (DEBUG_MODE) {
+											e.printStackTrace();
+										}
+									}
+
+								} else if (response != null) {
+
+									if (DEBUG_MODE) {
+										Log.e(TAG, "Error " + statusCode + ": " + response.toString());
+									}
+
+									Toast.makeText(getActivity(), response.toString(), Toast.LENGTH_SHORT).show();
+								} else {
+
+									if (DEBUG_MODE) {
+										Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
+									}
+
+									Toast.makeText(getActivity(), "Could not save picture. Try again later.", Toast.LENGTH_SHORT).show();
+								}
+							}
+
+							@Override
+							public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+								if (responseString != null) {
+									if (DEBUG_MODE) {
+										Log.e(TAG, "Error " + statusCode + ": " + responseString);
+									}
+								}
+							}
+
+							@Override
+							public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject error) {
+								if (error != null) {
+									if (DEBUG_MODE) {
+										Log.e(TAG, "Error " + statusCode + ": " + error.toString());
+									}
+
+									try {
+										Toast.makeText(getActivity(), error.getString("message"), Toast.LENGTH_SHORT).show();
+									} catch (JSONException e) {
+										e.printStackTrace();
+									}
+								} else {
+									if (DEBUG_MODE) {
+										Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
+									}
+
+									Toast.makeText(getActivity(), "Could not save picture. Try again later.", Toast.LENGTH_SHORT).show();
+								}
+							}
+						});
+
+
+					} catch (FileNotFoundException e) {
+						if (DEBUG_MODE) {
+							e.printStackTrace();
+						}
+					}
+				}
+				break;
+
+		}
+	}
+
 	@Override
 	public void onClick(View v) {
-		if (v.getId() == R.id.profile_edit_save) {
+		if (v.getId() == R.id.profile_edit_picture)  {
+			Intent intent = new Intent().setType("image/*").setAction(Intent.ACTION_GET_CONTENT);
+			startActivityForResult(intent, REQUEST_SELECT_PICTURE);
+		} else if (v.getId() == R.id.profile_edit_save) {
 
 			final String username = mUsername.getText().toString();
 			final String city = mCity.getText().toString();
