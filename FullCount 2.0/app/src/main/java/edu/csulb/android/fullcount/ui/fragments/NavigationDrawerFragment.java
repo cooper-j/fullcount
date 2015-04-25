@@ -3,6 +3,7 @@ package edu.csulb.android.fullcount.ui.fragments;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.database.MatrixCursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -17,19 +18,41 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.SearchView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.loopj.android.http.JsonHttpResponseHandler;
+
+import org.apache.http.Header;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
+import edu.csulb.android.fullcount.FullCountApplication;
 import edu.csulb.android.fullcount.R;
+import edu.csulb.android.fullcount.io.models.Player;
+import edu.csulb.android.fullcount.tools.FullCountRestClient;
 import edu.csulb.android.fullcount.ui.activities.HomeActivity;
+import edu.csulb.android.fullcount.ui.adapters.FavoritesListAdapter;
+import edu.csulb.android.fullcount.ui.adapters.PlayerSearchAdapter;
 
 public class NavigationDrawerFragment extends Fragment implements View.OnClickListener {
 
+    private static final boolean DEBUG_MODE = FullCountApplication.DEBUG_MODE;
 	private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
 	private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
+    private static final String ARGUMENT_AUTH = "AUTH";
+    private static final String ARGUMENT_AUTH_IS_BASIC = "AUTH_IS_BASIC";
+    private static String[] columns = new String[]{"_id", "FEED_ICON", "FEED_TITLE"};
 
-	/**
+
+    /**
 	 * A pointer to the current callbacks instance (the Activity).
 	 */
 	private NavigationDrawerCallbacks mCallbacks;
@@ -41,6 +64,8 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
 
 	private DrawerLayout mDrawerLayout;
 	private View mFragmentContainerView;
+    private PlayerSearchAdapter mCursorAdapter;
+    private SimpleCursorAdapter mAdapter;
 
 	/**
 	 * UI Elements
@@ -55,12 +80,17 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
 	private View mPlayerCardMenu;
 	private View mLogoutMenu;
 
+
+    private String mAuthTokenString;
+    private boolean mAuthIsBasic;
+
 	private int mCurrentSelectedViewId = R.id.drawer_picture;
 	private boolean mFromSavedInstanceState;
 	private boolean mUserLearnedDrawer;
 
 	public NavigationDrawerFragment() {
 	}
+
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -75,6 +105,11 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
 			mCurrentSelectedViewId = savedInstanceState.getInt(STATE_SELECTED_POSITION);
 			mFromSavedInstanceState = true;
 		}
+
+        final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
+
+        mAuthTokenString = settings.getString("auth", "");
+        mAuthIsBasic = settings.getBoolean("authIsBasic", true);
 
 	}
 
@@ -111,6 +146,74 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
 		mFavoritesMenu.setOnClickListener(this);
 		mPlayerCardMenu.setOnClickListener(this);
 		mLogoutMenu.setOnClickListener(this);
+
+        mCursorAdapter = new PlayerSearchAdapter(this.getActivity(), R.layout.player_list_item, null, columns,null, -1000);
+        mSearchView.setSuggestionsAdapter(mCursorAdapter);
+
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.put("needle", query);
+                    jsonObject.put("offset", 0);
+                    jsonObject.put("limit", 5);
+
+                    FullCountRestClient.post(getActivity(), "/api/users/search", jsonObject, "", false, new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                            ArrayList<Player> players = new ArrayList<Player>();
+                            if (statusCode == 200){
+                                try {
+                                    for (int i = 0; i < response.length(); i++) {
+                                        players.add(Player.parseFromJSON(response.getJSONObject(i)));
+                                    }
+
+                                    MatrixCursor cursor = new MatrixCursor(columns);
+                                    int i = 0;
+                                    for (Player p : players) {
+                                        String[] temp = new String[3];
+                                        i = i + 1;
+                                        temp[0] = Integer.toString(i);
+                                        temp[1] = p.getUsername();
+                                        temp[2] = p.getPictureUri();
+                                        cursor.addRow(temp);
+                                    }
+
+                                    mCursorAdapter.changeCursor(cursor);
+                                }catch(JSONException e) {
+                                    if (DEBUG_MODE) {
+                                        e.printStackTrace();
+                                    }
+                                    Toast.makeText(getActivity(), "Unexpected error occurred. Try again later.", Toast.LENGTH_SHORT).show();
+                                }
+                                //mAdapter = new FavoritesListAdapter(getActivity(), players);
+
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        }
+                    });
+
+                }catch (JSONException e) {
+                        if (DEBUG_MODE) {
+                            e.printStackTrace();
+                        }
+                        Toast.makeText(getActivity(), "Unexpected error occurred. Try again later.", Toast.LENGTH_SHORT).show();
+                    }
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+        });
 
 		// Select either the default item (0) or the last selected item.
 		selectItem(mCurrentSelectedViewId);

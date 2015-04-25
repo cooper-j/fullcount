@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ public class FavoritesListAdapter extends ArrayAdapter<Player> {
 
     private final Activity context;
     private ArrayList<Player> mFavorites;
+    private SearchView mSearch;
 
     public FavoritesListAdapter(Activity context, ArrayList<Player> favorites) {
         super(context, R.layout.player_list_item, favorites);
