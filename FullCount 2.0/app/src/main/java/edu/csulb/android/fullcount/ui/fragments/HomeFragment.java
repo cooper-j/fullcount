@@ -7,11 +7,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
+
+import com.nostra13.universalimageloader.core.ImageLoader;
+
+import java.util.ArrayList;
 
 import edu.csulb.android.fullcount.R;
 import edu.csulb.android.fullcount.io.models.Player;
+import edu.csulb.android.fullcount.tools.FullCountRestClient;
 import edu.csulb.android.fullcount.ui.activities.HomeActivity;
+import edu.csulb.android.fullcount.ui.adapters.GameHistoryListAdapter;
 
 public class HomeFragment extends Fragment implements View.OnClickListener {
 
@@ -38,6 +45,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 	private TextView mPlayerTeam;
 	private TextView mPlayerCity;
 	private View mProfileEdit;
+	private ListView mListView;
+	private View mPlaceHolder;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -48,6 +57,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 		mPlayerTeam = (TextView) inflateView.findViewById(R.id.home_team);
 		mPlayerCity = (TextView) inflateView.findViewById(R.id.home_city);
 		mProfileEdit = inflateView.findViewById(R.id.home_profile_edit);
+		mListView = (ListView) inflateView.findViewById(R.id.home_history);
+		mPlaceHolder = inflateView.findViewById(R.id.home_place_holder);
 
 		mProfileEdit.setOnClickListener(this);
 
@@ -65,6 +76,20 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 		mPlayerTeam.setText(mPlayer.getTeamName("No team")); // TODO String
 		mPlayerCity.setText(mPlayer.getCity());
 
+		if (mPlayer.getPictureUri() != null) {
+			ImageLoader.getInstance().displayImage(FullCountRestClient.getAbsoluteUrl(mPlayer.getPictureUri()), mPlayerPicture);
+		}
+
+		if (mPlayer.getTeam() != null) {
+			mListView.setVisibility(View.VISIBLE);
+			mPlaceHolder.setVisibility(View.GONE);
+
+			mListView.setAdapter(new GameHistoryListAdapter(getActivity(), mPlayer.getTeam(),
+					(ArrayList) mPlayer.getTeam().getGames()));
+		} else {
+			mListView.setVisibility(View.GONE);
+			mPlaceHolder.setVisibility(View.VISIBLE);
+		}
 	}
 
 	@Override

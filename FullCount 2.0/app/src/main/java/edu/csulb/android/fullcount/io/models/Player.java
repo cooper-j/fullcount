@@ -23,7 +23,8 @@ public class Player implements Serializable {
 	private static final String TAG_USERNAME = "username";
 	private static final String TAG_CITY = "city";
 	private static final String TAG_TEAM = "team";
-	private static final String TAG_PICTURE_URL = "picture";
+	private static final String TAG_PICTURE = "picture";
+	private static final String TAG_PICTURE_PATH = "path";
     private static final String TAG_FAVORITES = "favorites";
 
 	// Model attributes
@@ -91,7 +92,7 @@ public class Player implements Serializable {
 			jsonObject.put(TAG_USERNAME, mUsername);
 			jsonObject.put(TAG_CITY, mCity);
 			jsonObject.put(TAG_TEAM, mTeam);
-			jsonObject.put(TAG_PICTURE_URL, mPictureUri);
+			jsonObject.put(TAG_PICTURE, mPictureUri);
 		} catch (JSONException e) {
 			if (DEBUG_MODE) {
 				e.printStackTrace();
@@ -122,7 +123,13 @@ public class Player implements Serializable {
 		player.setUsername(jsonObject.optString(TAG_USERNAME, "Unknown")); // TODO String
 		player.setCity(jsonObject.optString(TAG_CITY));
 		player.setTeam(Team.parseFromJSON(jsonObject.optJSONObject(TAG_TEAM)));
-		player.setPictureUri(jsonObject.optString(TAG_PICTURE_URL));
+
+		JSONObject jsonPicture = jsonObject.optJSONObject(TAG_PICTURE);
+		if (jsonPicture != null) {
+			player.setPictureUri(jsonPicture.optString(TAG_PICTURE_PATH));
+		} else {
+			player.setPictureUri(null);
+		}
 
         JSONArray fav = jsonObject.optJSONArray(TAG_FAVORITES);
         if (fav != null)

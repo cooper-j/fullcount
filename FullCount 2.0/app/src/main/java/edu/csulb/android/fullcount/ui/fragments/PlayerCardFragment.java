@@ -1,7 +1,6 @@
 package edu.csulb.android.fullcount.ui.fragments;
 
 import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -10,8 +9,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+
 import edu.csulb.android.fullcount.R;
 import edu.csulb.android.fullcount.io.models.Player;
+import edu.csulb.android.fullcount.tools.FullCountRestClient;
 
 public class PlayerCardFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
@@ -53,7 +55,12 @@ public class PlayerCardFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_player_card, container, false);
 
         mPlayerImage = (ImageView)view.findViewById(R.id.player_image_player_card_fragment);
-        mPlayerImage.setImageResource(R.drawable.ic_launcher);
+
+	    if (mPlayer.getPictureUri() != null) {
+		    ImageLoader.getInstance().displayImage(FullCountRestClient.getAbsoluteUrl(mPlayer.getPictureUri()), mPlayerImage);
+	    } else {
+		    mPlayerImage.setImageResource(R.drawable.ic_launcher);
+	    }
 
         mFrameImage = (ImageView)view.findViewById(R.id.frame_player_card_fragment);
         mFrameImage.setImageResource(R.drawable.player_card_frame2);

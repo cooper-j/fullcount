@@ -79,5 +79,29 @@
 
     </FrameLayout>
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="3dp"
+        android:layout_marginTop="15dp"
+        android:background="?attr/colorPrimary">
+
+        <TextView
+            android:id="@+id/home_place_holder"
+            android:gravity="center"
+            android:text="No games to display"
+            android:layout_width="match_parent"
+            android:textSize="20sp"
+            android:layout_height="match_parent"
+            android:background="@color/default_background"/>
+
+        <ListView
+            android:id="@+id/home_history"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/default_background"/>
+
+    </FrameLayout>
 
 </LinearLayout>

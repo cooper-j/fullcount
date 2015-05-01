@@ -25,6 +25,7 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+<<<<<<< HEAD
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.apache.http.Header;
@@ -35,6 +36,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import edu.csulb.android.fullcount.FullCountApplication;
+=======
+import com.nostra13.universalimageloader.core.ImageLoader;
+
+>>>>>>> 92449d0391b7a546d1f5fbdbb80202c712544723
 import edu.csulb.android.fullcount.R;
 import edu.csulb.android.fullcount.io.models.Player;
 import edu.csulb.android.fullcount.tools.FullCountRestClient;
@@ -118,12 +123,20 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
 		super.onActivityCreated(savedInstanceState);
 		// Indicate that this fragment would like to influence the set of actions in the action bar.
 		setHasOptionsMenu(true);
-
-		// Fuck the police
-		mUsername.setText(((HomeActivity) getActivity()).player.getUsername());
-		// TODO Add picture
 	}
 
+
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		final Player player = ((HomeActivity) getActivity()).player;
+		mUsername.setText(player.getUsername());
+
+		if (player.getPictureUri() != null) {
+			ImageLoader.getInstance().displayImage(FullCountRestClient.getAbsoluteUrl(player.getPictureUri()), mUserPicture);
+		}
+	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
