@@ -18,14 +18,18 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CursorAdapter;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.SearchView;
-import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-<<<<<<< HEAD
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.apache.http.Header;
@@ -36,10 +40,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import edu.csulb.android.fullcount.FullCountApplication;
-=======
 import com.nostra13.universalimageloader.core.ImageLoader;
-
->>>>>>> 92449d0391b7a546d1f5fbdbb80202c712544723
 import edu.csulb.android.fullcount.R;
 import edu.csulb.android.fullcount.io.models.Player;
 import edu.csulb.android.fullcount.tools.FullCountRestClient;
@@ -69,15 +70,15 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
 
 	private DrawerLayout mDrawerLayout;
 	private View mFragmentContainerView;
-    private PlayerSearchAdapter mCursorAdapter;
-    private SimpleCursorAdapter mAdapter;
-
+    private FavoritesListAdapter mPlayerAdapter;
 	/**
 	 * UI Elements
 	 */
 	private SearchView mSearchView;
+	private ListView mlistView;
 	private ImageView mUserPicture;
 	private TextView mUsername;
+	private ScrollView mMenuLayout;
 
 	private View mTeamMenu;
 	private View mCreateGameMenu;
@@ -85,6 +86,8 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
 	private View mPlayerCardMenu;
 	private View mLogoutMenu;
 
+
+	private ArrayList<Player> mSearchPlayers = new ArrayList<Player>();
 
     private String mAuthTokenString;
     private boolean mAuthIsBasic;
@@ -143,8 +146,10 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
 		final View inflateView = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
 
 		mSearchView = (SearchView) inflateView.findViewById(R.id.drawer_search);
+		mlistView = (ListView) inflateView.findViewById(R.id.drawer_search_list);
 		mUserPicture = (ImageView) inflateView.findViewById(R.id.drawer_picture);
 		mUsername = (TextView) inflateView.findViewById(R.id.drawer_username);
+		mMenuLayout = (ScrollView) inflateView.findViewById(R.id.drawer_menu_layout);
 
 		mTeamMenu = inflateView.findViewById(R.id.drawer_team);
 		mCreateGameMenu = inflateView.findViewById(R.id.drawer_create_game);
@@ -160,76 +165,80 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
 		mPlayerCardMenu.setOnClickListener(this);
 		mLogoutMenu.setOnClickListener(this);
 
-        mCursorAdapter = new PlayerSearchAdapter(this.getActivity(), R.layout.player_list_item, null, columns,null, -1000);
-        mSearchView.setSuggestionsAdapter(mCursorAdapter);
+        mPlayerAdapter = new FavoritesListAdapter(getActivity(), mSearchPlayers);
+		mlistView.setAdapter(mPlayerAdapter);
 
-        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+		mlistView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				mSearchView.setQuery("", false);
+				mCallbacks.onSelectSearchedPlayer(mSearchPlayers.get(position));
+			}
+		});
 
-            @Override
-            public boolean onQueryTextChange(String query) {
+		mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
-                JSONObject jsonObject = new JSONObject();
-                try {
-                    jsonObject.put("needle", query);
-                    jsonObject.put("offset", 0);
-                    jsonObject.put("limit", 5);
+			@Override
+			public boolean onQueryTextChange(String query) {
 
-                    FullCountRestClient.post(getActivity(), "/api/users/search", jsonObject, "", false, new JsonHttpResponseHandler() {
-                        @Override
-                        public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                            ArrayList<Player> players = new ArrayList<Player>();
-                            if (statusCode == 200){
-                                try {
-                                    for (int i = 0; i < response.length(); i++) {
-                                        players.add(Player.parseFromJSON(response.getJSONObject(i)));
-                                    }
+				if (query.isEmpty()) {
+					mMenuLayout.setVisibility(View.VISIBLE);
+					mlistView.setVisibility(View.GONE);
+					return true;
+				}
 
-                                    MatrixCursor cursor = new MatrixCursor(columns);
-                                    int i = 0;
-                                    for (Player p : players) {
-                                        String[] temp = new String[3];
-                                        i = i + 1;
-                                        temp[0] = Integer.toString(i);
-                                        temp[1] = p.getUsername();
-                                        temp[2] = p.getPictureUri();
-                                        cursor.addRow(temp);
-                                    }
+				JSONObject jsonObject = new JSONObject();
+				try {
+					jsonObject.put("needle", query);
+					jsonObject.put("offset", 0);
+					jsonObject.put("limit", 5);
 
-                                    mCursorAdapter.changeCursor(cursor);
-                                }catch(JSONException e) {
-                                    if (DEBUG_MODE) {
-                                        e.printStackTrace();
-                                    }
-                                    Toast.makeText(getActivity(), "Unexpected error occurred. Try again later.", Toast.LENGTH_SHORT).show();
-                                }
-                                //mAdapter = new FavoritesListAdapter(getActivity(), players);
+					FullCountRestClient.post(getActivity(), "/api/users/search", jsonObject, "", false, new JsonHttpResponseHandler() {
+						@Override
+						public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+							if (statusCode == 200) {
+								try {
+									mSearchPlayers.clear();
+									for (int i = 0; i < response.length(); i++) {
+										mSearchPlayers.add(Player.parseFromJSON(response.getJSONObject(i)));
+									}
+								} catch (JSONException e) {
+									if (DEBUG_MODE) {
+										e.printStackTrace();
+									}
+									Toast.makeText(getActivity(), "Unexpected error occurred. Try again later.", Toast.LENGTH_SHORT).show();
+								}
+								mPlayerAdapter.notifyDataSetChanged();
+								/*Animation fadeOut = new AlphaAnimation(1, 0);
+								fadeOut.setInterpolator(new AccelerateInterpolator());
+								fadeOut.setStartOffset(1000);
+								fadeOut.setDuration(1000);
+								mMenuLayout.setAnimation(fadeOut);*/
+								mMenuLayout.setVisibility(View.GONE);
+								mlistView.setVisibility(View.VISIBLE);
+							}
+						}
 
-                            }
-                        }
+						@Override
+						public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+							super.onFailure(statusCode, headers, throwable, errorResponse);
+						}
+					});
 
-                        @Override
-                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                            super.onFailure(statusCode, headers, throwable, errorResponse);
-                        }
-                    });
+				} catch (JSONException e) {
+					if (DEBUG_MODE) {
+						e.printStackTrace();
+					}
+					Toast.makeText(getActivity(), "Unexpected error occurred. Try again later.", Toast.LENGTH_SHORT).show();
+				}
+				return false;
+			}
 
-                }catch (JSONException e) {
-                        if (DEBUG_MODE) {
-                            e.printStackTrace();
-                        }
-                        Toast.makeText(getActivity(), "Unexpected error occurred. Try again later.", Toast.LENGTH_SHORT).show();
-                    }
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
+			@Override
+			public boolean onQueryTextSubmit(String query) {
+				return false;
             }
         });
-
-		// Select either the default item (0) or the last selected item.
-		selectItem(mCurrentSelectedViewId);
 
 		return inflateView;
 	}
@@ -402,5 +411,6 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
 		 * Called when an item in the navigation drawer is selected.
 		 */
 		void onNavigationDrawerItemSelected(int viewId);
+		void onSelectSearchedPlayer(Player player);
 	}
 }
