@@ -40,13 +40,13 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import edu.csulb.android.fullcount.FullCountApplication;
-<<<<<<< HEAD
+
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
-=======
+
 import com.nostra13.universalimageloader.core.ImageLoader;
->>>>>>> origin/master
+
 import edu.csulb.android.fullcount.R;
 import edu.csulb.android.fullcount.io.models.Player;
 import edu.csulb.android.fullcount.tools.FullCountRestClient;
