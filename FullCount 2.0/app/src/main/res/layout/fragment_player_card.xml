@@ -35,20 +35,12 @@
         android:paddingRight="80dp"/>
 
     <CheckBox
-        android:id="@+id/star"
+        android:id="@+id/favorite_star"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginTop="25dp"
         android:layout_marginLeft="25dp"
-        style="?android:attr/starStyle"/>
+        android:button="@android:drawable/btn_star"/>
 
-    <ImageButton android:id="@+id/favorite"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:layout_marginLeft="25dp"
-        android:src="@drawable/star"
-        android:background="#00ffffff"
-        android:onClick="onToggleStar"/>
 </RelativeLayout>

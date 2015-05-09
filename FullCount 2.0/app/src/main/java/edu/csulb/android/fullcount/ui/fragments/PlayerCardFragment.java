@@ -3,25 +3,41 @@ package edu.csulb.android.fullcount.ui.fragments;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.loopj.android.http.JsonHttpResponseHandler;
 import com.nostra13.universalimageloader.core.ImageLoader;
+
+import org.apache.http.Header;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import edu.csulb.android.fullcount.R;
 import edu.csulb.android.fullcount.io.models.Player;
 import edu.csulb.android.fullcount.tools.FullCountRestClient;
+import edu.csulb.android.fullcount.ui.activities.HomeActivity;
 
 public class PlayerCardFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARGUMENT_PLAYER = "PLAYER";
+    private static final String ARGUMENT_USER = "user";
+    private static final String ARGUMENT_PLAYER = "player";
+    private static final String ARGUMENT_AUTH = "auth";
 
     // TODO: Rename and change types of parameters
+    private Player mUser;
     private Player mPlayer;
+    private String mAuth;
+
+    private CheckBox mFavoriteStar;
     private ImageView mPlayerImage;
     private ImageView mFrameImage;
     private TextView mPlayerName;
@@ -29,10 +45,12 @@ public class PlayerCardFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     // TODO: Rename and change types and number of parameters
-    public static PlayerCardFragment newInstance(Player player) {
+    public static PlayerCardFragment newInstance(Player user, Player player, String auth) {
         PlayerCardFragment fragment = new PlayerCardFragment();
         Bundle args = new Bundle();
+        args.putSerializable(ARGUMENT_USER, user);
         args.putSerializable(ARGUMENT_PLAYER, player);
+        args.putString(ARGUMENT_AUTH, auth);
         fragment.setArguments(args);
         return fragment;
     }
@@ -45,7 +63,9 @@ public class PlayerCardFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+            mUser = (Player)getArguments().getSerializable(ARGUMENT_USER);
             mPlayer = (Player)getArguments().getSerializable(ARGUMENT_PLAYER);
+            mAuth = getArguments().getString(ARGUMENT_AUTH);
         }
     }
 
@@ -54,6 +74,7 @@ public class PlayerCardFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_player_card, container, false);
 
+        mFavoriteStar = (CheckBox)view.findViewById(R.id.favorite_star);
         mPlayerImage = (ImageView)view.findViewById(R.id.player_image_player_card_fragment);
 
 	    if (mPlayer.getPictureUri() != null) {
@@ -68,6 +89,28 @@ public class PlayerCardFragment extends Fragment {
         mPlayerName = (TextView)view.findViewById(R.id.name_player_card_fragment);
         mPlayerName.setText(mPlayer.getUsername());
 
+        if (mUser == mPlayer)
+            mFavoriteStar.setVisibility(View.GONE);
+        else {
+            mFavoriteStar.setChecked(mUser.getFavorites().contains(mPlayer) ? true : false);
+            mFavoriteStar.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (isChecked)
+                        FullCountRestClient.post(getActivity(), "/api/users/" + mPlayer.getId() + "/follow", new JSONObject(), mAuth, true, new JsonHttpResponseHandler() {
+                                    @Override
+                                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+
+                                    }
+
+                                    @Override
+                                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject error) {
+                                        Log.e("fail", String.valueOf(statusCode));
+                                    }
+                                }
+                        );
+                }
+            });
+        }
         return view;
     }
 

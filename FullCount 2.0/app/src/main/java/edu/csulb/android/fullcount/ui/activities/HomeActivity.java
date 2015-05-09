@@ -107,7 +107,7 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 			case R.id.drawer_team: {
 				final String auth = settings.getString("auth", "");
                 String teamId = "";
-                if (player.getTeam().getId() != null)
+                if (player.getTeam() != null && player.getTeam().getId() != null)
                     teamId = player.getTeam().getId();
 				final boolean authIsBasic = settings.getBoolean("authIsBasic", true);
 				fragment = TeamFragment.newInstance(auth, authIsBasic, teamId);
@@ -137,9 +137,8 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 			case R.id.drawer_player_card:
 				Toast.makeText(this, "Player card", Toast.LENGTH_SHORT).show();
 
-                //final String auth = settings.getString("auth", "");
-                //final boolean authIsBasic = settings.getBoolean("authIsBasic", true);
-                fragment = PlayerCardFragment.newInstance(player);
+                final String auth = settings.getString("auth", "");
+                fragment = PlayerCardFragment.newInstance(player, player, auth);
                 transaction.addToBackStack(PlayerCardFragment.class.getName());
                 break;
 
@@ -296,19 +295,25 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 
     @Override
     public void onSelectFavorite(int position) {
+		final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+		final String auth = settings.getString("auth", "");
+
         final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
         transaction.addToBackStack(PlayerCardFragment.class.getName());
-        transaction.replace(R.id.container, PlayerCardFragment.newInstance(player.getFavorites().get(position)));
+        transaction.replace(R.id.container, PlayerCardFragment.newInstance(player, player.getFavorites().get(position), auth));
         transaction.commit();
     }
 
 	@Override
-	public void onSelectSearchedPlayer(Player player) {
+	public void onSelectSearchedPlayer(Player p) {
+		final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+		final String auth = settings.getString("auth", "");
+
 		final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 		transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
 		transaction.addToBackStack(PlayerCardFragment.class.getName());
-		transaction.replace(R.id.container, PlayerCardFragment.newInstance(player));
+		transaction.replace(R.id.container, PlayerCardFragment.newInstance(player, p, auth));
 		transaction.commit();
 	}
 
