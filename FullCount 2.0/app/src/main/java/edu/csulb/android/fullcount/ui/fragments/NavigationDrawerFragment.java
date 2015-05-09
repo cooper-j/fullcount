@@ -25,7 +25,6 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-<<<<<<< HEAD
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.apache.http.Header;
@@ -36,10 +35,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import edu.csulb.android.fullcount.FullCountApplication;
-=======
+
 import com.nostra13.universalimageloader.core.ImageLoader;
 
->>>>>>> 92449d0391b7a546d1f5fbdbb80202c712544723
 import edu.csulb.android.fullcount.R;
 import edu.csulb.android.fullcount.io.models.Player;
 import edu.csulb.android.fullcount.tools.FullCountRestClient;
