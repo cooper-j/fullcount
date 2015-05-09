@@ -170,8 +170,6 @@ public class LoginActivity extends FragmentActivity {
 		}
 
 		private void connectFacebook(String accessToken) {
-			startProgressDialog();
-
 			try {
 
 				JSONObject jsonObject = new JSONObject();
@@ -185,81 +183,77 @@ public class LoginActivity extends FragmentActivity {
 				editor.commit();
 
 				FullCountRestClient.post(getActivity(), "/api/users/login/facebook", jsonObject, "", true, new JsonHttpResponseHandler() {
+
+					@Override
+					public void onStart() {
+						startProgressDialog();
+					}
+
 					@Override
 					public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-						dismissProgressDialog();
-
 						if (response != null && (statusCode == 200 || statusCode == 201)) {
-
-							if (DEBUG_MODE) {
-								Log.i(TAG, "/api/users/login/facebook: " + response.toString());
-							}
-
+							if (DEBUG_MODE)	Log.i(TAG, "POST /api/users/login/facebook result" + '\n' + response.toString());
 							try {
 								final Player player = Player.parseFromJSON(response);
-
 								((LoginActivity) getActivity()).startHomeScreen(player);
 							} catch (JSONException e) {
-								e.printStackTrace();
+								if (DEBUG_MODE) e.printStackTrace();
+								Toast.makeText(getActivity(), "Internal error. Try again later", Toast.LENGTH_SHORT).show();
 							}
 						} else if (response != null) {
-
 							final Session session = Session.getActiveSession();
-							if (session != null) {
-								session.closeAndClearTokenInformation();
-							}
-
-							if (DEBUG_MODE) {
-								Log.e(TAG, "Error " + statusCode + ": " + response.toString());
-							}
-
-							// TODO Handle error message
+							if (session != null) session.closeAndClearTokenInformation();
+							if (DEBUG_MODE)	Log.e(TAG, "Error " + statusCode + ": " + response.toString());
 							Toast.makeText(getActivity(), response.toString(), Toast.LENGTH_SHORT).show();
 						} else {
-
 							final Session session = Session.getActiveSession();
-							if (session != null) {
-								session.closeAndClearTokenInformation();
-							}
-
-							if (DEBUG_MODE) {
-								Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
-							}
-
+							if (session != null) session.closeAndClearTokenInformation();
+							if (DEBUG_MODE)	Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
 							Toast.makeText(getActivity(), "Could not log in. Try again later.", Toast.LENGTH_SHORT).show();
 						}
+					}
+
+					@Override
+					public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+						final Session session = Session.getActiveSession();
+						if (session != null) session.closeAndClearTokenInformation();
+						if (responseString != null) {
+							if (DEBUG_MODE)	Log.e(TAG, "Error " + statusCode + ": " + responseString);
+							Toast.makeText(getActivity(), responseString, Toast.LENGTH_SHORT).show();
+						} else {
+							if (DEBUG_MODE)	Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
+							Toast.makeText(getActivity(), "Could not log in. Try again later.", Toast.LENGTH_SHORT).show();
+						}
+						if (DEBUG_MODE && throwable != null) throwable.printStackTrace();
 					}
 
 					@Override
 					public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject error) {
-						dismissProgressDialog();
-
 						final Session session = Session.getActiveSession();
-						if (session != null) {
-							session.closeAndClearTokenInformation();
-						}
-
+						if (session != null) session.closeAndClearTokenInformation();
 						if (error != null) {
-							if (DEBUG_MODE) {
-								Log.e(TAG, "Error " + statusCode + ": " + error.toString());
-							}
-
+							if (DEBUG_MODE)	Log.e(TAG, "Error " + statusCode + ": " + error.toString());
 							try {
 								Toast.makeText(getActivity(), error.getString("message"), Toast.LENGTH_SHORT).show();
 							} catch (JSONException e) {
-								e.printStackTrace();
+								if (DEBUG_MODE)	e.printStackTrace();
+								Toast.makeText(getActivity(), "Unknown error. Try again later", Toast.LENGTH_SHORT).show();
 							}
 						} else {
-							if (DEBUG_MODE) {
-								Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
-							}
-
+							if (DEBUG_MODE)	Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
 							Toast.makeText(getActivity(), "Could not log in. Try again later.", Toast.LENGTH_SHORT).show();
 						}
+						if (DEBUG_MODE && throwable != null) throwable.printStackTrace();
+					}
+
+					@Override
+					public void onFinish() {
+						dismissProgressDialog();
 					}
 				});
 			} catch (JSONException e) {
-				e.printStackTrace();
+				if (DEBUG_MODE) e.printStackTrace();
+				Toast.makeText(getActivity(), "Internal error. Try again later", Toast.LENGTH_SHORT).show();
 			}
 
 			mFacebookButton.setEnabled(true);
@@ -359,66 +353,73 @@ public class LoginActivity extends FragmentActivity {
 				editor.commit();
 
 				FullCountRestClient.post(getActivity(), "/api/users/login", jsonObject, auth, true, new JsonHttpResponseHandler() {
+
+					@Override
+					public void onStart() {
+						// TODO Enable progress dialog
+					}
+
 					@Override
 					public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+
 						if (response != null && statusCode == 200) {
-
-							if (DEBUG_MODE) {
-								Log.i(TAG, "/api/users/login: " + response.toString());
-							}
-
-							// TODO Enhance local data storage
+							if (DEBUG_MODE)	Log.i(TAG, "POST /api/users/login result" + '\n' + response.toString());
 							try {
 								final Player player = Player.parseFromJSON(response);
-
 								((LoginActivity) getActivity()).startHomeScreen(player);
 							} catch (JSONException e) {
-								e.printStackTrace();
+								if (DEBUG_MODE)	e.printStackTrace();
+								Toast.makeText(getActivity(), "Internal error. Try again later", Toast.LENGTH_SHORT).show();
 							}
-
 						} else if (response != null) {
-
-							if (DEBUG_MODE) {
-								Log.e(TAG, "Error " + statusCode + ": " + response.toString());
-							}
-
-							// TODO Handle error message
+							if (DEBUG_MODE)	Log.e(TAG, "Error " + statusCode + ": " + response.toString());
 							Toast.makeText(getActivity(), response.toString(), Toast.LENGTH_SHORT).show();
 						} else {
-
-							if (DEBUG_MODE) {
-								Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
-							}
-
+							if (DEBUG_MODE)	Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
 							Toast.makeText(getActivity(), "Could not log in. Try again later.", Toast.LENGTH_SHORT).show();
 						}
+					}
+
+					@Override
+					public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+						if (responseString != null) {
+							if (DEBUG_MODE)	Log.e(TAG, "Error " + statusCode + ": " + responseString);
+							Toast.makeText(getActivity(), responseString, Toast.LENGTH_SHORT).show();
+						} else {
+							if (DEBUG_MODE) Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
+							Toast.makeText(getActivity(), "Could not log in. Try again later.", Toast.LENGTH_SHORT).show();
+						}
+						if (DEBUG_MODE && throwable != null) throwable.printStackTrace();
 					}
 
 					@Override
 					public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject error) {
 						if (error != null) {
-							if (DEBUG_MODE) {
-								Log.e(TAG, "Error " + statusCode + ": " + error.toString());
-							}
-
+							if (DEBUG_MODE)	Log.e(TAG, "Error " + statusCode + ": " + error.toString());
 							try {
 								Toast.makeText(getActivity(), error.getString("message"), Toast.LENGTH_SHORT).show();
 							} catch (JSONException e) {
-								e.printStackTrace();
+								if (DEBUG_MODE) e.printStackTrace();
+								Toast.makeText(getActivity(), "Internal error. Try again later.", Toast.LENGTH_SHORT).show();
 							}
 						} else {
-							if (DEBUG_MODE) {
-								Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
-							}
-
+							if (DEBUG_MODE)	Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
 							Toast.makeText(getActivity(), "Could not log in. Try again later.", Toast.LENGTH_SHORT).show();
 						}
+						if (DEBUG_MODE && throwable != null) throwable.printStackTrace();
+					}
+
+					@Override
+					public void onFinish() {
+						// TODO Disable progress dialog
 					}
 				});
 			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
+				if (DEBUG_MODE) e.printStackTrace();
+				Toast.makeText(getActivity(), "Internal error. Try again later.", Toast.LENGTH_SHORT).show();
 			} catch (JSONException e) {
-				e.printStackTrace();
+				if (DEBUG_MODE) e.printStackTrace();
+				Toast.makeText(getActivity(), "Internal error. Try again later.", Toast.LENGTH_SHORT).show();
 			}
 		}
 	}
@@ -500,65 +501,72 @@ public class LoginActivity extends FragmentActivity {
 				editor.apply();
 
 				FullCountRestClient.post(getActivity(), "/api/users", jsonObject, "", true, new JsonHttpResponseHandler() {
+
+					@Override
+					public void onStart() {
+						// TODO Enable progress dialog
+					}
+
 					@Override
 					public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 						if (response != null && statusCode == 201) {
-
-							if (DEBUG_MODE) {
-								Log.i(TAG, "/api/users: " + response.toString());
-							}
-
-							// TODO Enhance local data storage
+							if (DEBUG_MODE)	Log.i(TAG, "POST /api/users result" + '\n' + response.toString());
 							try {
 								final Player player = Player.parseFromJSON(response);
-
 								((LoginActivity) getActivity()).startHomeScreen(player);
 							} catch (JSONException e) {
-								e.printStackTrace();
+								if (DEBUG_MODE)	e.printStackTrace();
+								Toast.makeText(getActivity(), "Internal error. Try again later.", Toast.LENGTH_SHORT).show();
 							}
 						} else if (response != null) {
-
-							if (DEBUG_MODE) {
-								Log.e(TAG, "Error " + statusCode + ": " + response.toString());
-							}
-
-							// TODO Handle error message
+							if (DEBUG_MODE)	Log.e(TAG, "Error " + statusCode + ": " + response.toString());
 							Toast.makeText(getActivity(), response.toString(), Toast.LENGTH_SHORT).show();
 						} else {
-
-							if (DEBUG_MODE) {
-								Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
-							}
-
+							if (DEBUG_MODE)	Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
 							Toast.makeText(getActivity(), "Could not sign up. Try again later.", Toast.LENGTH_SHORT).show();
 						}
+					}
+
+					@Override
+					public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+						if (responseString != null) {
+							if (DEBUG_MODE)	Log.e(TAG, "Error " + statusCode + ": " + responseString);
+							Toast.makeText(getActivity(), responseString, Toast.LENGTH_SHORT).show();
+						} else {
+							if (DEBUG_MODE)	Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
+							Toast.makeText(getActivity(), "Could not sign up. Try again later.", Toast.LENGTH_SHORT).show();
+						}
+						if (DEBUG_MODE && throwable != null) throwable.printStackTrace();
 					}
 
 					@Override
 					public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject error) {
 						if (error != null) {
-							if (DEBUG_MODE) {
-								Log.e(TAG, "Error " + statusCode + ": " + error.toString());
-							}
-
+							if (DEBUG_MODE)	Log.e(TAG, "Error " + statusCode + ": " + error.toString());
 							try {
 								Toast.makeText(getActivity(), error.getString("message"), Toast.LENGTH_SHORT).show();
 							} catch (JSONException e) {
-								e.printStackTrace();
+								if (DEBUG_MODE) e.printStackTrace();
+								Toast.makeText(getActivity(), "Internal error. Try again later.", Toast.LENGTH_SHORT).show();
 							}
 						} else {
-							if (DEBUG_MODE) {
-								Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
-							}
-
+							if (DEBUG_MODE)	Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
 							Toast.makeText(getActivity(), "Could not sign up. Try again later.", Toast.LENGTH_SHORT).show();
 						}
+						if (DEBUG_MODE && throwable != null) throwable.printStackTrace();
+					}
+
+					@Override
+					public void onFinish() {
+						// TODO Disable progress dialog
 					}
 				});
 			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
+				if (DEBUG_MODE) e.printStackTrace();
+				Toast.makeText(getActivity(), "Internal error. Try again later.", Toast.LENGTH_SHORT).show();
 			} catch (JSONException e) {
-				e.printStackTrace();
+				if (DEBUG_MODE) e.printStackTrace();
+				Toast.makeText(getActivity(), "Internal error. Try again later.", Toast.LENGTH_SHORT).show();
 			}
 		}
 	}

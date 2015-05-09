@@ -16,7 +16,6 @@ import android.widget.Toast;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.apache.http.Header;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -101,75 +100,67 @@ public class TeamFragment extends Fragment implements View.OnClickListener {
 
 		if (mTeamId != null) {
 			FullCountRestClient.get("/api/teams/" + mTeamId, null, mAuthTokenString, mAuthIsBasic, new JsonHttpResponseHandler() {
+
+				@Override
+				public void onStart() {
+					// TODO Start progress dialog
+				}
+
 				@Override
 				public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-
 					if (response != null && statusCode == 200) {
-
-						if (DEBUG_MODE) {
-							Log.i(TAG, "/api/teams: " + response.toString());
-						}
-
+						if (DEBUG_MODE)	Log.i(TAG, "/api/teams: " + response.toString());
 						try {
 							final Team team = Team.parseFromJSON(response);
-
-
-							if (getActivity() != null) {
-								((HomeActivity) getActivity()).player.setTeam(team);
-							}
-
 							fillTeamInformation(team);
-
-							/* TODO Add roster
-							SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
-							editor.putString("roster", response.getJSONArray("roster").toString());
-							editor.commit();
-							*/
-
+							if (getActivity() != null) ((HomeActivity) getActivity()).player.setTeam(team);
 						} catch (JSONException e) {
-							e.printStackTrace();
+							if (DEBUG_MODE)	e.printStackTrace();
+							Toast.makeText(getActivity(), "Internal error. Try again later.", Toast.LENGTH_SHORT).show();
 						}
-
 					} else if (response != null) {
-
-						if (DEBUG_MODE) {
-							Log.e(TAG, "Error " + statusCode + ": " + response.toString());
-						}
-
+						if (DEBUG_MODE)	Log.e(TAG, "Error " + statusCode + ": " + response.toString());
 						Toast.makeText(getActivity(), response.toString(), Toast.LENGTH_SHORT).show();
 					} else {
-
-						if (DEBUG_MODE) {
-							Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
-						}
-
+						if (DEBUG_MODE)	Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
 						Toast.makeText(getActivity(), "Could not retrieve team. Try again later.", Toast.LENGTH_SHORT).show();
 					}
+				}
 
+				@Override
+				public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+					if (responseString != null) {
+						if (DEBUG_MODE) Log.e(TAG, "Error " + statusCode + ": " + responseString);
+						Toast.makeText(getActivity(), responseString, Toast.LENGTH_SHORT).show();
+					} else {
+						if (DEBUG_MODE) Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
+						Toast.makeText(getActivity(), "Could not retrieve team. Try again later.", Toast.LENGTH_SHORT).show();
+					}
+					if (DEBUG_MODE && throwable != null) throwable.printStackTrace();
 				}
 
 				@Override
 				public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject error) {
 					if (error != null) {
-						if (DEBUG_MODE) {
-							Log.e(TAG, "Error " + statusCode + ": " + error.toString());
-						}
-
+						if (DEBUG_MODE)	Log.e(TAG, "Error " + statusCode + ": " + error.toString());
 						try {
 							Toast.makeText(getActivity(), error.getString("message"), Toast.LENGTH_SHORT).show();
 						} catch (JSONException e) {
-							e.printStackTrace();
+							if (DEBUG_MODE)	e.printStackTrace();
+							Toast.makeText(getActivity(), "Internal error. Try again later.", Toast.LENGTH_SHORT).show();
 						}
 					} else {
-						if (DEBUG_MODE) {
-							Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
-						}
-
+						if (DEBUG_MODE) Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
 						Toast.makeText(getActivity(), "Could not retrieve team. Try again later.", Toast.LENGTH_SHORT).show();
 					}
+					if (DEBUG_MODE && throwable != null) throwable.printStackTrace();
+				}
+
+				@Override
+				public void onFinish() {
+					// TODO Dismiss progress dialog
 				}
 			});
-
 		}
 
 		return inflateView;
@@ -220,131 +211,120 @@ public class TeamFragment extends Fragment implements View.OnClickListener {
 						@Override
 						public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 							if (response != null && statusCode == 200) {
-
-								if (DEBUG_MODE) {
-									Log.i(TAG, "/api/teams/" + mTeamId + ": " + response.toString());
-
-									Toast.makeText(getActivity(), "Team successfully edited.", Toast.LENGTH_SHORT).show();
-								}
-
+								if (DEBUG_MODE)	Log.i(TAG, "PUT /api/teams/" + mTeamId + " result" + '\n' + response.toString());
+								Toast.makeText(getActivity(), "Team successfully edited.", Toast.LENGTH_SHORT).show();
 								try {
 									final Team team = Team.parseFromJSON(response);
-
-									if (getActivity() != null) {
-										((HomeActivity) getActivity()).player.setTeam(team);
-									}
+									if (getActivity() != null) ((HomeActivity) getActivity()).player.setTeam(team);
 								} catch (JSONException e) {
-									if (DEBUG_MODE) {
-										e.printStackTrace();
-									}
+									if (DEBUG_MODE)	e.printStackTrace();
+									Toast.makeText(getActivity(), "Internal error", Toast.LENGTH_SHORT).show();
 								}
-
-								if (mListener != null) {
-									mListener.onTeamEdition();
-								}
-
+								if (mListener != null)	mListener.onTeamEdition();
 							} else if (response != null) {
-
-								if (DEBUG_MODE) {
-									Log.e(TAG, "Error " + statusCode + ": " + response.toString());
-								}
-
+								if (DEBUG_MODE)	Log.e(TAG, "Error " + statusCode + ": " + response.toString());
 								Toast.makeText(getActivity(), response.toString(), Toast.LENGTH_SHORT).show();
 							} else {
-
-								if (DEBUG_MODE) {
-									Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
-								}
-
+								if (DEBUG_MODE)	Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
 								Toast.makeText(getActivity(), "Could not edit team. Try again later.", Toast.LENGTH_SHORT).show();
 							}
 						}
 
-
+						@Override
+						public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+							if (responseString != null) {
+								if (DEBUG_MODE) Log.e(TAG, "Error " + statusCode + ": " + responseString);
+								Toast.makeText(getActivity(), responseString, Toast.LENGTH_SHORT).show();
+							} else {
+								if (DEBUG_MODE) Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
+								Toast.makeText(getActivity(), "Could not edit team. Try again later.", Toast.LENGTH_SHORT).show();
+							}
+							if (DEBUG_MODE && throwable != null) throwable.printStackTrace();
+						}
 
 						@Override
 						public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject error) {
 							if (error != null) {
-								if (DEBUG_MODE) {
-									Log.e(TAG, "Error " + statusCode + ": " + error.toString());
-								}
-
+								if (DEBUG_MODE)	Log.e(TAG, "Error " + statusCode + ": " + error.toString());
 								try {
 									Toast.makeText(getActivity(), error.getString("message"), Toast.LENGTH_SHORT).show();
 								} catch (JSONException e) {
-									e.printStackTrace();
+									if (DEBUG_MODE) e.printStackTrace();
+									Toast.makeText(getActivity(), "Internal error. Try again later.", Toast.LENGTH_SHORT).show();
 								}
 							} else {
-								if (DEBUG_MODE) {
-									Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
-								}
-
+								if (DEBUG_MODE) Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
 								Toast.makeText(getActivity(), "Could not edit team. Try again later.", Toast.LENGTH_SHORT).show();
 							}
+							if (DEBUG_MODE && throwable != null) throwable.printStackTrace();
 						}
 					});
 				} else {
 					FullCountRestClient.post(getActivity(), "/api/teams", jsonObject, mAuthTokenString, mAuthIsBasic, new JsonHttpResponseHandler() {
 
 						@Override
+						public void onStart() {
+							// TODO Start progress dialog
+						}
+
+						@Override
 						public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 							if (response != null && statusCode == 201) {
-
-								if (DEBUG_MODE) {
-									Log.i(TAG, "/api/teams: " + response.toString());
-
-									Toast.makeText(getActivity(), "Team successfully created.", Toast.LENGTH_SHORT).show();
-								}
-
-								if (mListener != null) {
-									mListener.onTeamCreation();
-								}
-
+								if (DEBUG_MODE)
+									Log.i(TAG, "POST /api/teams result" + '\n' + response.toString());
+								Toast.makeText(getActivity(), "Team successfully created.", Toast.LENGTH_SHORT).show();
+								if (mListener != null) mListener.onTeamCreation();
 							} else if (response != null) {
-
-								if (DEBUG_MODE) {
+								if (DEBUG_MODE)
 									Log.e(TAG, "Error " + statusCode + ": " + response.toString());
-								}
-
 								Toast.makeText(getActivity(), response.toString(), Toast.LENGTH_SHORT).show();
 							} else {
-
-								if (DEBUG_MODE) {
+								if (DEBUG_MODE)
 									Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
-								}
-
 								Toast.makeText(getActivity(), "Could not create team. Try again later.", Toast.LENGTH_SHORT).show();
 							}
 						}
 
 						@Override
+						public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+							if (responseString != null) {
+								if (DEBUG_MODE) Log.e(TAG, "Error " + statusCode + ": " + responseString);
+								Toast.makeText(getActivity(), responseString, Toast.LENGTH_SHORT).show();
+							} else {
+								if (DEBUG_MODE) Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
+								Toast.makeText(getActivity(), "Could not create team. Try again later.", Toast.LENGTH_SHORT).show();
+							}
+							if (DEBUG_MODE && throwable != null) throwable.printStackTrace();
+						}
+
+						@Override
 						public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject error) {
 							if (error != null) {
-								if (DEBUG_MODE) {
+								if (DEBUG_MODE)
 									Log.e(TAG, "Error " + statusCode + ": " + error.toString());
-								}
-
 								try {
 									Toast.makeText(getActivity(), error.getString("message"), Toast.LENGTH_SHORT).show();
 								} catch (JSONException e) {
-									e.printStackTrace();
+									if (DEBUG_MODE) e.printStackTrace();
+									Toast.makeText(getActivity(), "Internal error. Try again later.", Toast.LENGTH_SHORT).show();
 								}
 							} else {
-								if (DEBUG_MODE) {
+								if (DEBUG_MODE)
 									Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
-								}
-
 								Toast.makeText(getActivity(), "Could not create team. Try again later.", Toast.LENGTH_SHORT).show();
 							}
+							if (DEBUG_MODE && throwable != null) throwable.printStackTrace();
+						}
+
+						@Override
+						public void onFinish() {
+							// TODO Dismiss progress dialog
 						}
 					});
 				}
 
 			} catch (JSONException e) {
-				if (DEBUG_MODE) {
-					e.printStackTrace();
-				}
-
+				if (DEBUG_MODE)	e.printStackTrace();
 				Toast.makeText(getActivity(), "Unexpected error occurred. Try again later.", Toast.LENGTH_SHORT).show();
 			}
 		}

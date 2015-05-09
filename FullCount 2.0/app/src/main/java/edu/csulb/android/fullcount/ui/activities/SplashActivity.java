@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Toast;
 
 import com.facebook.Session;
 import com.facebook.SessionState;
@@ -30,7 +31,6 @@ import java.security.NoSuchAlgorithmException;
 import edu.csulb.android.fullcount.FullCountApplication;
 import edu.csulb.android.fullcount.R;
 import edu.csulb.android.fullcount.io.models.Player;
-import edu.csulb.android.fullcount.io.models.Team;
 import edu.csulb.android.fullcount.tools.FullCountRestClient;
 
 
@@ -182,141 +182,115 @@ public class SplashActivity extends Activity implements Session.StatusCallback {
 			editor.commit();
 
 			FullCountRestClient.post(this, "/api/users/login/facebook", jsonObject, "", true, new JsonHttpResponseHandler() {
+
 				@Override
 				public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 					isAutoLoginChecked = true;
-
 					if (response != null && (statusCode == 200 || statusCode == 201)) {
-
-						if (DEBUG_MODE) {
-							Log.i(TAG, "/api/users/login/facebook: " + response.toString());
-						}
-
+						if (DEBUG_MODE)	Log.i(TAG, "POST /api/users/login/facebook result" + '\n' + response.toString());
 						try {
                             mPlayer = Player.parseFromJSON(response);
-
 							startHomeActivity();
 						} catch (JSONException e) {
-							e.printStackTrace();
+							if (DEBUG_MODE) e.printStackTrace();
+							Toast.makeText(SplashActivity.this, "Internal error. Try again later.", Toast.LENGTH_SHORT).show();
 						}
 					} else if (response != null) {
-
 						final Session session = Session.getActiveSession();
-						if (session != null) {
-							session.closeAndClearTokenInformation();
-						}
-
-						if (DEBUG_MODE) {
-							Log.e(TAG, "Error " + statusCode + ": " + response.toString());
-						}
+						if (session != null) session.closeAndClearTokenInformation();
+						if (DEBUG_MODE)	Log.e(TAG, "Error " + statusCode + ": " + response.toString());
+						// Toast.makeText(SplashActivity.this, response.toString(), Toast.LENGTH_SHORT).show();
 					} else {
-
 						final Session session = Session.getActiveSession();
-						if (session != null) {
-							session.closeAndClearTokenInformation();
-						}
+						if (session != null) session.closeAndClearTokenInformation();
+						if (DEBUG_MODE)	Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
+						// Toast.makeText(SplashActivity.this, "Could not login. Try again later.", Toast.LENGTH_SHORT).show();
+					}
+				}
 
-						if (DEBUG_MODE) {
-							Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
-						}
+				@Override
+				public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+					final Session session = Session.getActiveSession();
+					if (session != null) session.closeAndClearTokenInformation();
+					if (responseString != null) {
+						if (DEBUG_MODE) Log.e(TAG, "Error " + statusCode + ": " + responseString);
+						// Toast.makeText(SplashActivity.this, responseString, Toast.LENGTH_SHORT).show();
+					} else {
+						if (DEBUG_MODE) Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
+						// Toast.makeText(SplashActivity.this, "Could not login. Try again later.", Toast.LENGTH_SHORT).show();
 					}
 				}
 
 				@Override
 				public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject error) {
-
 					final Session session = Session.getActiveSession();
-					if (session != null) {
-						session.closeAndClearTokenInformation();
-					}
-
+					if (session != null) session.closeAndClearTokenInformation();
 					if (error != null) {
-						if (DEBUG_MODE) {
-							Log.e(TAG, "Error " + statusCode + ": " + error.toString());
-						}
+						if (DEBUG_MODE) Log.e(TAG, "Error " + statusCode + ": " + error.toString());
+						// Toast.makeText(SplashActivity.this, response.toString(), Toast.LENGTH_SHORT).show();
 					} else {
-						if (DEBUG_MODE) {
-							Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
-						}
+						if (DEBUG_MODE)	Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
+						// Toast.makeText(SplashActivity.this, "Could not login. Try again later.", Toast.LENGTH_SHORT).show();
 					}
 				}
 			});
 		} catch (JSONException e) {
-			e.printStackTrace();
+			if (DEBUG_MODE) e.printStackTrace();
+			Toast.makeText(SplashActivity.this, "Internal error. Try again later.", Toast.LENGTH_SHORT).show();
 		}
 	}
 
 	private void connect(String auth) {
 		FullCountRestClient.get("/api/users/current", null, auth, true, new JsonHttpResponseHandler() {
+
 			@Override
 			public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-				isAutoLoginChecked = true;
-
 				if (response != null && statusCode == 200) {
-
-					if (DEBUG_MODE) {
-						Log.i(TAG, "/api/users/current: " + response.toString());
-					}
-
+					if (DEBUG_MODE)	Log.i(TAG, "GET /api/users/current result" + '\n' + response.toString());
 					try {
 						mPlayer = Player.parseFromJSON(response);
-
-						startHomeActivity();
 					} catch (JSONException e) {
-						e.printStackTrace();
+						if (DEBUG_MODE) e.printStackTrace();
+						// Toast.makeText(this, "Internal error. Try again later.", Toast.LENGTH_SHORT).show();
 					}
-
 				} else if (response != null) {
-
-					if (DEBUG_MODE) {
-						Log.e(TAG, "Error " + statusCode + ": " + response.toString());
-					}
-
+					if (DEBUG_MODE)	Log.e(TAG, "Error " + statusCode + ": " + response.toString());
 					PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().clear();
-
-					startHomeActivity();
 				} else {
-
-					if (DEBUG_MODE) {
-						Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
-					}
+					if (DEBUG_MODE)	Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
 					PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().clear();
-
-					startHomeActivity();
 				}
 			}
 
 			@Override
 			public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-
-				isAutoLoginChecked = true;
-
-				if (DEBUG_MODE) {
-					Log.e(TAG, "Error " + statusCode + ": " + responseString);
-					throwable.printStackTrace();
+				PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().clear();
+				if (responseString != null) {
+					if (DEBUG_MODE)	Log.e(TAG, "Error " + statusCode + ": " + responseString);
+					// Toast.makeText(SplashActivity.this, responseString, Toast.LENGTH_SHORT).show();
+				} else {
+					if (DEBUG_MODE)	Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
+					// Toast.makeText(SplashActivity.this, "Could not login. Try again later.", Toast.LENGTH_SHORT).show();
 				}
-
-				startHomeActivity();
+				if (DEBUG_MODE && throwable != null) throwable.printStackTrace();
 			}
 
 			@Override
 			public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject error) {
-				isAutoLoginChecked = true;
-
 				PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().clear();
-
 				if (error != null) {
-					if (DEBUG_MODE) {
-						Log.e(TAG, "Error " + statusCode + ": " + error.toString());
-						throwable.printStackTrace();
-					}
+					if (DEBUG_MODE) Log.e(TAG, "Error " + statusCode + ": " + error.toString());
+					// Toast.makeText(SplashActivity.this, error.toString(), Toast.LENGTH_SHORT).show();
 				} else {
-					if (DEBUG_MODE) {
-						Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
-						throwable.printStackTrace();
-					}
+					if (DEBUG_MODE) Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
+					// Toast.makeText(SplashActivity.this, "Could not login. Try again later.", Toast.LENGTH_SHORT).show();
 				}
+				if (DEBUG_MODE && throwable != null) throwable.printStackTrace();
+			}
 
+			@Override
+			public void onFinish() {
+				isAutoLoginChecked = true;
 				startHomeActivity();
 			}
 		});
@@ -337,16 +311,12 @@ public class SplashActivity extends Activity implements Session.StatusCallback {
 
 	private void startHomeActivity() {
 		if (isFinishing()) {
-			if (DEBUG_MODE) {
-				Log.i(TAG, "User quit splash screen during timer");
-			}
+			if (DEBUG_MODE)	Log.i(TAG, "User quit splash screen during timer");
 			return;
 		}
 
 		if (!isSplashTime || !isAutoLoginChecked) {
-			if (DEBUG_MODE) {
-				Log.w(TAG, "It's time !.. to wait some more..");
-			}
+			if (DEBUG_MODE)	Log.w(TAG, "It's time !.. to wait some more..");
 			return;
 		}
 
