@@ -302,4 +302,16 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
         transaction.replace(R.id.container, PlayerCardFragment.newInstance(player.getFavorites().get(position)));
         transaction.commit();
     }
+
+	@Override
+	public void onSelectSearchedPlayer(Player player) {
+		final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+		transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+		transaction.addToBackStack(PlayerCardFragment.class.getName());
+		transaction.replace(R.id.container, PlayerCardFragment.newInstance(player));
+		transaction.commit();
+	}
+
+	public void onToggleStar(View view){}
+
 }
