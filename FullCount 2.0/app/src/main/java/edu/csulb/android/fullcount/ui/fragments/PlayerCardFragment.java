@@ -104,7 +104,7 @@ public class PlayerCardFragment extends Fragment {
 
                                     @Override
                                     public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject error) {
-                                        Log.e("fail", String.valueOf(statusCode));
+                                        Log.e("Fav", "Error " + statusCode + ": " + error.toString() + " " + mPlayer.getId());
                                     }
                                 }
                         );
