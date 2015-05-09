@@ -27,7 +27,7 @@ public class FavoritesListAdapter extends ArrayAdapter<Player> {
     public FavoritesListAdapter(Activity context, ArrayList<Player> favorites) {
         super(context, R.layout.player_list_item, favorites);
 
-        mFavorites = favorites != null ? favorites : new ArrayList<Player>();
+        mFavorites = favorites;
         this.context = context;
     }
 

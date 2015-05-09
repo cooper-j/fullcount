@@ -48,7 +48,7 @@ public class FavoritesFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_favorites, container, false);
 
-        mAdapter = new FavoritesListAdapter(getActivity(), mFavoritesList);
+        mAdapter = new FavoritesListAdapter(getActivity(), (mFavoritesList != null) ? mFavoritesList : new ArrayList<Player>());
         ListView listView = (ListView)view.findViewById(R.id.favorites_list);
         listView.setAdapter(mAdapter);
 

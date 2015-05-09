@@ -240,6 +240,8 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
             }
         });
 
+		selectItem(mCurrentSelectedViewId);
+
 		return inflateView;
 	}
 
