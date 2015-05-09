@@ -128,54 +128,38 @@ public class ProfileEditFragment extends Fragment implements View.OnClickListene
 
 			case REQUEST_SELECT_PICTURE:
 				if (resultCode == Activity.RESULT_OK) {
-
-					Uri pictureUri = data.getData();
-					String picturePath = ImageFilePath.getPath(getActivity(), pictureUri);
-
-					Log.i(TAG, picturePath);
-					final File picture = new File(picturePath);
-
+					final Uri pictureUri = data.getData();
+					final String picturePath = ImageFilePath.getPath(getActivity(), pictureUri);
+					final File picture = new File(picturePath); // TODO Reduce picture size
 					ImageLoader.getInstance().displayImage("file://" + picturePath, mPicture);
-					RequestParams params = new RequestParams();
+					final RequestParams params = new RequestParams();
 					try {
 						params.put("picture", picture);
-
 						FullCountRestClient.put("/api/users/current", params, mAuthTokenString, mAuthIsBasic, new JsonHttpResponseHandler() {
+
+							@Override
+							public void onStart() {
+								// TODO Enable upload progress
+								// TODO Disable picture click
+							}
 
 							@Override
 							public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 								if (response != null && statusCode == 200) {
-
-									if (DEBUG_MODE) {
-										Log.i(TAG, "/api/users/current: " + response.toString());
-										Toast.makeText(getActivity(), "Picture successfully edited.", Toast.LENGTH_SHORT).show();
-									}
-
+									if (DEBUG_MODE)	Log.i(TAG, "PUT /api/users/current result" + '\n' + response.toString());
+									Toast.makeText(getActivity(), "Picture successfully edited.", Toast.LENGTH_SHORT).show();
 									try {
 										final Player player = Player.parseFromJSON(response);
-
-										if (getActivity() != null) {
-											((HomeActivity) getActivity()).player = player;
-										}
+										if (getActivity() != null) ((HomeActivity) getActivity()).player = player;
 									} catch (JSONException e) {
-										if (DEBUG_MODE) {
-											e.printStackTrace();
-										}
+										if (DEBUG_MODE)	e.printStackTrace();
+										Toast.makeText(getActivity(), "Internal error. Try again later", Toast.LENGTH_SHORT).show();
 									}
-
 								} else if (response != null) {
-
-									if (DEBUG_MODE) {
-										Log.e(TAG, "Error " + statusCode + ": " + response.toString());
-									}
-
+									if (DEBUG_MODE)	Log.e(TAG, "Error " + statusCode + ": " + response.toString());
 									Toast.makeText(getActivity(), response.toString(), Toast.LENGTH_SHORT).show();
 								} else {
-
-									if (DEBUG_MODE) {
-										Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
-									}
-
+									if (DEBUG_MODE)	Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
 									Toast.makeText(getActivity(), "Could not save picture. Try again later.", Toast.LENGTH_SHORT).show();
 								}
 							}
@@ -183,31 +167,34 @@ public class ProfileEditFragment extends Fragment implements View.OnClickListene
 							@Override
 							public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 								if (responseString != null) {
-									if (DEBUG_MODE) {
-										Log.e(TAG, "Error " + statusCode + ": " + responseString);
-									}
+									if (DEBUG_MODE) Log.e(TAG, "Error " + statusCode + ": " + responseString);
+									Toast.makeText(getActivity(), responseString, Toast.LENGTH_SHORT).show();
+								} else {
+									if (DEBUG_MODE) Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
+									Toast.makeText(getActivity(), "Could not save picture. Try again later.", Toast.LENGTH_SHORT).show();
 								}
 							}
 
 							@Override
 							public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject error) {
 								if (error != null) {
-									if (DEBUG_MODE) {
-										Log.e(TAG, "Error " + statusCode + ": " + error.toString());
-									}
-
+									if (DEBUG_MODE)	Log.e(TAG, "Error " + statusCode + ": " + error.toString());
 									try {
 										Toast.makeText(getActivity(), error.getString("message"), Toast.LENGTH_SHORT).show();
 									} catch (JSONException e) {
-										e.printStackTrace();
+										if (DEBUG_MODE) e.printStackTrace();
+										Toast.makeText(getActivity(), "Internal error. Try again later", Toast.LENGTH_SHORT).show();
 									}
 								} else {
-									if (DEBUG_MODE) {
-										Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
-									}
-
+									if (DEBUG_MODE) Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
 									Toast.makeText(getActivity(), "Could not save picture. Try again later.", Toast.LENGTH_SHORT).show();
 								}
+							}
+
+							@Override
+							public void onFinish() {
+								// TODO Disable upload progress
+								// TODO Enable picture click
 							}
 						});
 
@@ -246,43 +233,28 @@ public class ProfileEditFragment extends Fragment implements View.OnClickListene
 				FullCountRestClient.put(getActivity(), "/api/users/current", jsonObject, mAuthTokenString, mAuthIsBasic, new JsonHttpResponseHandler() {
 
 					@Override
+					public void onStart() {
+						// TODO Start progress dialog
+					}
+
+					@Override
 					public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 						if (response != null && statusCode == 200) {
-
-							if (DEBUG_MODE) {
-								Log.i(TAG, "/api/users/current: " + response.toString());
-								Toast.makeText(getActivity(), "User successfully edited.", Toast.LENGTH_SHORT).show();
-							}
-
+							if (DEBUG_MODE)	Log.i(TAG, "PUT /api/users/current result" + '\n' + response.toString());
+							Toast.makeText(getActivity(), "Profile saved.", Toast.LENGTH_SHORT).show();
 							try {
 								final Player player = Player.parseFromJSON(response);
-
-								if (getActivity() != null) {
-									((HomeActivity) getActivity()).player = player;
-								}
+								if (getActivity() != null) ((HomeActivity) getActivity()).player = player;
 							} catch (JSONException e) {
-								if (DEBUG_MODE) {
-									e.printStackTrace();
-								}
+								if (DEBUG_MODE)	e.printStackTrace();
+								Toast.makeText(getActivity(), "Internal error. Try again later.", Toast.LENGTH_SHORT).show();
 							}
-
-							if (mListener != null) {
-								mListener.onProfileSaved();
-							}
-
+							if (mListener != null) mListener.onProfileSaved();
 						} else if (response != null) {
-
-							if (DEBUG_MODE) {
-								Log.e(TAG, "Error " + statusCode + ": " + response.toString());
-							}
-
+							if (DEBUG_MODE)	Log.e(TAG, "Error " + statusCode + ": " + response.toString());
 							Toast.makeText(getActivity(), response.toString(), Toast.LENGTH_SHORT).show();
 						} else {
-
-							if (DEBUG_MODE) {
-								Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
-							}
-
+							if (DEBUG_MODE)	Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
 							Toast.makeText(getActivity(), "Could not save profile. Try again later.", Toast.LENGTH_SHORT).show();
 						}
 					}
@@ -290,38 +262,39 @@ public class ProfileEditFragment extends Fragment implements View.OnClickListene
 					@Override
 					public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 						if (responseString != null) {
-							if (DEBUG_MODE) {
-								Log.e(TAG, "Error " + statusCode + ": " + responseString);
-							}
+							if (DEBUG_MODE) Log.e(TAG, "Error " + statusCode + ": " + responseString);
+							Toast.makeText(getActivity(), responseString, Toast.LENGTH_SHORT).show();
+						} else {
+							if (DEBUG_MODE) Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
+							Toast.makeText(getActivity(), "Could not save profile. Try again later.", Toast.LENGTH_SHORT).show();
 						}
+						if (DEBUG_MODE && throwable != null) throwable.printStackTrace();
 					}
 
 					@Override
 					public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject error) {
 						if (error != null) {
-							if (DEBUG_MODE) {
-								Log.e(TAG, "Error " + statusCode + ": " + error.toString());
-							}
-
+							if (DEBUG_MODE)	Log.e(TAG, "Error " + statusCode + ": " + error.toString());
 							try {
 								Toast.makeText(getActivity(), error.getString("message"), Toast.LENGTH_SHORT).show();
 							} catch (JSONException e) {
-								e.printStackTrace();
+								if (DEBUG_MODE)	e.printStackTrace();
+								Toast.makeText(getActivity(), "Internal error. Try again later.", Toast.LENGTH_SHORT).show();
 							}
 						} else {
-							if (DEBUG_MODE) {
-								Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
-							}
-
+							if (DEBUG_MODE)	Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
 							Toast.makeText(getActivity(), "Could not save profile. Try again later.", Toast.LENGTH_SHORT).show();
 						}
+						if (DEBUG_MODE && throwable != null) throwable.printStackTrace();
+					}
+
+					@Override
+					public void onFinish() {
+						// TODO Disable progress dialog
 					}
 				});
 			} catch (JSONException e) {
-				if (DEBUG_MODE) {
-					e.printStackTrace();
-				}
-
+				if (DEBUG_MODE) e.printStackTrace();
 				Toast.makeText(getActivity(), "Unexpected error occurred. Try again later.", Toast.LENGTH_SHORT).show();
 			}
 		}

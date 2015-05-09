@@ -117,31 +117,21 @@ public class ScoreFinalFragment extends Fragment implements View.OnClickListener
 				FullCountRestClient.post(getActivity(), "/api/games", jsonObject, mAuthTokenString, mAuthIsBasic, new JsonHttpResponseHandler() {
 
 					@Override
+					public void onStart() {
+						// TODO Start progress dialog
+					}
+
+					@Override
 					public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 						if (response != null && (statusCode == 200 || statusCode == 201)) {
-
-							if (DEBUG_MODE) {
-								Log.i(TAG, "/api/games: " + response.toString());
-								Toast.makeText(getActivity(), "Game saved.", Toast.LENGTH_SHORT).show();
-							}
-
-							if (mListener != null) {
-								mListener.onGameFinished();
-							}
-
+							if (DEBUG_MODE)	Log.i(TAG, "POST /api/games result" + '\n' + response.toString());
+							Toast.makeText(getActivity(), "Game saved.", Toast.LENGTH_SHORT).show();
+							if (mListener != null)	mListener.onGameFinished();
 						} else if (response != null) {
-
-							if (DEBUG_MODE) {
-								Log.e(TAG, "Error " + statusCode + ": " + response.toString());
-							}
-
+							if (DEBUG_MODE)	Log.e(TAG, "Error " + statusCode + ": " + response.toString());
 							Toast.makeText(getActivity(), response.toString(), Toast.LENGTH_SHORT).show();
 						} else {
-
-							if (DEBUG_MODE) {
-								Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
-							}
-
+							if (DEBUG_MODE)	Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
 							Toast.makeText(getActivity(), "Could not save game. Try again later.", Toast.LENGTH_SHORT).show();
 						}
 					}
@@ -149,38 +139,39 @@ public class ScoreFinalFragment extends Fragment implements View.OnClickListener
 					@Override
 					public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 						if (responseString != null) {
-							if (DEBUG_MODE) {
-								Log.e(TAG, "Error " + statusCode + ": " + responseString);
-							}
+							if (DEBUG_MODE) Log.e(TAG, "Error " + statusCode + ": " + responseString);
+							Toast.makeText(getActivity(), responseString, Toast.LENGTH_SHORT).show();
+						} else {
+							if (DEBUG_MODE) Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
+							Toast.makeText(getActivity(), "Could not save game. Try again later.", Toast.LENGTH_SHORT).show();
 						}
+						if (DEBUG_MODE && throwable != null) throwable.printStackTrace();
 					}
 
 					@Override
 					public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject error) {
 						if (error != null) {
-							if (DEBUG_MODE) {
-								Log.e(TAG, "Error " + statusCode + ": " + error.toString());
-							}
-
+							if (DEBUG_MODE)	Log.e(TAG, "Error " + statusCode + ": " + error.toString());
 							try {
 								Toast.makeText(getActivity(), error.getString("message"), Toast.LENGTH_SHORT).show();
 							} catch (JSONException e) {
-								e.printStackTrace();
+								if (DEBUG_MODE)	e.printStackTrace();
+								Toast.makeText(getActivity(), "Internal error. Try again later.", Toast.LENGTH_SHORT).show();
 							}
 						} else {
-							if (DEBUG_MODE) {
-								Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
-							}
-
+							if (DEBUG_MODE)	Log.e(TAG, "Error " + statusCode + ": " + "Response is null");
 							Toast.makeText(getActivity(), "Could not save game. Try again later.", Toast.LENGTH_SHORT).show();
 						}
+						if (DEBUG_MODE && throwable != null) throwable.printStackTrace();
+					}
+
+					@Override
+					public void onFinish() {
+						// TODO Stop progress dialog
 					}
 				});
 			} catch (JSONException e) {
-				if (DEBUG_MODE) {
-					e.printStackTrace();
-				}
-
+				if (DEBUG_MODE)	e.printStackTrace();
 				Toast.makeText(getActivity(), "Unexpected error occurred. Try again later.", Toast.LENGTH_SHORT).show();
 			}
 		}

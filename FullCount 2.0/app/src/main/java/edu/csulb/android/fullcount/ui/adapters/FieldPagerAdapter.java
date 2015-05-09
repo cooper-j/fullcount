@@ -89,20 +89,22 @@ public class FieldPagerAdapter extends PagerAdapter {
 			final Object object = currentObjects.get(key);
 			final ViewGroup parent = ((ViewGroup) object);
 
-			if (mRuns.size() >= (key + 1) * mBattersCount) {
-				for (int i = 0; i < parent.getChildCount(); i++) {
-					mRuns.set(key * mBattersCount + i, ((Field) parent.getChildAt(i)).getRun());
+			if (parent != null) {
+				if (mRuns.size() >= (key + 1) * mBattersCount) {
+					for (int i = 0; i < parent.getChildCount(); i++) {
+						mRuns.set(key * mBattersCount + i, ((Field) parent.getChildAt(i)).getRun());
+					}
+				} else {
+					int size = mRuns.size();
+					for (int i = 0; i < key * mBattersCount - size; i++) {
+						mRuns.add(new Run());
+					}
+					for (int i = 0; i < parent.getChildCount(); i++) {
+						mRuns.add(key * mBattersCount + i, ((Field) parent.getChildAt(i)).getRun());
+					}
 				}
-			} else {
-				int size = mRuns.size();
-				for (int i = 0; i < key * mBattersCount - size; i++) {
-					mRuns.add(new Run());
-				}
-				for (int i = 0; i < parent.getChildCount(); i++) {
-					mRuns.add(key * mBattersCount + i, ((Field) parent.getChildAt(i)).getRun());
-				}
-			}
 
+			}
 		}
 	}
 

@@ -1,17 +1,11 @@
 package edu.csulb.android.fullcount.ui.fragments;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.Uri;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -19,15 +13,11 @@ import android.widget.Toast;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.apache.http.Header;
-import org.apache.http.entity.StringEntity;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.List;
 
 import edu.csulb.android.fullcount.R;
 import edu.csulb.android.fullcount.io.models.Player;
@@ -118,36 +108,42 @@ public class TeamRosterFragment extends Fragment implements View.OnClickListener
             }
 
                 FullCountRestClient.put(getActivity(), "/api/teams/" + mPlayer.getTeam().getId() + "/members", jsonParams, mAuthTokenString, mAuthIsBasic, new JsonHttpResponseHandler() {
-               /* @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                    Toast.makeText(getActivity(), "Success: " + statusCode, Toast.LENGTH_SHORT).show();
-                }*/
 
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                    Toast.makeText(getActivity(), "Success", Toast.LENGTH_SHORT).show();
+	                @Override
+	                public void onStart() {
+		                // TODO Start progress dialog
+	                }
 
-                    ArrayList<RosterMember> rosterMembers = new ArrayList<RosterMember>();
+	                @Override
+		            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+		                Toast.makeText(getActivity(), "Success", Toast.LENGTH_SHORT).show();
 
-                    for(int i = 0 ; i < response.length(); i++){
-                        try {
-                            JSONObject obj = response.getJSONObject(i);
-                            RosterMember rosterMember = new RosterMember(obj.getString("_id"));
-                            rosterMember.setName(obj.getString("name"));
-                            rosterMembers.add(rosterMember);
-                        }catch (JSONException e){
-                            e.printStackTrace();
-                        }
-                    }
+		                ArrayList<RosterMember> rosterMembers = new ArrayList<>();
 
-                    mListener.onSaveTeamRoster(rosterMembers);
-                }
+		                for (int i = 0; i < response.length(); i++){
+		                    try {
+		                        JSONObject obj = response.getJSONObject(i);
+		                        RosterMember rosterMember = new RosterMember(obj.getString("_id"));
+		                        rosterMember.setName(obj.getString("name"));
+		                        rosterMembers.add(rosterMember);
+		                    }catch (JSONException e){
+		                        e.printStackTrace();
+		                    }
+		                }
 
-                @Override
-                public void onFailure(int statusCode, Header[] headers, String error, Throwable throwable) {
-                    Toast.makeText(getActivity(), "Error: " + statusCode + " " + error, Toast.LENGTH_SHORT).show();
-                }
-            });
+		                mListener.onSaveTeamRoster(rosterMembers);
+		            }
+
+		            @Override
+		            public void onFailure(int statusCode, Header[] headers, String error, Throwable throwable) {
+		                Toast.makeText(getActivity(), "Error: " + statusCode + " " + error, Toast.LENGTH_SHORT).show();
+		            }
+
+	                @Override
+	                public void onFinish() {
+		                // TODO Dismiss progress dialog
+	                }
+                });
         }
 
     }
