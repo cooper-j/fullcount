@@ -84,6 +84,8 @@ public class Player implements Serializable {
 
     public void addFavorite(Player player) { if (mFavorites == null) mFavorites = new ArrayList<Player>(); mFavorites.add(player); }
 
+	public void removeFavorite(Player player) { if (mFavorites != null) mFavorites.remove(player); }
+
 	public JSONObject toJSON() {
 		JSONObject jsonObject = new JSONObject();
 

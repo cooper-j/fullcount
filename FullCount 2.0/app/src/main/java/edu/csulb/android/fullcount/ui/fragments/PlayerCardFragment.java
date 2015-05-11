@@ -99,7 +99,20 @@ public class PlayerCardFragment extends Fragment {
                         FullCountRestClient.post(getActivity(), "/api/users/" + mPlayer.getId() + "/follow", new JSONObject(), mAuth, true, new JsonHttpResponseHandler() {
                                     @Override
                                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                                        mUser.addFavorite(mPlayer);
+                                    }
 
+                                    @Override
+                                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject error) {
+                                        Log.e("Fav", "Error " + statusCode + ": " + error.toString() + " " + mPlayer.getId());
+                                    }
+                                }
+                        );
+                    else
+                        FullCountRestClient.delete(getActivity(), "/api/users/" + mPlayer.getId() + "/follow", mAuth, true, new JsonHttpResponseHandler() {
+                                    @Override
+                                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                                        mUser.removeFavorite(mPlayer);
                                     }
 
                                     @Override
