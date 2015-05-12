@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -40,13 +41,13 @@ public class TeamRosterListAdapter extends ArrayAdapter<RosterMember> {
         View rowView=inflater.inflate(R.layout.team_roster_list_item, null,true);
 
         ViewHolder holder = new ViewHolder();
-        holder.removePlayerButton = (Button)rowView.findViewById(R.id.team_roster_list_delete);
+        holder.removePlayerButton = (ImageButton)rowView.findViewById(R.id.team_roster_list_delete);
         holder.removePlayerButton.setTag(mRosterMembers.get(position));
 
         holder.name = (TextView)rowView.findViewById(R.id.player_name);
         holder.icon = (ImageView)rowView.findViewById(R.id.player_icon);
 
-        Button deleteButton = (Button) rowView.findViewById(R.id.team_roster_list_delete);
+        ImageButton deleteButton = (ImageButton) rowView.findViewById(R.id.team_roster_list_delete);
         deleteButton.setTag(position);
 
         deleteButton.setOnClickListener(
@@ -74,7 +75,7 @@ public class TeamRosterListAdapter extends ArrayAdapter<RosterMember> {
 
     static class ViewHolder {
         TextView name;
-        Button removePlayerButton;
+        ImageButton removePlayerButton;
         ImageView icon;
     }
 
