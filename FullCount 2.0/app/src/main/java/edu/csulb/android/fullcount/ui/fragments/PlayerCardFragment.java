@@ -11,19 +11,16 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.apache.http.Header;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.csulb.android.fullcount.R;
 import edu.csulb.android.fullcount.io.models.Player;
 import edu.csulb.android.fullcount.tools.FullCountRestClient;
-import edu.csulb.android.fullcount.ui.activities.HomeActivity;
 
 public class PlayerCardFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
@@ -48,6 +45,7 @@ public class PlayerCardFragment extends Fragment {
     public static PlayerCardFragment newInstance(Player user, Player player, String auth) {
         PlayerCardFragment fragment = new PlayerCardFragment();
         Bundle args = new Bundle();
+        fragment.mUser = user;
         args.putSerializable(ARGUMENT_USER, user);
         args.putSerializable(ARGUMENT_PLAYER, player);
         args.putString(ARGUMENT_AUTH, auth);
@@ -63,7 +61,7 @@ public class PlayerCardFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mUser = (Player)getArguments().getSerializable(ARGUMENT_USER);
+            //mUser = (Player)getArguments().getSerializable(ARGUMENT_USER);
             mPlayer = (Player)getArguments().getSerializable(ARGUMENT_PLAYER);
             mAuth = getArguments().getString(ARGUMENT_AUTH);
         }

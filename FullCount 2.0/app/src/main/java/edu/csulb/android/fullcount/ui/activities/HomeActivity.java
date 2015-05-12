@@ -12,6 +12,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.facebook.Session;
@@ -57,6 +58,7 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 	// UI Elements
 	private NavigationDrawerFragment mNavigationDrawerFragment;
 	private CharSequence mTitle;
+	private DrawerLayout nNavDrawerLayout;
 
 	// Public attributes
 	public Toolbar toolbar;
@@ -75,6 +77,8 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 			Toast.makeText(this, "Internal error occurred. Please try again.", Toast.LENGTH_SHORT).show();
 			onNavigationDrawerItemSelected(R.id.drawer_logout);
 		}
+
+		nNavDrawerLayout = (DrawerLayout) this.findViewById(R.id.drawer_layout);
 
 		mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
 		mTitle = getTitle();
@@ -111,7 +115,6 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
                     teamId = player.getTeam().getId();
 				final boolean authIsBasic = settings.getBoolean("authIsBasic", true);
 				fragment = TeamFragment.newInstance(auth, authIsBasic, teamId);
-				transaction.addToBackStack(TeamFragment.class.getName());
 				break;
 			}
 
@@ -119,15 +122,13 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 				Toast.makeText(this, "Create game", Toast.LENGTH_SHORT).show();
                 if (player.getTeam() != null) {
                     fragment = BattingRosterFragment.newInstance(player.getTeam().getRoster());
-                    transaction.addToBackStack(BattingRosterFragment.class.getName());
                 }
 				break;
 
 			case R.id.drawer_favorites: {
 				final String auth = settings.getString("auth", "");
 				final boolean authIsBasic = settings.getBoolean("authIsBasic", true);
-				fragment = FavoritesFragment.newInstance(player.getFavorites());
-				transaction.addToBackStack(FavoritesFragment.class.getName());
+				fragment = FavoritesFragment.newInstance(player);
 
 				// Toast.makeText(this, "Favorites", Toast.LENGTH_SHORT).show();
 				// TODO fragmentManager.beginTransaction().replace(R.id.container, FavoritesFragment.newInstance()).commit();
@@ -139,7 +140,6 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 
                 final String auth = settings.getString("auth", "");
                 fragment = PlayerCardFragment.newInstance(player, player, auth);
-                transaction.addToBackStack(PlayerCardFragment.class.getName());
                 break;
 
 			case R.id.drawer_logout:
@@ -278,6 +278,7 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
         transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
         transaction.addToBackStack(AddPlayerTeamRosterFragment.class.getName());
         transaction.replace(R.id.container, AddPlayerTeamRosterFragment.newInstance());
+
         transaction.commit();
     }
 
@@ -315,6 +316,7 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 		transaction.addToBackStack(PlayerCardFragment.class.getName());
 		transaction.replace(R.id.container, PlayerCardFragment.newInstance(player, p, auth));
 		transaction.commit();
+		nNavDrawerLayout.closeDrawers();
 	}
 
 	public void onToggleStar(View view){}
