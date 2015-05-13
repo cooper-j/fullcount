@@ -7,7 +7,7 @@
 
     <edu.csulb.android.fullcount.ui.widgets.DynamicRosterMemberListView
         android:id="@+id/listview"
-        android:background="#0000"
+        android:background="@color/background_material_light"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
