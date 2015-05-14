@@ -50,7 +50,7 @@ public class ProfileEditFragment extends Fragment implements View.OnClickListene
 	private EditText mCity;
 	private View mSaveButton;
 
-	private Player mPlayer;
+	public Player mPlayer;
 
 	private OnFragmentInteractionListener mListener;
 
@@ -104,7 +104,9 @@ public class ProfileEditFragment extends Fragment implements View.OnClickListene
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
-		mPlayer = ((HomeActivity) getActivity()).player;
+		if (getActivity() instanceof HomeActivity) {
+			mPlayer = ((HomeActivity) getActivity()).player;
+		}
 
 		if (mPlayer != null) {
 			fillPlayerInformation(mPlayer);
@@ -304,12 +306,14 @@ public class ProfileEditFragment extends Fragment implements View.OnClickListene
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 
-		((HomeActivity) activity).onFragmentAttached(R.layout.fragment_profile_edit);
+		if (activity instanceof  HomeActivity) {
+			((HomeActivity) activity).onFragmentAttached(R.layout.fragment_profile_edit);
+		}
 
 		try {
 			mListener = (OnFragmentInteractionListener) activity;
 		} catch (ClassCastException e) {
-			throw new ClassCastException(activity.toString() + " must implement OnFragmentInteractionListener");
+			// throw new ClassCastException(activity.toString() + " must implement OnFragmentInteractionListener");
 		}
 	}
 

@@ -3,7 +3,6 @@ package edu.csulb.android.fullcount.ui.fragments;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.database.MatrixCursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -18,12 +17,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
 import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.SearchView;
@@ -31,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.apache.http.Header;
 import org.json.JSONArray;
@@ -40,19 +36,11 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import edu.csulb.android.fullcount.FullCountApplication;
-
-
-import com.nostra13.universalimageloader.core.ImageLoader;
-
-
-import com.nostra13.universalimageloader.core.ImageLoader;
-
 import edu.csulb.android.fullcount.R;
 import edu.csulb.android.fullcount.io.models.Player;
 import edu.csulb.android.fullcount.tools.FullCountRestClient;
 import edu.csulb.android.fullcount.ui.activities.HomeActivity;
 import edu.csulb.android.fullcount.ui.adapters.FavoritesListAdapter;
-import edu.csulb.android.fullcount.ui.adapters.PlayerSearchAdapter;
 
 public class NavigationDrawerFragment extends Fragment implements View.OnClickListener {
 

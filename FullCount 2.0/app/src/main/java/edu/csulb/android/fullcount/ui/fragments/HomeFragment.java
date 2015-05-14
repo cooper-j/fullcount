@@ -24,7 +24,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
 	private OnFragmentInteractionListener mListener;
 
-	private Player mPlayer;
+	public Player mPlayer;
 
 	public static HomeFragment newInstance() {
 		HomeFragment fragment = new HomeFragment();
@@ -69,7 +69,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 	public void onResume() {
 		super.onResume();
 
-		mPlayer = ((HomeActivity) getActivity()).player;
+		if (getActivity() instanceof HomeActivity) {
+			mPlayer = ((HomeActivity) getActivity()).player;
+		}
 
 		// TODO Add picture
 		mPlayerUsername.setText(mPlayer.getUsername());
@@ -103,12 +105,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 
-		((HomeActivity) activity).onFragmentAttached(R.layout.fragment_home);
+		if (activity instanceof HomeActivity) {
+			((HomeActivity) activity).onFragmentAttached(R.layout.fragment_home);
+		}
 
 		try {
 			mListener = (OnFragmentInteractionListener) activity;
 		} catch (ClassCastException e) {
-			throw new ClassCastException(activity.toString() + " must implement OnFragmentInteractionListener");
+			// throw new ClassCastException(activity.toString() + " must implement OnFragmentInteractionListener");
 		}
 	}
 

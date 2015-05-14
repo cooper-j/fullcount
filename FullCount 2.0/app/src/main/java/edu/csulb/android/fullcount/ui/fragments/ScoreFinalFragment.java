@@ -181,12 +181,14 @@ public class ScoreFinalFragment extends Fragment implements View.OnClickListener
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 
-		((HomeActivity) activity).onFragmentAttached(R.layout.fragment_score_final);
+		if (activity instanceof HomeActivity) {
+			((HomeActivity) activity).onFragmentAttached(R.layout.fragment_score_final);
+		}
 
 		try {
 			mListener = (OnFragmentInteractionListener) activity;
 		} catch (ClassCastException e) {
-			throw new ClassCastException(activity.toString() + " must implement OnFragmentInteractionListener");
+			// throw new ClassCastException(activity.toString() + " must implement OnFragmentInteractionListener");
 		}
 	}
 

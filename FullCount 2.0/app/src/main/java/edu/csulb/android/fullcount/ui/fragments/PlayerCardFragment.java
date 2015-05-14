@@ -11,19 +11,16 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.apache.http.Header;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.csulb.android.fullcount.R;
 import edu.csulb.android.fullcount.io.models.Player;
 import edu.csulb.android.fullcount.tools.FullCountRestClient;
-import edu.csulb.android.fullcount.ui.activities.HomeActivity;
 
 public class PlayerCardFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
@@ -33,8 +30,8 @@ public class PlayerCardFragment extends Fragment {
     private static final String ARGUMENT_AUTH = "auth";
 
     // TODO: Rename and change types of parameters
-    private Player mUser;
-    private Player mPlayer;
+    public Player mUser;
+    public Player mPlayer;
     private String mAuth;
 
     private CheckBox mFavoriteStar;

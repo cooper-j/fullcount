@@ -37,7 +37,7 @@ public class TeamFragment extends Fragment implements View.OnClickListener {
 	private String mAuthTokenString;
 	private boolean mAuthIsBasic;
 	private String mTeamId;
-	private Team mTeam;
+	public Team mTeam;
 
 	private EditText mTeamName;
 	private EditText mTeamCity;
@@ -166,11 +166,15 @@ public class TeamFragment extends Fragment implements View.OnClickListener {
 		return inflateView;
 	}
 
+
 	@Override
 	public void onActivityCreated(@Nullable Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		Team team = null;
 
-		final Team team = ((HomeActivity) getActivity()).player.getTeam();
+		if (getActivity() instanceof HomeActivity) {
+			team = ((HomeActivity) getActivity()).player.getTeam();
+		}
 
 		if (team != null) {
 			fillTeamInformation(team);
@@ -334,12 +338,14 @@ public class TeamFragment extends Fragment implements View.OnClickListener {
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 
-		((HomeActivity) activity).onFragmentAttached(R.layout.fragment_team);
+		if (activity instanceof HomeActivity) {
+			((HomeActivity) activity).onFragmentAttached(R.layout.fragment_team);
+		}
 
 		try {
 			mListener = (OnFragmentInteractionListener) activity;
 		} catch (ClassCastException e) {
-			throw new ClassCastException(activity.toString() + " must implement OnFragmentInteractionListener");
+			// throw new ClassCastException(activity.toString() + " must implement OnFragmentInteractionListener");
 		}
 	}
 
