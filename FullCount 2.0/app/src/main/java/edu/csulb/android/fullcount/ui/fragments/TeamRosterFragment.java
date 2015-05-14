@@ -116,6 +116,7 @@ public class TeamRosterFragment extends Fragment implements View.OnClickListener
 
 	                @Override
 		            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                        if (getActivity() != null)
 		                Toast.makeText(getActivity(), "Success", Toast.LENGTH_SHORT).show();
 
 		                ArrayList<RosterMember> rosterMembers = new ArrayList<>();

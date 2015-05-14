@@ -222,7 +222,7 @@ public class TeamFragment extends Fragment implements View.OnClickListener {
 									if (getActivity() != null) ((HomeActivity) getActivity()).player.setTeam(team);
 								} catch (JSONException e) {
 									if (DEBUG_MODE)	e.printStackTrace();
-									Toast.makeText(getActivity(), "Internal error", Toast.LENGTH_SHORT).show();
+									//Toast.makeText(getActivity(), "Internal error", Toast.LENGTH_SHORT).show();
 								}
 								if (mListener != null)	mListener.onTeamEdition();
 							} else if (response != null) {

@@ -97,6 +97,11 @@ public class FullCountRestClient {
 		}
 	}
 
+	public static void delete(Context context, String url, String auth, boolean basic, AsyncHttpResponseHandler responseHandler) {
+		if (auth != null && !auth.matches("")) client.addHeader("Authorization", (basic ? "Basic " : " Bearer ") + auth);
+		client.delete(context, getAbsoluteUrl(url), responseHandler);
+	}
+
 	public static String getAbsoluteUrl(String relativeUrl) {
 		return BASE_URL + relativeUrl;
 	}

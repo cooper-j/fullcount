@@ -45,6 +45,7 @@ public class PlayerCardFragment extends Fragment {
     public static PlayerCardFragment newInstance(Player user, Player player, String auth) {
         PlayerCardFragment fragment = new PlayerCardFragment();
         Bundle args = new Bundle();
+        fragment.mUser = user;
         args.putSerializable(ARGUMENT_USER, user);
         args.putSerializable(ARGUMENT_PLAYER, player);
         args.putString(ARGUMENT_AUTH, auth);
@@ -60,7 +61,7 @@ public class PlayerCardFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mUser = (Player)getArguments().getSerializable(ARGUMENT_USER);
+            //mUser = (Player)getArguments().getSerializable(ARGUMENT_USER);
             mPlayer = (Player)getArguments().getSerializable(ARGUMENT_PLAYER);
             mAuth = getArguments().getString(ARGUMENT_AUTH);
         }
@@ -96,12 +97,25 @@ public class PlayerCardFragment extends Fragment {
                         FullCountRestClient.post(getActivity(), "/api/users/" + mPlayer.getId() + "/follow", new JSONObject(), mAuth, true, new JsonHttpResponseHandler() {
                                     @Override
                                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-
+                                        mUser.addFavorite(mPlayer);
                                     }
 
                                     @Override
                                     public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject error) {
-                                        Log.e("fail", String.valueOf(statusCode));
+                                        Log.e("Fav", "Error " + statusCode + ": " + error.toString() + " " + mPlayer.getId());
+                                    }
+                                }
+                        );
+                    else
+                        FullCountRestClient.delete(getActivity(), "/api/users/" + mPlayer.getId() + "/follow", mAuth, true, new JsonHttpResponseHandler() {
+                                    @Override
+                                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                                        mUser.removeFavorite(mPlayer);
+                                    }
+
+                                    @Override
+                                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject error) {
+                                        Log.e("Fav", "Error " + statusCode + ": " + error.toString() + " " + mPlayer.getId());
                                     }
                                 }
                         );

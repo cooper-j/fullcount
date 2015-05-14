@@ -16,17 +16,17 @@ import edu.csulb.android.fullcount.io.models.Player;
 import edu.csulb.android.fullcount.ui.adapters.FavoritesListAdapter;
 
 public class FavoritesFragment extends Fragment {
-    private static final String ARGUMENT_FAVORITES = "FAVORITES";
+    private static final String ARGUMENT_PLAYER = "FAVORITES";
 
-    private ArrayList<Player> mFavoritesList;
+    private Player mPlayer;
     private FavoritesListAdapter mAdapter;
 
     private OnFragmentInteractionListener mListener;
 
-    public static FavoritesFragment newInstance(ArrayList<Player> favorites) {
+    public static FavoritesFragment newInstance(Player player) {
         FavoritesFragment fragment = new FavoritesFragment();
         Bundle args = new Bundle();
-        args.putSerializable(ARGUMENT_FAVORITES, favorites);
+        args.putSerializable(ARGUMENT_PLAYER, player);
         fragment.setArguments(args);
         return fragment;
     }
@@ -39,7 +39,7 @@ public class FavoritesFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mFavoritesList = (ArrayList<Player>)getArguments().getSerializable(ARGUMENT_FAVORITES);
+            mPlayer = (Player)getArguments().getSerializable(ARGUMENT_PLAYER);
         }
     }
 
@@ -48,7 +48,7 @@ public class FavoritesFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_favorites, container, false);
 
-        mAdapter = new FavoritesListAdapter(getActivity(), (mFavoritesList != null) ? mFavoritesList : new ArrayList<Player>());
+        mAdapter = new FavoritesListAdapter(getActivity(), (mPlayer.getFavorites() != null) ? mPlayer.getFavorites() : new ArrayList<Player>());
         ListView listView = (ListView)view.findViewById(R.id.favorites_list);
         listView.setAdapter(mAdapter);
 
@@ -83,7 +83,13 @@ public class FavoritesFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        public void onSelectFavorite(int position);
+        void onSelectFavorite(int position);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mAdapter != null)
+            mAdapter.notifyDataSetChanged();
+    }
 }
