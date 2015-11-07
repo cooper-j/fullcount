@@ -1,6 +1,7 @@
-.gradle
-/local.properties
-/.idea/workspace.xml
-/.idea/libraries
+./Fullcount 1.0/.gradle
+./Fullcount 2.0/.gradle
+./Fullcount 1.0/local.properties
+./Fullcount 2.0/local.properties
+.idea/workspace.xml
+.idea/libraries
 .DS_Store
-/build
