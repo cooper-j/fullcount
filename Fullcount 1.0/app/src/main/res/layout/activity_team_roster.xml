@@ -1,0 +1,93 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/DoneButton"
+        android:layout_below="@+id/AddPlayerButton"
+        android:id="@+id/scrollView">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true">
+
+
+
+        </RelativeLayout>
+
+
+    </ScrollView>
+
+    <!-- Text should stay static on the screen -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/team_roster"
+        android:id="@+id/TeamRosterLabel"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:textSize="30dp" />
+
+
+
+    <!-- Button should stay static on the screen -->
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/done"
+        android:id="@+id/DoneButton"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="13dp"
+        android:layout_marginEnd="13dp"
+        android:layout_marginBottom="13dp" />
+
+    <!-- Button should stay static on the screen -->
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/add_player"
+        android:id="@+id/AddPlayerButton"
+        android:layout_below="@+id/TeamRosterLabel"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="12dp"
+        android:layout_marginStart="12dp" />
+
+    <!-- Loads team name, location on screen is static -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Team Name Here"
+        android:id="@+id/TeamNameAdapt"
+        android:layout_alignBaseline="@+id/AddPlayerButton"
+        android:layout_alignBottom="@+id/AddPlayerButton"
+        android:layout_alignRight="@+id/DoneButton"
+        android:layout_alignEnd="@+id/DoneButton" />
+
+    <!-- Team's logo, should stay static next to team name) -->
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/TeamLogoTemp"
+        android:src="@drawable/ic_launcher"
+        android:scaleType="matrix"
+        android:layout_above="@+id/scrollView"
+        android:layout_toLeftOf="@+id/TeamNameAdapt"
+        android:layout_toStartOf="@+id/TeamNameAdapt" />
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/team_roster_list"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/DoneButton"
+        android:layout_alignTop="@+id/scrollView"
+        android:headerDividersEnabled="false" />
+
+</RelativeLayout>
